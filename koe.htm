@@ -1,0 +1,60 @@
+<!doctype html>
+
+<html lang="fi">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>vue.js kokeilu</title>
+    <meta name="description" content="Vue.js kokeilua">
+    <meta name="author" content="Jori Ostrovskij">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="js/jquery-3.1.1.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/moment.js"></script>
+    <script src="js/script.js"></script>
+</head>
+
+<body>
+    <div style="display: none; height:300px; position: fixed; top: 100px; left: 50px; width: 70%; background: yellow; border: 3px solid red;" id="loader">Ladataan tietoja...</div>
+    
+    <div id="app">
+        {{ message }}
+        
+        <button @click="saveCookies">Save</button>
+        <button @click="loadCookies">Load</button>
+
+        <ul>
+            <li v-for="competition in competitions">
+                {{competition.competition_name}}
+                <ul>
+                    <li v-for="category in competition.categories">
+                        {{category.category_name}}
+                        <ul>
+                            <li v-for="group in category.groups">
+                                <input type="checkbox" v-model="group.displayed"> {{group.group_name}}
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+      
+
+        <!--<p>Matches (total {{matches_with_incomplete_referees.length}}):</p>-->
+        <p>Matches (total {{matches_of_displayed_categories.length}}):</p>
+        Haetaan ottelut ennen <input type="date" v-model="datestring"> 
+        <ul>
+            <!--<li v-for="match in matches_with_incomplete_referees">{{match.category_id}}  {{match.match_number}} {{match.weekday}} {{match.datelocal}} {{match.team_A_name}}-{{match.team_B_name}}  {{match.timelocal}}  {{match.venue_name}}  {{match.referee_1_name}}  {{match.referee_2_name}}  {{match.assistant_referee_1_name}}  {{match.assistant_referee_2_name}} Puuttuu: {{match.referee_status}}    Group: {{match.group_id}}</li>-->
+            <li v-for="match in matches_of_displayed_categories">{{match.category_id}}  {{match.match_number}} {{match.weekday}} {{match.datelocal}} {{match.team_A_name}}-{{match.team_B_name}}  {{match.timelocal}}  {{match.venue_name}}  {{match.referee_1_name}}  {{match.referee_2_name}}  {{match.assistant_referee_1_name}}  {{match.assistant_referee_2_name}} Puuttuu: {{match.referee_status}}    Group: {{match.group_id}}</li>
+        </ul>
+
+        <button @click="buttonklik">Klikkaa mua!</button>
+        <p>{{klikattu}}</p>
+    </div>
+</body>
+
+</html>
