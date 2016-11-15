@@ -1,0 +1,71 @@
+#app {
+    margin-left: 16%;
+    margin-right: 16%;
+}
+#nav {
+    left: 16%;
+    right: 16%;
+    background: white;
+}
+
+#save {
+    position: fixed;
+    top: 5px;
+    right: 16%;
+    z-index: 100;
+}
+
+.table {
+    max-width: 800px;
+}
+
+tr {
+    border-bottom: 1px solid #bbb;
+}
+
+th {
+    border-top: 1px solid navy;
+    border-bottom: 1px solid navy;
+}
+
+.vue-box, .joukkuelista {
+    display: inline-block; /* vain se leveys, minkä sisältö vaatii */
+    padding: 5px;
+    border-radius: 8px;
+    border: 2px solid #bb7;
+    vertical-align: top;
+}
+
+.joukkuelista .panel-body, .joukkuelista .panel-heading, .vue-box .panel-body, .vue-box .panel-heading {
+    background: white;
+    height: 20px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    border: none;
+}
+
+.kapea-editori {
+    width: 200px;
+    display: inline;
+}
+
+.number-input {
+    font-size: smaller;
+    width: 55px;
+}
+
+@media screen and (max-width: 800px){
+    #app {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+#nav {
+    left: 5px;
+    right: 5px;
+}
+
+#save {
+        right: 5px;
+    }
+}

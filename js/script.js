@@ -8,6 +8,145 @@
 // NL Naisten Mestaruusliiga
 // NSC Naisten Suomen Cup
 
+class Match{
+    constructor(torneoMatch, competition, category, group){
+        this.number = torneoMatch.match_number;
+        this.id = torneoMatch.match_id;
+        this.torneoMatch = torneoMatch;
+        this.displayed = true;
+        this.referees = [];
+
+        this.fill_date();
+        this.fill_referees();
+
+        this.competition = competition;
+        this.category = category;
+        this.group = group;
+
+        this.special = 0;
+    }
+
+    isDisplayed(map){
+        for(let id of this.referee_ids){
+            let refe = map.get(id);
+
+            if(refe == undefined){
+                this.special = 1;
+                return true;
+            }
+            if(refe.displayed) return true;
+        }
+        return false;
+    }
+
+    fill_date(){
+        let a = this.torneoMatch;
+        let da = a.date.split("-");
+        if(da.length < 3) da = ["2030", "1", "1"];
+        
+        let ta = a.time.split(":");
+        if(ta.length < 3) ta = ["23", "59", "59"];
+        
+        let date_a = new Date(da[0], da[1], da[2], ta[0], ta[1], ta[2], 0);
+        this.datetime = date_a;
+
+        this.datelocal = date_a.toLocaleDateString();
+        let hours = date_a.getHours().toString();
+        if(hours.length < 2) hours = "0" + hours;
+        let mins = date_a.getMinutes().toString();
+        if(mins.length < 2) mins = "0" + mins;
+        this.timelocal = hours + ":" + mins;
+
+        switch(this.datetime.getDay()){
+            case 0: this.weekday = "Su"; break;
+            case 1: this.weekday = "Ma"; break;
+            case 2: this.weekday = "Ti"; break;
+            case 3: this.weekday = "Ke"; break;
+            case 4: this.weekday = "To"; break;
+            case 5: this.weekday = "Pe"; break;
+            case 6: this.weekday = "La"; break;
+        }   
+    }
+
+    fill_referees(){
+        // Asetetaan ottelulle tieto tuomarien statuksesta
+        let m = this.torneoMatch;
+        this.referee_status="";
+        this.referees = [];
+        this.referee_ids = [];
+
+        let puuttuu = [];
+
+        if(REF4.includes(m.category_id)){
+            // Kaikki neljä täytyy löytyä
+            if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
+            else { this.referees.push(m.referee_1_name); this.referee_ids.push(m.referee_1_id); }
+
+            if(!(m.referee_2_name !== null && m.referee_2_name.length > 0 &&  m.referee_2_name !== "??")) puuttuu.push("VT"); 
+            else { this.referees.push(m.referee_2_name); this.referee_ids.push(m.referee_2_id); }
+
+            if(!(m.assistant_referee_1_name !== null && m.assistant_referee_1_name.length > 0 &&  m.assistant_referee_1_name !== "??")) puuttuu.push("RT1"); 
+            else { this.referees.push(m.assistant_referee_1_name); this.referee_ids.push(m.assistant_referee_1_id); }
+
+            if(!(m.assistant_referee_2_name !== null && m.assistant_referee_2_name.length > 0 &&  m.assistant_referee_2_name !== "??")) puuttuu.push("RT2"); 
+            else { this.referees.push(m.assistant_referee_2_name); this.referee_ids.push(m.assistant_referee_2_id); }
+
+        }
+        else if(REF2.includes(m.category_id)){
+            // Kaksi täytyy löytyä
+            if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
+            else { this.referees.push(m.referee_1_name); this.referee_ids.push(m.referee_1_id); }
+
+            if(!(m.referee_2_name !== null && m.referee_2_name.length > 0 &&  m.referee_2_name !== "??")) puuttuu.push("VT"); 
+            else { this.referees.push(m.referee_2_name); this.referee_ids.push(m.referee_2_id); }
+        }
+        else {    
+            // Yksi sentään 
+            if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
+            else { this.referees.push(m.referee_1_name); this.referee_ids.push(m.referee_1_id); }
+        }
+
+        this.referee_status = puuttuu.join(" ");
+    }  
+}
+
+class Category {
+    constructor(torneoCategory){
+        this.torneoCategory = torneoCategory;
+        this.displayed = true;
+        this.id = torneoCategory.category_id;
+        this.name = torneoCategory.category_name;
+    }
+}
+
+class Competition {
+    constructor(torneoCompetition){
+        this.torneoCompetition = torneoCompetition;
+        this.displayed = true;
+        this.name = torneoCompetition.competition_name;
+        this.id = torneoCompetition.competition_id;
+    }
+}
+
+class Group {
+    constructor(torneoGroup){
+        this.id = torneoGroup.group_id;
+        this.name = torneoGroup.group_name;
+        this.torneoGroup = torneoGroup;
+        this.displayed = true;
+        this.matches = [];
+    }
+}
+
+class Referee {
+      constructor(torneoReferee){
+          this.id = torneoReferee.referee_id;
+          this.name = torneoReferee.last_name + " " + torneoReferee.first_name;
+          this.torneoReferee = torneoReferee;
+          this.displayed = true;
+    }  
+}
+
 const REF4 = ["M1", "ML", "MSC", "N1", "NSC"];
 const REF2 = ["M2", "M3"];
 
@@ -17,7 +156,7 @@ const SKIP_COMPETITION = ["aluetesti", "beach2016", "masku2016", "power2016",
 
 const SKIP_CATEGORY = ["TB", "PB", "PC", "PD", "PE", "PF", "PD6", "PDAlku", "PDT", "PDalku", "PET", "TD-AM", "TDT", "TE", "TE-Tiikeri", "TPE", "TPF", "TD", "TET", "TPD", "TPD", "TF", "testi", "TESTI", "Testi"];
 
- const SKIP_CATEGORIES = [
+const SKIP_CATEGORIES = [
      { competition_id: "vb2016epohj",
        skip_list: ["NH"] // Ei näemmä nimetä tuomareita
      },
@@ -53,78 +192,7 @@ var match_without_date = function(m){
     return m.datetime < new Date(2029, 1, 1, 1, 1, 1, 1);
 };
 
-var fill_referees = function(m){
-    // Asetetaan ottelulle tieto tuomarien statuksesta
-    m.referee_status="";
-    m.referees = [];
-    m.referee_ids = [];
 
-    let puuttuu = [];
-
-    if(REF4.includes(m.category_id)){
-        // Kaikki neljä täytyy löytyä
-        if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
-        else { m.referees.push(m.referee_1_name); m.referee_ids.push(m.referee_1_id); }
-
-        if(!(m.referee_2_name !== null && m.referee_2_name.length > 0 &&  m.referee_2_name !== "??")) puuttuu.push("VT"); 
-        else { m.referees.push(m.referee_2_name); m.referee_ids.push(m.referee_2_id); }
-
-        if(!(m.assistant_referee_1_name !== null && m.assistant_referee_1_name.length > 0 &&  m.assistant_referee_1_name !== "??")) puuttuu.push("RT1"); 
-        else { m.referees.push(m.assistant_referee_1_name); m.referee_ids.push(m.assistant_referee_1_id); }
-
-        if(!(m.assistant_referee_2_name !== null && m.assistant_referee_2_name.length > 0 &&  m.assistant_referee_2_name !== "??")) puuttuu.push("RT2"); 
-        else { m.referees.push(m.assistant_referee_2_name); m.referee_ids.push(m.assistant_referee_2_id); }
-
-    }
-    else if(REF2.includes(m.category_id)){
-        // Kaksi täytyy löytyä
-        if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
-        else { m.referees.push(m.referee_1_name); m.referee_ids.push(m.referee_1_id); }
-
-        if(!(m.referee_2_name !== null && m.referee_2_name.length > 0 &&  m.referee_2_name !== "??")) puuttuu.push("VT"); 
-        else { m.referees.push(m.referee_2_name); m.referee_ids.push(m.referee_2_id); }
-    }
-    else {    
-        // Yksi sentään 
-        if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
-        else { m.referees.push(m.referee_1_name); m.referee_ids.push(m.referee_1_id); }
-    }
-
-    m.referee_status = puuttuu.join(" ");
-
-    return m; 
-};
-
-
-var fill_date = function(a){
-    var da = a.date.split("-");
-    if(da.length < 3) da = ["2030", "1", "1"];
-    
-    var ta = a.time.split(":");
-    if(ta.length < 3) ta = ["23", "59", "59"];
-    
-    var date_a = new Date(da[0], da[1], da[2], ta[0], ta[1], ta[2], 0);
-    a.datetime = date_a;
-
-    a.datelocal = date_a.toLocaleDateString();
-    let hours = date_a.getHours().toString();
-    if(hours.length < 2) hours = "0" + hours;
-    let mins = date_a.getMinutes().toString();
-    if(mins.length < 2) mins = "0" + mins;
-    a.timelocal = hours + ":" + mins;
-
-    switch(a.datetime.getDay()){
-        case 0: a.weekday = "Su"; break;
-        case 1: a.weekday = "Ma"; break;
-        case 2: a.weekday = "Ti"; break;
-        case 3: a.weekday = "Ke"; break;
-        case 4: a.weekday = "To"; break;
-        case 5: a.weekday = "Pe"; break;
-        case 6: a.weekday = "La"; break;
-    }   
-
-    return a;
-};
 
 var setCookie = function(cname, cvalue, exdays) {
     var d = new Date();
@@ -164,34 +232,49 @@ $(document).ready(function () {
             competitions: [],
             message: 'Hello Vue!',
             klikattu: '',
-            trig: true
+            trig: true,
+            referees: [],
+            ids: [], 
+            refereeMap: null           
         },
         created: function () {
             var self = this;
             
+            self.refereeMap = new Map();
+
+            $.get("https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre", function(data){
+                self.referees = [];
+                for(let referee of data.referees){
+                    let newReferee = new Referee(referee);
+                    self.refereeMap.set(referee.referee_id, newReferee);
+                    self.referees.push(newReferee);    
+                }
+            });
+
+            //return;
             $("#loader").show();
             var loader_count = 0;
 
             loader_count++;
-            $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions", function(data){
+            $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                 loader_count--;
-                for(let competition of data.competitions){
-                    let url = "https://lentopallo.torneopal.fi/taso/rest/getCategories?competition_id=" + competition.competition_id;
-                    if(SKIP_COMPETITION.includes(competition.competition_id)) continue; 
+                for(let torneoCompetition of data.competitions){
+                    let url = "https://lentopallo.torneopal.fi/taso/rest/getCategories?api_key=qfzy3wsw9cqu25kq5zre&competition_id=" + torneoCompetition.competition_id;
+                    if(SKIP_COMPETITION.includes(torneoCompetition.competition_id)) continue; 
+                    let competition = new Competition(torneoCompetition);
                     competition.categories = [];
-                    competition.displayed = true;
                     self.competitions.push(competition);
                     loader_count++;
                     $.get(url, function(data){
                         loader_count--;
                         if(data.call.status === "error") return;
                         //console.log(data);
-                        for(let category of data.categories){
-                            if(SKIP_CATEGORY.includes(category.category_id)) continue;
+                        for(let torneoCategory of data.categories){
+                            if(SKIP_CATEGORY.includes(torneoCategory.category_id)) continue;
                             
                             let skip_this = false;
                             for(let skip of SKIP_CATEGORIES){
-                                if(skip.competition_id === category.competition_id && skip.skip_list.includes(category.category_id)){
+                                if(skip.competition_id === torneoCategory.competition_id && skip.skip_list.includes(torneoCategory.category_id)){
                                     skip_this = true;
                                     break;
                                 } 
@@ -199,46 +282,42 @@ $(document).ready(function () {
                             if(skip_this) continue;
 
                             // Lohkot & ottelut
-                            let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?category_id=" + category.category_id + "&competition_id=" + category.competition_id + "&matches=1";
+                            let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id + "&matches=1";
                             //console.log(url2);
                             loader_count++;
                             $.get(url2, function(data){
                                 loader_count--;
                                 if(data.call.status === "error") return;
 
-                                let detailed_category = data.category;
-                                detailed_category.displayed = true;
+                                let detailedTorneoCategory = data.category
+                                
+                                let category = new Category(data.category);
 
                                 let my_groups = [];
 
-                                for(let group of detailed_category.groups){
-                                    group.displayed = true;
-                                    group.matches = [];
+                                for(let torneoGroup of detailedTorneoCategory.groups){
+                                    let group = new Group(torneoGroup);
 
-                                    for(let match of detailed_category.matches){
-                                        if(match.group_id !== group.group_id) continue;
+                                    for(let torneoMatch of detailedTorneoCategory.matches){
+                                        if(torneoMatch.group_id !== group.id) continue;
                                         //console.log(self.matches.length);
-                                        match = fill_date(match);
-                                        match = fill_referees(match);
-                                        //category.matches.push(match);
-                                        match.competition = competition;
-                                        match.category = detailed_category;
-                                        match.group = group;
+                                        let match = new Match(torneoMatch, competition, category, group);
                                         self.matches.push(match);
                                         group.matches.push(match);
+
                                     }
                                     my_groups.push(group);
                                 }
-                                detailed_category.groups = my_groups;
-                                competition.categories.push(detailed_category);
-                                if(--loader_count < 1) $("#loader").hide();
+                                category.groups = my_groups;
+                                competition.categories.push(category);
+                                if(--loader_count < 1){
+                                     self.loadCookies();
+                                     $("#loader").hide();
+                                }
                             });
                         }
-                        self.loadCookies();
-                        if(--loader_count < 1) $("#loader").hide();
                     });
                 }
-                if(--loader_count < 1) $("#loader").hide();
             });
             
             
@@ -258,6 +337,11 @@ $(document).ready(function () {
             
         },
         computed: {
+            matches_of_selected_referees: function(){
+                let ret = this.matches.filter((m)=>m.isDisplayed(this.refereeMap));
+                return ret;
+            },
+            
             matches_of_displayed_categories: function(){
                 this.date = new Date(this.datestring);
                 return this.matches.filter((m)=>m.competition.displayed && m.category.displayed && m.group.displayed).filter((m)=>m.datetime<this.date);
@@ -279,25 +363,40 @@ $(document).ready(function () {
                 for(let competition of this.competitions){
                     for(let category of competition.categories){
                         for(let group of category.groups){
-                            if(!group.displayed) list.push(category.competition_id + "." + category.category_id + "." + group.group_id);
+                            if(!group.displayed) list.push(category.id + "." + category.id + "." + group.id);
                         }
                     }
                 }
                 setCookie("tuomarilistacookie", JSON.stringify(list), 300);
+
+                list = [];
+                for(let referee of this.referees){
+                    if(referee.displayed === false) list.push(referee.id);
+                }
+                setCookie("referees_cookie", JSON.stringify(list), 300);
             },
             loadCookies: function(){
                 let str = getCookie("tuomarilistacookie");
+                if(str){
+                    let list = JSON.parse(str);
+                    for(let competition of this.competitions){
+                        for(let category of competition.categories){
+                            for(let group of category.groups){
+                                for(let item of list){
+                                    let arr = item.split(".");
+                                    if(category.id === arr[0] && category.id === arr[1] && group.id === arr[2]) group.displayed = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                str = getCookie("referees_cookie");
                 if(!str) return;
 
                 let list = JSON.parse(str);
-                for(let competition of this.competitions){
-                    for(let category of competition.categories){
-                        for(let group of category.groups){
-                            for(let item of list){
-                                let arr = item.split(".");
-                                if(category.competition_id === arr[0] && category.category_id === arr[1] && group.group_id === arr[2]) group.displayed = false;
-                            }
-                        }
+                for(let referee of this.referees){
+                    for(let item of list){
+                        if(referee.id === item) referee.displayed = false;
                     }
                 }
             },
