@@ -245,7 +245,13 @@ $(document).ready(function () {
             $.get("https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                 self.referees = [];
                 for(let referee of data.referees){
+                    
                     let newReferee = new Referee(referee);
+                    tuomariDetails = getTuomariDetails(referee.referee_id);
+                    newReferee.PostiNo = tuomariDetails.PostiNo;
+                    newReferee.Kunta = tuomariDetails.Kunta;
+                    newReferee.Luokka = tuomariDetails.Luokka;
+
                     self.refereeMap.set(referee.referee_id, newReferee);
                     self.referees.push(newReferee);    
                 }

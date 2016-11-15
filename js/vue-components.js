@@ -47,7 +47,7 @@ Vue.component('vue-referees', {
                           </div>
                           <div :id="collapseId" class="panel-collapse collapse in">
                               <ul>
-                                  <li v-for="referee in referees"><input type="checkbox" v-model="referee.displayed"> {{referee.id}} - {{referee.name}}</li>
+                                  <li v-for="referee in referees"><input type="checkbox" v-model="referee.displayed"> {{referee.id}} - {{referee.name}} - {{referee.Luokka}} - {{referee.PostiNo}} - {{referee.Kunta}}</li>
                               </ul>
                             <!--div class="panel-footer">Panel Footer</div-->
                           </div>
