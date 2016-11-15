@@ -225,6 +225,7 @@ $(document).ready(function () {
     var app = new Vue({
         el: '#app',
         data: {
+            alertShown: false,
             datestring: "2016-12-31",
             date: new Date("2016-12-31"),
             matches: [],
@@ -242,7 +243,14 @@ $(document).ready(function () {
             
             self.refereeMap = new Map();
 
-            $.get("https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre", function(data){
+            var REFEREES_TEST = true;
+            
+            var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
+            
+            if(REFEREES_TEST) url = "/ajax/referees.json";
+
+
+            $.get(url, function(data){
                 self.referees = [];
                 for(let referee of data.referees){
                     
@@ -255,9 +263,10 @@ $(document).ready(function () {
                     self.refereeMap.set(referee.referee_id, newReferee);
                     self.referees.push(newReferee);    
                 }
+                if(REFEREES_TEST) self.loadCookies();
             });
 
-            //return;
+            if(REFEREES_TEST) return;
             $("#loader").show();
             var loader_count = 0;
 

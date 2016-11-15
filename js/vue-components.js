@@ -42,13 +42,29 @@ Vue.component('vue-referees', {
                       <div class="panel panel-default tuomarilista">
                           <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" :href="collapseHref">Tuomarit:</a>
+                                <a data-toggle="collapse" :href="collapseHref">Tuomarit: (valittu {{selected_referees.length}}/{{referees.length}}</a>
                             </h4>
                           </div>
                           <div :id="collapseId" class="panel-collapse collapse in">
-                              <ul>
-                                  <li v-for="referee in referees"><input type="checkbox" v-model="referee.displayed"> {{referee.id}} - {{referee.name}} - {{referee.Luokka}} - {{referee.PostiNo}} - {{referee.Kunta}}</li>
-                              </ul>
+                              <button id="kaikki" @click="select_all_referees()">Valitse kaikki</button>
+                              <button id="ei_mitaan" @click="select_no_referees()">Tyhjennä valinnat</button>
+                              <table>
+                                  <tr>
+                                      <th>&nbsp;</td>
+                                      <th><a @click="setSort('id')">Id</a></th>
+                                      <th><a @click="setSort('nimi')">Nimi</a></th>
+                                      <th><a @click="setSort('luokka')">Luokka</a></th>
+                                      <th><a @click="setSort('posti')">Posti</a></th>
+                                      <th><a @click="setSort('kunta')">Kunta</a></th>
+                                  </tr>
+                                  <tr v-for="referee in sorted_referees">
+                                      <td><input type="checkbox" v-model="referee.displayed"></td>
+                                      <td>{{referee.id}}</td>
+                                      <td>{{referee.name}}</td>
+                                      <td>{{referee.Luokka}}</td>
+                                      <td>{{referee.PostiNo}}</td>
+                                      <td>{{referee.Kunta}}</td>
+                                  </tr>
                             <!--div class="panel-footer">Panel Footer</div-->
                           </div>
               
@@ -57,9 +73,76 @@ Vue.component('vue-referees', {
                   return {
                       id: this._uid,
                       collapseId: this._uid,
-                      collapseHref: "#" + this._uid.toString()
+                      collapseHref: "#" + this._uid.toString(),
+                      sortField: '',
+                      sortOrderAsc: true,
                   }
-              }
+              },
+              methods:{
+                  setSort: function(field){
+                      if(field == this.sortField){
+                          this.sortOrderAsc = !this.sortOrderAsc;
+                          this.sortField = ""; 
+                          this.sortField = field; 
+                      } 
+                      else {
+                          this.sortField = field;
+                          this.sortOrderAsc = true;
+                      }
+                  },
+                  select_all_referees: function(){
+                      for(let referee of this.referees){
+                          referee.displayed = true;
+                      }
+                  },
+                  select_no_referees: function(){
+                      for(let referee of this.referees){
+                          referee.displayed = false;
+                      }
+                  }
+              },
+              computed: {
+                  sorted_referees: function(){
+                      var self = this;
+                      switch(this.sortField.toLowerCase()){
+                          case 'nimi': 
+                              return this.referees.sort(function(a,b){
+                                  let ret = a.name.localeCompare(b.name);
+                                  if(self.sortOrderAsc) return ret;
+                                  return -ret;    
+                              });
+                          case 'luokka': 
+                              return this.referees.sort(function(a,b){
+                                  let ret = a.Luokka.localeCompare(b.Luokka);
+                                  if(self.sortOrderAsc) return ret;
+                                  return -ret;    
+                              });
+                          case 'kunta': 
+                              return this.referees.sort(function(a,b){
+                                  let ret = a.Kunta.localeCompare(b.Kunta);
+                                  if(self.sortOrderAsc) return ret;
+                                  return -ret;    
+                              });
+                          case 'posti': 
+                              return this.referees.sort(function(a,b){
+                                  let ret = parseInt(a.PostiNo,10) - parseInt(b.PostiNo, 10);
+                                  if(self.sortOrderAsc) return ret;
+                                  return -ret;    
+                              });
+                          default: 
+                              return this.referees.sort(function(a,b){
+                                  let ret = a.id - b.id;
+                                  if(self.sortOrderAsc) return ret;
+                                  return -ret;    
+                              });
+                      }
+                  },
+
+                  selected_referees: function(){
+                      let ret = this.referees.filter((m)=>m.displayed);
+                      return ret;
+                  }
+              },                  
 });
 Vue.component('vue-competitions', {
               props: ['competitions'],
@@ -121,6 +204,22 @@ Vue.component('vue-matches', {
                             <!--div class="panel-footer">Panel Footer</div-->
                           </div>
               
+              `,
+              data: function() {
+                  return {
+                      date: this.initial_date,
+                      id: this._uid,
+                      collapseId: this._uid,
+                      collapseHref: "#" + this._uid.toString()
+                  }
+              }
+});
+Vue.component('vue-tuplat', {
+              props: [],
+              template: `
+                      <div>
+                          <h1>Tuplabuukkaukset</h1>
+                      </div>
               `,
               data: function() {
                   return {
