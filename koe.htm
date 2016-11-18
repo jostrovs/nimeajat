@@ -38,7 +38,7 @@
 		<div class="tab-content">
      		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
 			<div id="tuplat" class="tab-pane fade in active">
-                <vue-matches :matches="matches_of_selected_referees" :initial_date="datestring"></vue-matches>
+                <vue-tuplat :duplicates="double_booking" :initial_date="datestring"></vue-tuplat>
 			</div>
 			<div id="tyhjat" class="tab-pane fade">
                 <vue-matches :matches="matches_of_selected_referees" :initial_date="datestring"></vue-matches>

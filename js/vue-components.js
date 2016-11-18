@@ -214,11 +214,50 @@ Vue.component('vue-matches', {
                   }
               }
 });
+Vue.component('vue-match', {
+              props: ['match'],
+              template: `
+                  <div class='match'>
+                      {{match.torneoMatch.category_id}} 
+                      {{match.torneoMatch.match_number}} 
+                      {{match.datetime.toLocaleDateString()}} 
+                      {{match.datetime.toLocaleTimeString()}}
+                      {{match.torneoMatch.venue_name}}
+                      {{match.torneoMatch.team_A_name}}
+                      {{match.torneoMatch.team_B_name}}
+                  </div>
+              `,
+              data: function() {
+                  return {
+                      id: this._uid,
+                      collapseId: this._uid,
+                      collapseHref: "#" + this._uid.toString()
+                  }
+              }
+});
+Vue.component('vue-double-booking', {
+              props: ['double_booking_item'],
+              template: `
+                  <div class='double-booking'>
+                      Referee: {{double_booking_item.referee.name}}<br>
+                      <vue-match v-for="match in double_booking_item.matches" :match="match"></vue-match>
+                  </div>
+              `,
+              data: function() {
+                  return {
+                      id: this._uid,
+                      collapseId: this._uid,
+                      collapseHref: "#" + this._uid.toString()
+                  }
+              }
+});
+
 Vue.component('vue-tuplat', {
-              props: [],
+              props: ["duplicates", "initial_date"],
               template: `
                       <div>
                           <h1>Tuplabuukkaukset</h1>
+                          <vue-double-booking v-for="item in duplicates" :double_booking_item="item"></vue-double-booking>
                       </div>
               `,
               data: function() {
