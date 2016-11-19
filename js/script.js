@@ -15,6 +15,7 @@ class Match{
         this.torneoMatch = torneoMatch;
         this.displayed = true;
         this.referees = [];
+        this.href="https://lentopallo.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
 
         if(this.number === "4363" || this.number === "2161"){
             var breaker=0;
@@ -24,10 +25,22 @@ class Match{
         this.fill_referees();
 
         this.competition = competition;
+        
         this.category = category;
+        this.category_href="https://lentopallo.torneopal.fi/taso/sarja.php?turnaus=" + competition.id + "&sarja=" + category.id;
+        
         this.group = group;
+        this.group_href = this.category_href + "&lohko=" + this.group.id;
 
         this.special = 0;
+    }
+
+    toTimeString(){
+        let h = this.datetime.getHours().toString();
+        if(h.length < 2) h = "0" + h;
+        let m = this.datetime.getMinutes().toString();
+        if(m.length < 2) m = "0" + m;
+        return h + ":" + m;
     }
 
     toLogString(){
@@ -158,6 +171,7 @@ class Referee {
           this.name = torneoReferee.last_name + " " + torneoReferee.first_name;
           this.torneoReferee = torneoReferee;
           this.displayed = true;
+          this.href="https://lentopallo.torneopal.fi/taso/ottelulista.php?tuomari=" + torneoReferee.referee_id; 
     }  
 }
 

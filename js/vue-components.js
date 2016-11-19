@@ -218,12 +218,13 @@ Vue.component('vue-match', {
               props: ['match'],
               template: `
                   <div class='match'>
-                      {{match.torneoMatch.category_id}} 
-                      {{match.torneoMatch.match_number}} 
-                      {{match.datetime.toLocaleDateString()}} 
-                      {{match.datetime.toLocaleTimeString()}}
-                      {{match.torneoMatch.venue_name}}
-                      {{match.torneoMatch.team_A_name}}
+                      <a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> 
+                      <a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> 
+                      <a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a> 
+                      <span class="ajankohta-label">{{match.datetime.toLocaleDateString()}} 
+                      klo {{match.toTimeString()}}</span>
+                      <span class="pelipaikka-label">{{match.torneoMatch.venue_name}}</span>
+                      {{match.torneoMatch.team_A_name}} -
                       {{match.torneoMatch.team_B_name}}
                   </div>
               `,
@@ -238,8 +239,8 @@ Vue.component('vue-match', {
 Vue.component('vue-double-booking', {
               props: ['double_booking_item'],
               template: `
-                  <div class='double-booking'>
-                      Referee: {{double_booking_item.referee.name}}<br>
+                  <div class='double-booking' v-if="double_booking_item.referee.displayed">
+                      Tuomari: <a :href="double_booking_item.referee.href" target="_blank">{{double_booking_item.referee.name}}</a><br>
                       <vue-match v-for="match in double_booking_item.matches" :match="match"></vue-match>
                   </div>
               `,

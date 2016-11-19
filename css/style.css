@@ -95,3 +95,65 @@ th, td {
         right: 5px;
     }
 }
+
+.double-booking {
+    padding: 7px;
+    margin-bottom: 7px; 
+    border: 2px solid red;
+    border-radius: 8px;
+}
+
+.lohko-label {
+    background: #f7f7f7;
+    padding: 2px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+.pelipaikka-label {
+    background: #f3fff3;
+    padding: 2px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+.ajankohta-label {
+    background: #fff3ff;
+    padding: 2px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+.sarja-label {
+    background: lightgray;
+    color: black;
+    padding: 2px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+.ML {
+    background: yellow;
+    color: black;
+}
+.NL {
+    background: black;
+    color: white;
+}
+.N1 {
+    background: red;
+    color: white;
+}
+.M1 {
+    background: blue;
+    color: white;
+}
+.N2 {
+    background: #f99;
+    color: white;
+}
+.M2 {
+    background: #99f;
+    color: white;
+}
+.M3 {
+    background: #aaf;
+    color: white;
+}
+
