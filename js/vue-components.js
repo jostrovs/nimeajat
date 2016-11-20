@@ -182,37 +182,40 @@ Vue.component('vue-competitions', {
               }
 });
 Vue.component('vue-matches', {
-              props: ['matches', 'initial_date'],
+              props: ['initial_matches', 'initial_date'],
+              computed: {
+                  matches_before: function(){
+                      console.log(this.initial_matches.length);
+                      let dt = Date.parse(this.date);
+                      return this.initial_matches.filter((m)=>m.datetime <= dt);
+                  }
+              },
               template: `
                       <div class="panel panel-default ottelulista">
                           <div class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" :href="collapseHref">
-                                    <p>Matches (total {{matches.length}}):</p>
+                                   <p>Nimeämättömiä otteluita yhteensä {{matches_before.length}}</p>
                                 </a>
                             </h4>
                           </div>
                           <div :id="collapseId" class="panel-collapse collapse in">
-                                <!--<p>Matches (total {{matches_with_incomplete_referees.length}}):</p>-->
-                                <input type="date" v-model="date" class="form-control">
-                                {{date}}
-                                <ul>
-                                    <!--<li v-for="match in matches_with_incomplete_referees">{{match.category_id}}  {{match.match_number}} {{match.weekday}} {{match.datelocal}} {{match.team_A_name}}-{{match.team_B_name}}  {{match.timelocal}}  {{match.venue_name}}  {{match.referee_1_name}}  {{match.referee_2_name}}  {{match.assistant_referee_1_name}}  {{match.assistant_referee_2_name}} Puuttuu: {{match.referee_status}}    Group: {{match.group_id}}</li>-->
-                                    <li v-for="match in matches">{{match.number}} {{match.weekday}} {{match.datelocal}} {{match.team_A_name}}-{{match.team_B_name}}  {{match.timelocal}}  {{match.venue_name}}  {{match.referee_1_name}}  {{match.referee_2_name}}  {{match.assistant_referee_1_name}}  {{match.assistant_referee_2_name}} Puuttuu: {{match.referee_status}}    Group: {{match.group_id}}  Special: {{match.special}}</li>
-                                    <!--<li v-for="match in matches_of_displayed_categories">{{match.category_id}}  {{match.match_number}} {{match.weekday}} {{match.datelocal}} {{match.team_A_name}}-{{match.team_B_name}}  {{match.timelocal}}  {{match.venue_name}}  {{match.referee_1_name}}  {{match.referee_2_name}}  {{match.assistant_referee_1_name}}  {{match.assistant_referee_2_name}} Puuttuu: {{match.referee_status}}    Group: {{match.group_id}}</li>-->
-                                </ul>
-                            <!--div class="panel-footer">Panel Footer</div-->
+                                <p>
+                                    Näytä ottelut ennen: <input style="width:200px;" type="date" v-model="date" class="form-control">
+                                </p>                                
+                                <vue-match v-for="match in matches_before" :match="match"></vue-match>
                           </div>
               
               `,
               data: function() {
                   return {
+                      matches: this.initial_matches,
                       date: this.initial_date,
                       id: this._uid,
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString()
                   }
-              }
+              },
 });
 Vue.component('vue-match', {
               props: ['match'],
@@ -226,6 +229,12 @@ Vue.component('vue-match', {
                       <span class="pelipaikka-label">{{match.torneoMatch.venue_name}}</span>
                       {{match.torneoMatch.team_A_name}} -
                       {{match.torneoMatch.team_B_name}}
+                      <span v-if="match.referee_status!==''">
+                          Puuttuu: 
+                          <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
+                              {{referee}}
+                          </span>
+                      </span>
                   </div>
               `,
               data: function() {

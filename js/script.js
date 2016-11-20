@@ -134,6 +134,10 @@ class Match{
         }
 
         this.referee_status = puuttuu.join(" ");
+
+        if(this.referee_status !== ''){
+            var breaker=0;
+        }
     }  
 }
 
@@ -356,6 +360,7 @@ $(document).ready(function () {
                                 category.groups = my_groups;
                                 competition.categories.push(category);
                                 console.log("loader_count: " + loader_count);
+                                $("#loader").text("Ladataan tietoja, sarjoja jäljellä " + loader_count + "...");
                                 if(--loader_count < 1){
                                      console.log("loadCookies, match count: " + self.matches.length.toString() + "   loader_count: " + loader_count);
                                      self.loadCookies();
@@ -391,14 +396,11 @@ $(document).ready(function () {
             },
             
             matches_of_displayed_categories: function(){
-                this.date = new Date(this.datestring);
-                return this.matches.filter((m)=>m.competition.displayed && m.category.displayed && m.group.displayed).filter((m)=>m.datetime<this.date);
+                return this.matches.filter((m)=>m.competition.displayed && m.category.displayed && m.group.displayed);
             },
 
             matches_with_incomplete_referees: function(){
-                this.date = new Date(this.datestring);
-                let matches_before_time = this.matches_of_displayed_categories.filter((m)=>m.datetime<this.date);
-                let matches_without_referee =matches_before_time.filter((m)=>m.referee_status.length > 0);
+                let matches_without_referee =this.matches_of_displayed_categories.filter((m)=>m.referee_status.length > 0);
                 return matches_without_referee;  
             },
         },
