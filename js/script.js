@@ -19,10 +19,6 @@ class Match{
         this.referees = [];
         this.href="https://lentopallo.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
 
-        if(this.number === "4363" || this.number === "2161"){
-            var breaker=0;
-        }
-
         this.fill_date();
         this.fill_referees();
 
@@ -37,7 +33,14 @@ class Match{
         this.special = 0;
 
         this.isDisplayed = function(){
-            return this.displayed && this.competition.displayed && this.group.displayed && this.category.displayed;
+            return this.displayed && this.competition.displayed && this.group.displayed && this.category.displayed &&
+                   this.isTeamDisplayed();
+        }
+
+        this.isTeamDisplayed = function(){
+            let team = this.group.getTeam(this.torneoMatch.team_A_id);
+            if(!team) return false;
+            return team.displayed;
         }
     }
 
@@ -176,6 +179,26 @@ class Group {
         this.torneoGroup = torneoGroup;
         this.displayed = true;
         this.matches = [];
+        this.teams = [];
+    }
+
+    fillTeams(){
+        // Haetaan lohkon otteluista joukkueet
+        for(let match of this.matches){
+            if(null === this.getTeam(match.torneoMatch.team_A_id)){
+                this.teams.push(new Team(match.torneoMatch.team_A_id, match.torneoMatch.team_A_name));
+            }
+            if(null === this.getTeam(match.torneoMatch.team_B_id)){
+                this.teams.push(new Team(match.torneoMatch.team_B_id, match.torneoMatch.team_B_name));
+            }
+        }
+    }
+
+    getTeam(id){
+        for(let team of this.teams){
+            if(team.id === id) return team;
+        }        
+        return null;
     }
 }
 
@@ -187,6 +210,15 @@ class Referee {
           this.displayed = true;
           this.href="https://lentopallo.torneopal.fi/taso/ottelulista.php?tuomari=" + torneoReferee.referee_id; 
     }  
+}
+
+class Team {
+    constructor(id, name){
+        this.id = id;
+        this.name = name;
+        this.displayed = true;
+        this.matches = [];
+    }
 }
 
 const REF4 = ["M1", "ML", "MSC", "N1", "NSC"];
@@ -264,6 +296,7 @@ var order_match = function(a,b){
 };
 
 $(document).ready(function () {
+    var loader_count=0;
     var app = new Vue({
         el: '#app',
         data: {
@@ -280,125 +313,17 @@ $(document).ready(function () {
             ids: [], 
             refereeMap: null,
             double_booking: [],
+            
         },
+        
         created: function () {
             var self = this;
-            
-            self.refereeMap = new Map();
-
-            var REFEREES_TEST = false;
-            
-            var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
-            
-            if(REFEREES_TEST) url = "/ajax/referees.json";
-
-            $.get(url, function(data){
-                self.referees = [];
-                for(let referee of data.referees){
-                    
-                    let newReferee = new Referee(referee);
-                    tuomariDetails = getTuomariDetails(referee.referee_id);
-                    newReferee.PostiNo = tuomariDetails.PostiNo;
-                    newReferee.Kunta = tuomariDetails.Kunta;
-                    newReferee.Luokka = tuomariDetails.Luokka;
-
-                    self.refereeMap.set(referee.referee_id, newReferee);
-                    self.referees.push(newReferee);    
-                }
-                if(REFEREES_TEST) self.loadCookies();
-            });
-
-            if(REFEREES_TEST) return;
+            loader_count = 0;
             $("#loader").show();
-            var loader_count = 0;
 
-            $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
-                for(let torneoCompetition of data.competitions){
-                    let url = "https://lentopallo.torneopal.fi/taso/rest/getCategories?api_key=qfzy3wsw9cqu25kq5zre&competition_id=" + torneoCompetition.competition_id;
-                    if(SKIP_COMPETITION.includes(torneoCompetition.competition_id)) continue; 
-                    let competition = new Competition(torneoCompetition);
-                    competition.categories = [];
-                    self.competitions.push(competition);
-                    $.get(url, function(data){
-                        if(data.call.status === "error") return;
-                        //console.log(data);
-                        for(let torneoCategory of data.categories){
-                            if(SKIP_CATEGORY.includes(torneoCategory.category_id)) continue;
-                            
-                            let skip_this = false;
-                            for(let skip of SKIP_CATEGORIES){
-                                if(skip.competition_id === torneoCategory.competition_id && skip.skip_list.includes(torneoCategory.category_id)){
-                                    skip_this = true;
-                                    break;
-                                } 
-                            }
-                            if(skip_this) continue;
+            this.loadReferees();
 
-                            // Lohkot & ottelut
-                            let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id + "&matches=1";
-                            //console.log(url2);
-                            ++loader_count;
-                            $.get(url2, function(data){
-                                if(data.call.status === "error"){
-                                    --loader_count;
-                                    return;
-                                }
-
-                                let detailedTorneoCategory = data.category
-                                
-                                let category = new Category(data.category);
-
-                                let my_groups = [];
-
-                                for(let torneoGroup of detailedTorneoCategory.groups){
-
-
-                                    let group = new Group(torneoGroup);
-
-                                    for(let torneoMatch of detailedTorneoCategory.matches){
-                                        if(torneoMatch.group_id !== group.id) continue;
-                                        //console.log(self.matches.length);
-                                        let match = new Match(torneoMatch, competition, category, group);
-                                        if(match.datetime >= new Date() && match.datetime < new Date(2030,1,1,0,0,0,0)){
-                                            // Lisätään vain jos ottelu on vasta tulossa
-                                            self.matches.push(match);
-                                            group.matches.push(match);
-                                        }
-
-                                    }
-                                    my_groups.push(group);
-                                }
-                                category.groups = my_groups;
-                                competition.categories.push(category);
-                                console.log("loader_count: " + loader_count);
-                                $("#loader").text("Ladataan tietoja, sarjoja jäljellä " + loader_count + "...");
-                                if(--loader_count < 1){
-                                     console.log("loadCookies, match count: " + self.matches.length.toString() + "   loader_count: " + loader_count);
-                                     self.loadCookies();
-                                     self.checkDoubleBooking();
-                                     $("#loader").hide();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-            
-            
-            // $.get("/data/ottelut.json", function (data) {
-            // //$.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function (data) {
-            //     //self.matches = data.matches.map(fill_date).filter(match_without_date);
-            //     self.matches = data.matches.map(fill_date).map(fill_referees);//
-            //     //self.matches = matches3;
-            // });
-
-            // $.get("/data/categories.json", function (data) {
-            // //$.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function (data) {
-            //     self.categories = data.categories.filter((cat)=>cat.category_id!="TESTI");
-            //     //self.matches = matches3;
-            // });
-
-            
+            this.loadCompetitions();
         },
         computed: {
             matches_of_selected_referees: function(){
@@ -416,6 +341,102 @@ $(document).ready(function () {
             },
         },
         methods: {
+            loadReferees: function(){
+                var self = this;
+                self.refereeMap = new Map();
+
+                var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
+                //url = "/ajax/referees.json";
+
+                $.get(url, function(data){
+                    self.referees = [];
+                    for(let referee of data.referees){
+                        
+                        let newReferee = new Referee(referee);
+                        tuomariDetails = getTuomariDetails(referee.referee_id);
+                        newReferee.PostiNo = tuomariDetails.PostiNo;
+                        newReferee.Kunta = tuomariDetails.Kunta;
+                        newReferee.Luokka = tuomariDetails.Luokka;
+
+                        self.refereeMap.set(referee.referee_id, newReferee);
+                        self.referees.push(newReferee);    
+                    }
+                });
+            },
+
+            loadCompetitions: function(){
+                var self = this;
+
+                $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
+                    for(let torneoCompetition of data.competitions){
+                        let url = "https://lentopallo.torneopal.fi/taso/rest/getCategories?api_key=qfzy3wsw9cqu25kq5zre&competition_id=" + torneoCompetition.competition_id;
+                        if(SKIP_COMPETITION.includes(torneoCompetition.competition_id)) continue; 
+                        let competition = new Competition(torneoCompetition);
+                        competition.categories = [];
+                        self.competitions.push(competition);
+                        $.get(url, function(data){
+                            if(data.call.status === "error") return;
+                            //console.log(data);
+                            for(let torneoCategory of data.categories){
+                                if(SKIP_CATEGORY.includes(torneoCategory.category_id)) continue;
+                                
+                                let skip_this = false;
+                                for(let skip of SKIP_CATEGORIES){
+                                    if(skip.competition_id === torneoCategory.competition_id && skip.skip_list.includes(torneoCategory.category_id)){
+                                        skip_this = true;
+                                        break;
+                                    } 
+                                }
+                                if(skip_this) continue;
+
+                                // Lohkot & ottelut
+                                let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id + "&matches=1";
+                                //console.log(url2);
+                                ++loader_count;
+                                $.get(url2, function(data){
+                                    if(data.call.status === "error"){
+                                        --loader_count;
+                                        return;
+                                    }
+
+                                    let detailedTorneoCategory = data.category
+                                    
+                                    let category = new Category(data.category);
+
+                                    let my_groups = [];
+
+                                    for(let torneoGroup of detailedTorneoCategory.groups){
+                                        let group = new Group(torneoGroup);
+
+                                        for(let torneoMatch of detailedTorneoCategory.matches){
+                                            if(torneoMatch.group_id !== group.id) continue;
+                                            //console.log(self.matches.length);
+                                            let match = new Match(torneoMatch, competition, category, group);
+                                            if(match.datetime >= new Date() && match.datetime < new Date(2030,1,1,0,0,0,0)){
+                                                // Lisätään vain jos ottelu on vasta tulossa
+                                                self.matches.push(match);
+                                                group.matches.push(match);
+                                            }
+                                        }
+                                        group.fillTeams();
+                                        my_groups.push(group);
+                                    }
+                                    category.groups = my_groups;
+                                    competition.categories.push(category);
+                                    $("#loader").text("Ladataan tietoja, sarjoja jäljellä " + loader_count + "...");
+                                    if(--loader_count < 1){
+                                        self.loadCookies();
+                                        self.checkDoubleBooking();
+                                        $("#loader").hide();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                
+            },
+
             buttonklik: function(){
                 this.klikattu = "Sä klikkasit mua!";
             },
@@ -423,19 +444,23 @@ $(document).ready(function () {
                 const PREFIX = "TUOMARILISTA_";
 
                 // competitions, categories & groups
-                var comp=[], cat=[], gro = [];
+                var comp=[], cat=[], gro = [], tea=[];
                 for(let competition of this.competitions){
                     if(!competition.displayed) comp.push(competition.id);
                     for(let category of competition.categories){
                         if(!category.displayed) cat.push(competition.id + "." + category.id);
                         for(let group of category.groups){
                             if(!group.displayed) gro.push(competition.id + "." + category.id + "." + group.id);
+                            for(let team of group.teams){
+                                if(!team.displayed) tea.push(competition.id + "." + category.id + "." + group.id + "." + team.id);
+                            }
                         }
                     }
                 }
                 setCookie(PREFIX + "Competitions", JSON.stringify(comp), 300);
                 setCookie(PREFIX + "Categories", JSON.stringify(cat), 300);
                 setCookie(PREFIX + "Groups", JSON.stringify(gro), 300);
+                setCookie(PREFIX + "Teams", JSON.stringify(tea), 300);
 
                 list = [];
                 for(let referee of this.referees){
@@ -448,12 +473,14 @@ $(document).ready(function () {
                 let strComp = getCookie(PREFIX + "Competitions");
                 let strCat = getCookie(PREFIX + "Categories");
                 let strGro = getCookie(PREFIX + "Groups");
-                let comp = [], cat=[], gro = [];
+                let strTea = getCookie(PREFIX + "Teams");
+                let comp = [], cat=[], gro = [], tea=[];
                 if(strComp) comp = JSON.parse(strComp);
                 if(strCat) cat = JSON.parse(strCat);
                 if(strGro) gro = JSON.parse(strGro);
+                if(strTea) tea = JSON.parse(strTea);
 
-                if(strComp || strCat || strGro){
+                if(strComp || strCat || strGro || strTea){
                     for(let competition of this.competitions){
                         // Käsitellään kilpailujen ruksit
                         for(let compItem of comp){
@@ -466,10 +493,20 @@ $(document).ready(function () {
                                 let arr = catItem.split(".");
                                 if(competition.id === arr[0] && category.id === arr[1]) category.displayed = false;
                             }
+                            
                             for(let group of category.groups){
+                                // Käsitellään lohkojen ruksit
                                 for(let groItem of gro){
                                     let arr = groItem.split(".");
                                     if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2]) group.displayed = false;
+                                }
+                                
+                                for(let team of group.teams){
+                                    // Käsitellään joukkueiden ruksit
+                                    for(let teaItem of tea){
+                                    let arr = teaItem.split(".");
+                                        if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2] && team.id === arr[3]) team.displayed = false;
+                                    }
                                 }
                             }
                         }

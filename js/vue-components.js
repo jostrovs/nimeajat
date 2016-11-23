@@ -165,6 +165,11 @@ Vue.component('vue-competitions', {
                                                 <ul>
                                                     <li v-for="group in category.groups" v-if="category.displayed">
                                                         <input type="checkbox" v-model="group.displayed"> {{group.name}}
+                                                        <ul>
+                                                            <li v-for="team in group.teams" v-if="group.displayed">
+                                                                <input type="checkbox" v-model="team.displayed"> {{team.name}}
+                                                            </li>
+                                                        </ul>
                                                     </li>
                                                 </ul>
                                             </li>
