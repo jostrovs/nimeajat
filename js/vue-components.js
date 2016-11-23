@@ -48,6 +48,8 @@ Vue.component('vue-referees', {
                           <div :id="collapseId" class="panel-collapse collapse in">
                               <button id="kaikki" @click="select_all_referees()">Valitse kaikki</button>
                               <button id="ei_mitaan" @click="select_no_referees()">Tyhjennä valinnat</button>
+                              <td><input type="checkbox" v-model="selectedOnly"></td>
+                              
                               <table>
                                   <tr>
                                       <th>&nbsp;</td>
@@ -56,14 +58,18 @@ Vue.component('vue-referees', {
                                       <th><a @click="setSort('luokka')">Luokka</a></th>
                                       <th><a @click="setSort('posti')">Posti</a></th>
                                       <th><a @click="setSort('kunta')">Kunta</a></th>
+                                      <th>Tuplat</td>
+                                      <th>Määrät</td>
                                   </tr>
-                                  <tr v-for="referee in sorted_referees">
+                                  <tr v-for="referee in sorted_referees" v-if="!selectedOnly || (selectedOnly && referee.displayed)">
                                       <td><input type="checkbox" v-model="referee.displayed"></td>
                                       <td>{{referee.id}}</td>
                                       <td>{{referee.name}}</td>
                                       <td>{{referee.Luokka}}</td>
                                       <td>{{referee.PostiNo}}</td>
                                       <td>{{referee.Kunta}}</td>
+                                      <td><input type="checkbox" v-model="referee.showDouble"></td>
+                                      <td><input type="checkbox" v-model="referee.showWorkLoad"></td>
                                   </tr>
                             <!--div class="panel-footer">Panel Footer</div-->
                           </div>
@@ -71,6 +77,7 @@ Vue.component('vue-referees', {
               `,
               data: function() {
                   return {
+                      selectedOnly: false,
                       id: this._uid,
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString(),
@@ -192,7 +199,6 @@ Vue.component('vue-matches', {
               props: ['initial_matches', 'initial_date'],
               computed: {
                   matches_before: function(){
-                      console.log(this.initial_matches.length);
                       let dt = Date.parse(this.date);
                       return this.initial_matches.filter((m)=>m.datetime <= dt);
                   }
@@ -285,4 +291,52 @@ Vue.component('vue-tuplat', {
                       collapseHref: "#" + this._uid.toString()
                   }
               }
+});
+Vue.component('vue-tehtavat', {
+              props: ["matches", "referees"],
+              template: `
+                      <div>
+                          <h1>Tehtävämäärät</h1>
+                          <table>
+                              <tr>
+                                  <th>Nimi</th>
+                                  <th>Luokka</th>
+                                  <th>Lokakuu</th>
+                              </tr>
+                              <tr v-for="referee in referees">
+                                   <td>{{referee.name}}</td>
+                                   <td>{{referee.Luokka}}</td>
+                                   <td>
+                                       <a v-for="match in getMatches(referee.id, 'lokakuu')" :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                   </td>
+                              </tr>
+                          </table>
+                      </div>
+              `,
+              data: function() {
+                  return {
+                      id: this._uid,
+                      collapseId: this._uid,
+                      collapseHref: "#" + this._uid.toString()
+                  }
+              },
+              methods: {
+                  getMatches: function(referee_id, month){
+                      var self = this;
+                      var ret = [];
+                      
+                      if(this.matches.length > 20){
+                          let m = this.matches[20];
+                          let month = m.datetime.getMonth();
+                          let a=1;
+                      }
+
+                      switch(month.toLowerCase()){
+                          case 'lokakuu':
+                              ret = this.matches.filter((m)=> m.referee_ids.includes(referee_id) && m.datetime.getMonth() == 9);
+                              break;
+                      }
+                      return ret;
+                  },
+              },                             
 });

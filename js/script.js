@@ -208,6 +208,8 @@ class Referee {
           this.name = torneoReferee.last_name + " " + torneoReferee.first_name;
           this.torneoReferee = torneoReferee;
           this.displayed = true;
+          this.showWorkLoad = true;
+          this.showDouble = true;
           this.href="https://lentopallo.torneopal.fi/taso/ottelulista.php?tuomari=" + torneoReferee.referee_id; 
     }  
 }
@@ -296,7 +298,6 @@ var order_match = function(a,b){
 };
 
 $(document).ready(function () {
-    var loader_count=0;
     var app = new Vue({
         el: '#app',
         data: {
@@ -313,12 +314,11 @@ $(document).ready(function () {
             ids: [], 
             refereeMap: null,
             double_booking: [],
-            
+            loader_count: 0            
         },
         
         created: function () {
             var self = this;
-            loader_count = 0;
             $("#loader").show();
 
             this.loadReferees();
@@ -327,7 +327,23 @@ $(document).ready(function () {
         },
         computed: {
             matches_of_selected_referees: function(){
+                //if(loader_count<1) return [];
                 let ret = this.matches.filter((m)=>m.isDisplayed(this.refereeMap));
+                ret = this.matches.sort(function(a,b){ return a.datetime-b.datetime;});
+                return ret;
+            },
+
+            workload_referees: function(){
+                let ret = this.referees.filter((m)=>m.displayed && m.showWorkLoad);
+                ret = ret.sort(function(a,b){
+                    var ret = a.LuokkaNo - b.LuokkaNo;
+                    if(ret != 0) return ret;
+
+                    if(a.name < b.name) return -1;
+                    if(a.name > b.name) return 1;
+                    return 0;
+                });
+
                 return ret;
             },
             
@@ -357,6 +373,15 @@ $(document).ready(function () {
                         newReferee.PostiNo = tuomariDetails.PostiNo;
                         newReferee.Kunta = tuomariDetails.Kunta;
                         newReferee.Luokka = tuomariDetails.Luokka;
+                        switch(newReferee.Luokka){
+                            case "Liiga": newReferee.LuokkaNo = 0; break;
+                            case "Pääsarja": newReferee.LuokkaNo = 1; break;
+                            case "I": newReferee.LuokkaNo = 2; break;
+                            case "II": newReferee.LuokkaNo = 3; break;
+                            case "III": newReferee.LuokkaNo = 4; break;
+                            case "NT": newReferee.LuokkaNo = 5; break;
+                            default: newReferee.LuokkaNo = 4;
+                        }
 
                         self.refereeMap.set(referee.referee_id, newReferee);
                         self.referees.push(newReferee);    
@@ -392,10 +417,10 @@ $(document).ready(function () {
                                 // Lohkot & ottelut
                                 let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id + "&matches=1";
                                 //console.log(url2);
-                                ++loader_count;
+                                ++self.loader_count;
                                 $.get(url2, function(data){
                                     if(data.call.status === "error"){
-                                        --loader_count;
+                                        --self.loader_count;
                                         return;
                                     }
 
@@ -412,8 +437,7 @@ $(document).ready(function () {
                                             if(torneoMatch.group_id !== group.id) continue;
                                             //console.log(self.matches.length);
                                             let match = new Match(torneoMatch, competition, category, group);
-                                            if(match.datetime >= new Date() && match.datetime < new Date(2030,1,1,0,0,0,0)){
-                                                // Lisätään vain jos ottelu on vasta tulossa
+                                            if(match.datetime < new Date(2030,1,1,0,0,0,0)){
                                                 self.matches.push(match);
                                                 group.matches.push(match);
                                             }
@@ -423,8 +447,8 @@ $(document).ready(function () {
                                     }
                                     category.groups = my_groups;
                                     competition.categories.push(category);
-                                    $("#loader").text("Ladataan tietoja, sarjoja jäljellä " + loader_count + "...");
-                                    if(--loader_count < 1){
+                                    $("#loader").text("Ladataan tietoja, sarjoja jäljellä " + self.loader_count + "...");
+                                    if(--self.loader_count < 1){
                                         self.loadCookies();
                                         self.checkDoubleBooking();
                                         $("#loader").hide();
@@ -462,11 +486,15 @@ $(document).ready(function () {
                 setCookie(PREFIX + "Groups", JSON.stringify(gro), 300);
                 setCookie(PREFIX + "Teams", JSON.stringify(tea), 300);
 
-                list = [];
+                list = [], workload =[], double=[];
                 for(let referee of this.referees){
                     if(referee.displayed === false) list.push(referee.id);
+                    if(referee.showDouble === false) double.push(referee.id);
+                    if(referee.showWorkLoad === false) workload.push(referee.id);
                 }
                 setCookie(PREFIX + "Referees", JSON.stringify(list), 300);
+                setCookie(PREFIX + "RefereeDoubles", JSON.stringify(double), 300);
+                setCookie(PREFIX + "RefereeWorkload", JSON.stringify(workload), 300);
             },
             loadCookies: function(){
                 const PREFIX = "TUOMARILISTA_";
@@ -512,14 +540,17 @@ $(document).ready(function () {
                         }
                     }
                 }
-                str = getCookie(PREFIX + "Referees");
-                if(!str) return;
+                strDisp = getCookie(PREFIX + "Referees");
+                strDouble = getCookie(PREFIX + "RefereeDoubles");
+                strWork = getCookie(PREFIX + "RefereeWorkload");
 
-                let list = JSON.parse(str);
+                let disp=[]; if(strDisp) disp = JSON.parse(strDisp);
+                let doub=[]; if(strDouble) doub = JSON.parse(strDouble);
+                let work=[]; if(strWork) work = JSON.parse(strWork);
                 for(let referee of this.referees){
-                    for(let item of list){
-                        if(referee.id === item) referee.displayed = false;
-                    }
+                    if(disp.includes(referee.id)) referee.displayed = false;
+                    if(doub.includes(referee.id)) referee.showDouble = false;
+                    if(work.includes(referee.id)) referee.showWorkLoad = false;
                 }
             },
             getReferee: function(id){
