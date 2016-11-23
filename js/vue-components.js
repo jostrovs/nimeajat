@@ -42,7 +42,7 @@ Vue.component('vue-referees', {
                       <div class="panel panel-default tuomarilista">
                           <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" :href="collapseHref">Tuomarit: (valittu {{selected_referees.length}}/{{referees.length}}</a>
+                                <a data-toggle="collapse" :href="collapseHref">Tuomarit: valittu {{selected_referees.length}}/{{referees.length}}</a>
                             </h4>
                           </div>
                           <div :id="collapseId" class="panel-collapse collapse in">
@@ -156,12 +156,14 @@ Vue.component('vue-competitions', {
                           <div :id="collapseId" class="panel-collapse collapse in">
                                 <ul>
                                     <li v-for="competition in competitions">
+                                        <input type="checkbox" v-model="competition.displayed">
                                         {{competition.name}}
                                         <ul>
-                                            <li v-for="category in competition.categories">
+                                            <li v-for="category in competition.categories" v-if="competition.displayed">
+                                                <input type="checkbox" v-model="category.displayed">
                                                 {{category.name}}
                                                 <ul>
-                                                    <li v-for="group in category.groups">
+                                                    <li v-for="group in category.groups" v-if="category.displayed">
                                                         <input type="checkbox" v-model="group.displayed"> {{group.name}}
                                                     </li>
                                                 </ul>
@@ -218,9 +220,9 @@ Vue.component('vue-matches', {
               },
 });
 Vue.component('vue-match', {
-              props: ['match'],
+              props: ['match', 'forceDisplay'],
               template: `
-                  <div class='match'>
+                  <div class='match' v-if="forceDisplay || match.isDisplayed()">
                       <a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> 
                       <a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> 
                       <a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a> 
@@ -250,7 +252,7 @@ Vue.component('vue-double-booking', {
               template: `
                   <div class='double-booking' v-if="double_booking_item.referee.displayed">
                       Tuomari: <a :href="double_booking_item.referee.href" target="_blank">{{double_booking_item.referee.name}}</a><br>
-                      <vue-match v-for="match in double_booking_item.matches" :match="match"></vue-match>
+                      <vue-match v-for="match in double_booking_item.matches" :match="match" forceDisplay="true"></vue-match>
                   </div>
               `,
               data: function() {
@@ -266,7 +268,7 @@ Vue.component('vue-tuplat', {
               props: ["duplicates", "initial_date"],
               template: `
                       <div>
-                          <h1>Tuplabuukkaukset</h1>
+                          <h1>Tuplabuukkaukset <span style="font-size: 18px;" class="referee-label">{{duplicates.length}}</span></h1>
                           <vue-double-booking v-for="item in duplicates" :double_booking_item="item"></vue-double-booking>
                       </div>
               `,
