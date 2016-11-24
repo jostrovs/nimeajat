@@ -140,6 +140,20 @@ th, td {
     border-radius: 4px;
     margin-right: 5px;
 }
+.workload-label {
+    background: lightgray;
+    color: black;
+    padding: 2px;
+    border-radius: 3px;
+    margin-right: 1px;
+    min-width: 21px;
+    font-size: 9pt;
+}
+.workload-month {
+    border-left: 2px solid black;
+    padding-left: 10px;
+    padding-right: 10px;
+}
 .ML {
     background: yellow;
     color: black;

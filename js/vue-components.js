@@ -48,8 +48,10 @@ Vue.component('vue-referees', {
                           <div :id="collapseId" class="panel-collapse collapse in">
                               <button id="kaikki" @click="select_all_referees()">Valitse kaikki</button>
                               <button id="ei_mitaan" @click="select_no_referees()">Tyhjennä valinnat</button>
-                              <td><input type="checkbox" v-model="selectedOnly"></td>
-                              
+                              <td><input type="checkbox" v-model="selectedOnly"> Näytä vain valitut tuomarit</td>
+                              <template v-for="luokka in classes">
+                                  <span style="border: 1px solid purple; padding: 3px; margin: 5px;"><input type="checkbox" v-model="luokka.displayed"> {{luokka.Luokka}}</span>
+                              </template>
                               <table>
                                   <tr>
                                       <th>&nbsp;</td>
@@ -61,7 +63,7 @@ Vue.component('vue-referees', {
                                       <th>Tuplat</td>
                                       <th>Määrät</td>
                                   </tr>
-                                  <tr v-for="referee in sorted_referees" v-if="!selectedOnly || (selectedOnly && referee.displayed)">
+                                  <tr v-for="referee in sorted_referees" v-if="isDisplayed(referee)">
                                       <td><input type="checkbox" v-model="referee.displayed"></td>
                                       <td>{{referee.id}}</td>
                                       <td>{{referee.name}}</td>
@@ -77,6 +79,16 @@ Vue.component('vue-referees', {
               `,
               data: function() {
                   return {
+                      classes: [{Luokka: 'Liiga', displayed: true},
+                                {Luokka: 'Pääsarja', displayed: true},
+                                {Luokka: 'I', displayed: true},
+                                {Luokka: 'II', displayed: true},
+                                {Luokka: 'III', displayed: true},
+                                {Luokka: 'O', displayed: true},
+                                {Luokka: 'NT', displayed: true},
+                                {Luokka: 'Ei', displayed: false},
+                      ],
+                      displayedClasses: ["Liiga", "Pääsarja", "I", "II", "III", "O", "NT"],
                       selectedOnly: false,
                       id: this._uid,
                       collapseId: this._uid,
@@ -86,6 +98,11 @@ Vue.component('vue-referees', {
                   }
               },
               methods:{
+                  isDisplayed: function(referee){
+                      if(this.displayedClasses.includes(referee.Luokka)==false) return false;
+                      return !this.selectedOnly || (this.selectedOnly && referee.displayed); 
+                  },
+                  
                   setSort: function(field){
                       if(field == this.sortField){
                           this.sortOrderAsc = !this.sortOrderAsc;
@@ -110,7 +127,16 @@ Vue.component('vue-referees', {
               },
               computed: {
                   sorted_referees: function(){
+                      console.log("sorted_referees");
                       var self = this;
+                      this.displayedClasses = [];
+                      for(let clas of self.classes){
+                          if(clas.displayed) this.displayedClasses.push(clas.Luokka);
+                      }
+
+                      let ret = this.referees.filter((r)=> this.displayedClasses.includes(r.Luokka));
+
+
                       switch(this.sortField.toLowerCase()){
                           case 'nimi': 
                               return this.referees.sort(function(a,b){
@@ -293,21 +319,49 @@ Vue.component('vue-tuplat', {
               }
 });
 Vue.component('vue-tehtavat', {
-              props: ["matches", "referees"],
+              props: ["initial_matches", "referees", "series"],
               template: `
                       <div>
                           <h1>Tehtävämäärät</h1>
+                          <template v-for="sarja in local_series">
+                              <span style="border: 1px solid purple; padding: 3px; margin: 5px;"><input type="checkbox" v-model="sarja.displayed"> {{sarja.id}}</span>
+                          </template>
+                          <button id="saveSarja" @click="save">Save</button>
                           <table>
                               <tr>
                                   <th>Nimi</th>
                                   <th>Luokka</th>
                                   <th>Lokakuu</th>
+                                  <th>Marraskuu</th>
+                                  <th>Joulukuu</th>
+                                  <th>Tammikuu</th>
+                                  <th>Helmikuu</th>
+                                  <th>Maaliskuu</th>
+                                  <th>Huhtikuu</th>
                               </tr>
                               <tr v-for="referee in referees">
                                    <td>{{referee.name}}</td>
                                    <td>{{referee.Luokka}}</td>
-                                   <td>
-                                       <a v-for="match in getMatches(referee.id, 'lokakuu')" :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                   <td class="workload-month">
+                                       <a v-for="match in getMatches(referee.id, 'lokakuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                   </td>
+                                   <td class="workload-month">
+                                       <a v-for="match in getMatches(referee.id, 'marraskuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                   </td>
+                                   <td class="workload-month">
+                                       <a v-for="match in getMatches(referee.id, 'joulukuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                   </td>
+                                   <td class="workload-month">
+                                       <a v-for="match in getMatches(referee.id, 'tammikuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                   </td>
+                                   <td class="workload-month">
+                                       <a v-for="match in getMatches(referee.id, 'helmikuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                   </td>
+                                   <td class="workload-month">
+                                       <a v-for="match in getMatches(referee.id, 'maaliskuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                   </td>
+                                   <td class="workload-month">
+                                       <a v-for="match in getMatches(referee.id, 'huhtikuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
                                    </td>
                               </tr>
                           </table>
@@ -315,28 +369,65 @@ Vue.component('vue-tehtavat', {
               `,
               data: function() {
                   return {
+                      //local_series: this.series,
+                      local_series: [],
+                      matches: [],
                       id: this._uid,
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString()
                   }
               },
               methods: {
+                  save: function(){
+                      //Talletetaan valinnat
+                      let list = [];
+                      for(let sarja of this.local_series){
+                          if(sarja.displayed === false) list.push(sarja.id);
+                      }
+                      Lockr.set("notSelectedSerieIds", list);
+                  },
                   getMatches: function(referee_id, month){
                       var self = this;
-                      var ret = [];
+                      let ret = this.matches.filter((m)=> m.referee_ids.includes(referee_id));
                       
-                      if(this.matches.length > 20){
-                          let m = this.matches[20];
-                          let month = m.datetime.getMonth();
-                          let a=1;
+                      for(let sarja of this.local_series){
+                          if(sarja.displayed === false){
+                              ret = ret.filter((m)=>m.category.id !== sarja.id);
+                          }
                       }
 
                       switch(month.toLowerCase()){
                           case 'lokakuu':
-                              ret = this.matches.filter((m)=> m.referee_ids.includes(referee_id) && m.datetime.getMonth() == 9);
-                              break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2016); break;
+                          case 'marraskuu':
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2016); break;
+                          case 'joulukuu':
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2016); break;
+                          case 'tammikuu':
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2017); break;
+                          case 'helmikuu':
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2017); break;
+                          case 'maaliskuu':
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2017); break;
+                          case 'huhtikuu':
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2017); break;
                       }
                       return ret;
                   },
-              },                             
+                  handleChecks: function(){
+                      // Ladataan ja talletetaan localStoragesta
+                      console.log("checked: " + this.series.filter((s)=> s.displayed).length);
+                            
+                  },
+                  
+              },
+              beforeUpdate: function(){
+                  this.handleChecks();
+              },
+              updated: function(){
+                  this.local_series = this.series;
+                  this.matches = this.initial_matches;
+                  this.handleChecks();
+                  console.log("Updated: " + this.referees.length + " referees, " + this.initial_matches.length + " matches  " + this.series.length + " series");
+              }
 });

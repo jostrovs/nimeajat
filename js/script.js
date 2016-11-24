@@ -1,3 +1,4 @@
+const PREFIX = "TUOMARILISTA_";
 // M1 Miesten 1-sarja
 // M2 Miesten 2-sarja
 // M3 Miesten 3-sarja
@@ -8,7 +9,24 @@
 // NL Naisten Mestaruusliiga
 // NSC Naisten Suomen Cup
 
+var initialSettings = function(){
+    // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
+    let comp = Lockr.getArr(PREFIX + "Competitions");
+    if(comp.length < 1){
+        comp = ["SARJAPOHJA", "vb2016epohj", "vb2016esavo", "vb2016esuomi", "vb2016isuomi", "vb2016ksuomi", "vb2016lappi", "vb2016lsuomi", "vb2016pkarjala", "vb2016ppohj", "vb2016psavo"];
+        Lockr.set(PREFIX + "Competitions", comp);
+    }
 
+    let refe = Lockr.getArr(PREFIX + "Referees");
+    if(refe.length < 1){
+        for(let i=1164;i<2500;++i){
+            if(i != 1202 && i != 1288 && i!= 1225 && i != 1201){
+                refe.push(i.toString());                
+            }
+        }
+        Lockr.set(PREFIX + "Referees", refe);
+    }
+};
 
 class Match{
     constructor(torneoMatch, competition, category, group){
@@ -71,6 +89,19 @@ class Match{
                 return true;
             }
             if(refe.displayed) return true;
+        }
+        return false;
+    }
+
+    isWorkloadDisplayed(map){
+        for(let id of this.referee_ids){
+            let refe = map.get(id);
+
+            if(refe == undefined){
+                this.special = 1;
+                return true;
+            }
+            if(refe.displayed && refe.showWorkLoad) return true;
         }
         return false;
     }
@@ -298,6 +329,8 @@ var order_match = function(a,b){
 };
 
 $(document).ready(function () {
+    initialSettings();
+
     var app = new Vue({
         el: '#app',
         data: {
@@ -327,9 +360,32 @@ $(document).ready(function () {
         },
         computed: {
             matches_of_selected_referees: function(){
-                //if(loader_count<1) return [];
                 let ret = this.matches.filter((m)=>m.isDisplayed(this.refereeMap));
                 ret = this.matches.sort(function(a,b){ return a.datetime-b.datetime;});
+                return ret;
+            },
+
+            matches_of_workload_referees: function(){
+                let ret = this.matches.filter((m)=>m.isWorkloadDisplayed(this.refereeMap));
+                ret = ret.sort(function(a,b){ return a.datetime-b.datetime;});
+                console.log("matches_of_workload_referees");
+                return ret;
+            },
+            
+            series_of_workload_referee_matches: function(){
+                // Poimitaan otteluista sarjat
+                var inc = [];
+                var ret = [];
+                let notSelectedSerieIds = Lockr.get("notSelectedSerieIds");
+                for(let match of this.matches_of_workload_referees){
+                    if(inc.includes(match.category.id) == false){
+                        inc.push(match.category.id);
+                        ret.push({
+                            id: match.category.id,
+                            displayed: !notSelectedSerieIds.includes(match.category.id)
+                        });
+                    }
+                }
                 return ret;
             },
 
@@ -465,8 +521,6 @@ $(document).ready(function () {
                 this.klikattu = "Sä klikkasit mua!";
             },
             saveCookies: function(){
-                const PREFIX = "TUOMARILISTA_";
-
                 // competitions, categories & groups
                 var comp=[], cat=[], gro = [], tea=[];
                 for(let competition of this.competitions){
@@ -481,10 +535,10 @@ $(document).ready(function () {
                         }
                     }
                 }
-                setCookie(PREFIX + "Competitions", JSON.stringify(comp), 300);
-                setCookie(PREFIX + "Categories", JSON.stringify(cat), 300);
-                setCookie(PREFIX + "Groups", JSON.stringify(gro), 300);
-                setCookie(PREFIX + "Teams", JSON.stringify(tea), 300);
+                Lockr.set(PREFIX + "Competitions", comp);
+                Lockr.set(PREFIX + "Categories", cat);
+                Lockr.set(PREFIX + "Groups", gro);
+                Lockr.set(PREFIX + "Teams", tea);
 
                 list = [], workload =[], double=[];
                 for(let referee of this.referees){
@@ -492,61 +546,54 @@ $(document).ready(function () {
                     if(referee.showDouble === false) double.push(referee.id);
                     if(referee.showWorkLoad === false) workload.push(referee.id);
                 }
-                setCookie(PREFIX + "Referees", JSON.stringify(list), 300);
-                setCookie(PREFIX + "RefereeDoubles", JSON.stringify(double), 300);
-                setCookie(PREFIX + "RefereeWorkload", JSON.stringify(workload), 300);
+                Lockr.set(PREFIX + "Referees", list);
+                Lockr.set(PREFIX + "RefereeDoubles", double);
+                Lockr.set(PREFIX + "RefereeWorkload", workload);
             },
             loadCookies: function(){
                 const PREFIX = "TUOMARILISTA_";
-                let strComp = getCookie(PREFIX + "Competitions");
-                let strCat = getCookie(PREFIX + "Categories");
-                let strGro = getCookie(PREFIX + "Groups");
-                let strTea = getCookie(PREFIX + "Teams");
-                let comp = [], cat=[], gro = [], tea=[];
-                if(strComp) comp = JSON.parse(strComp);
-                if(strCat) cat = JSON.parse(strCat);
-                if(strGro) gro = JSON.parse(strGro);
-                if(strTea) tea = JSON.parse(strTea);
+                let comp = Lockr.getArr(PREFIX + "Competitions");
+                let cat = Lockr.getArr(PREFIX + "Categories");
+                let gro = Lockr.getArr(PREFIX + "Groups");
+                let tea = Lockr.getArr(PREFIX + "Teams");
 
-                if(strComp || strCat || strGro || strTea){
-                    for(let competition of this.competitions){
-                        // Käsitellään kilpailujen ruksit
-                        for(let compItem of comp){
-                            if(competition.id === compItem) competition.displayed = false;
+                if(comp.length < 1) comp = ["vb2016a"];
+
+                for(let competition of this.competitions){
+                    // Käsitellään kilpailujen ruksit
+                    for(let compItem of comp){
+                        if(competition.id === compItem) competition.displayed = false;
+                    }
+
+                    for(let category of competition.categories){
+                        // Käsitellään sarjojen ruksit
+                        for(let catItem of cat){
+                            let arr = catItem.split(".");
+                            if(competition.id === arr[0] && category.id === arr[1]) category.displayed = false;
                         }
-
-                        for(let category of competition.categories){
-                            // Käsitellään sarjojen ruksit
-                            for(let catItem of cat){
-                                let arr = catItem.split(".");
-                                if(competition.id === arr[0] && category.id === arr[1]) category.displayed = false;
+                        
+                        for(let group of category.groups){
+                            // Käsitellään lohkojen ruksit
+                            for(let groItem of gro){
+                                let arr = groItem.split(".");
+                                if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2]) group.displayed = false;
                             }
                             
-                            for(let group of category.groups){
-                                // Käsitellään lohkojen ruksit
-                                for(let groItem of gro){
-                                    let arr = groItem.split(".");
-                                    if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2]) group.displayed = false;
-                                }
-                                
-                                for(let team of group.teams){
-                                    // Käsitellään joukkueiden ruksit
-                                    for(let teaItem of tea){
-                                    let arr = teaItem.split(".");
-                                        if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2] && team.id === arr[3]) team.displayed = false;
-                                    }
+                            for(let team of group.teams){
+                                // Käsitellään joukkueiden ruksit
+                                for(let teaItem of tea){
+                                let arr = teaItem.split(".");
+                                    if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2] && team.id === arr[3]) team.displayed = false;
                                 }
                             }
                         }
                     }
                 }
-                strDisp = getCookie(PREFIX + "Referees");
-                strDouble = getCookie(PREFIX + "RefereeDoubles");
-                strWork = getCookie(PREFIX + "RefereeWorkload");
 
-                let disp=[]; if(strDisp) disp = JSON.parse(strDisp);
-                let doub=[]; if(strDouble) doub = JSON.parse(strDouble);
-                let work=[]; if(strWork) work = JSON.parse(strWork);
+                let disp = Lockr.getArr(PREFIX + "Referees");
+                let doub = Lockr.getArr(PREFIX + "RefereeDoubles");
+                let work = Lockr.getArr(PREFIX + "RefereeWorkload");
+
                 for(let referee of this.referees){
                     if(disp.includes(referee.id)) referee.displayed = false;
                     if(doub.includes(referee.id)) referee.showDouble = false;
