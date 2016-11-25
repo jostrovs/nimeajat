@@ -1,13 +1,4 @@
 const PREFIX = "TUOMARILISTA_";
-// M1 Miesten 1-sarja
-// M2 Miesten 2-sarja
-// M3 Miesten 3-sarja
-// ML Miesten Mestaruusliiga
-// MSC Miesten Suomen Cup
-// N1 Naisten 1-sarja
-// N2 Naisten 2-sarja
-// NL Naisten Mestaruusliiga
-// NSC Naisten Suomen Cup
 
 var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
@@ -299,30 +290,6 @@ var match_without_date = function(m){
     return m.datetime < new Date(2029, 1, 1, 1, 1, 1, 1);
 };
 
-
-
-var setCookie = function(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-};
-
-var getCookie = function(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length,c.length);
-        }
-    }
-    return "";
-};
-
 var order_match = function(a,b){
     a.datetime < b.datetime;
     return date_a < date_b;
@@ -336,7 +303,7 @@ $(document).ready(function () {
         data: {
             alertShown: false,
             datestring: "2016-12-31",
-            date: new Date("2016-12-31"),
+            //date: new Date("2016-12-31"),
             matches: [],
             categories: [],
             competitions: [],
@@ -517,9 +484,6 @@ $(document).ready(function () {
                 
             },
 
-            buttonklik: function(){
-                this.klikattu = "Sä klikkasit mua!";
-            },
             saveCookies: function(){
                 // competitions, categories & groups
                 var comp=[], cat=[], gro = [], tea=[];

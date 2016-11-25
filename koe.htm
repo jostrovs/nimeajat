@@ -43,7 +43,7 @@
                 <vue-tehtavat  v-if="loader_count < 1" :series="series_of_workload_referee_matches" :initial_matches="matches_of_workload_referees" :referees="workload_referees"></vue-tehtavat>
 			</div>
 			<div id="tuplat" class="tab-pane fade">
-                <vue-tuplat  v-if="loader_count < 1" :duplicates="double_booking" :initial_date="datestring"></vue-tuplat>
+                <vue-tuplat  v-if="loader_count < 1" :duplicates="double_booking"></vue-tuplat>
 			</div>
 			<div id="tyhjat" class="tab-pane fade">
                 <vue-matches  v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :initial_date="datestring"></vue-matches>

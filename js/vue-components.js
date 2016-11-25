@@ -302,7 +302,7 @@ Vue.component('vue-double-booking', {
 });
 
 Vue.component('vue-tuplat', {
-              props: ["duplicates", "initial_date"],
+              props: ["duplicates"],
               template: `
                       <div>
                           <h1>Tuplabuukkaukset <span style="font-size: 18px;" class="referee-label">{{duplicates.length}}</span></h1>
@@ -311,7 +311,6 @@ Vue.component('vue-tuplat', {
               `,
               data: function() {
                   return {
-                      date: this.initial_date,
                       id: this._uid,
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString()
