@@ -127,7 +127,7 @@ Vue.component('vue-referees', {
               },
               computed: {
                   sorted_referees: function(){
-                      console.log("sorted_referees");
+                      //console.log("sorted_referees");
                       var self = this;
                       this.displayedClasses = [];
                       for(let clas of self.classes){
@@ -222,11 +222,15 @@ Vue.component('vue-competitions', {
               }
 });
 Vue.component('vue-matches', {
-              props: ['initial_matches', 'initial_date'],
+              props: ['initial_matches', 'show_days_ahead', 'nimeamattomat_lkm'],
               computed: {
                   matches_before: function(){
-                      let dt = Date.parse(this.date);
-                      return this.initial_matches.filter((m)=>m.datetime <= dt);
+                      let dt = this.date;
+                      let ret = this.initial_matches.filter((m)=>m.datetime <= dt);
+                      
+                      this.displayed_matches_count = ret.filter((m)=> m.isDisplayed()).length;
+                      this.$emit('input', this.displayed_matches_count);
+                      return ret;
                   }
               },
               template: `
@@ -234,22 +238,33 @@ Vue.component('vue-matches', {
                           <div class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" :href="collapseHref">
-                                   <p>Nimeämättömiä otteluita yhteensä {{matches_before.length}}</p>
+                                   <p>Nimeämättömiä otteluita yhteensä {{displayed_matches_count}}</p>
                                 </a>
                             </h4>
                           </div>
                           <div :id="collapseId" class="panel-collapse collapse in">
                                 <p>
-                                    Näytä ottelut ennen: <input style="width:200px;" type="date" v-model="date" class="form-control">
+                                    Näytetään ottelut, joista puuttuu tuomareita ennen päivämäärää: {{date.toLocaleDateString()}}
                                 </p>                                
                                 <vue-match v-for="match in matches_before" :match="match"></vue-match>
                           </div>
               
               `,
+              methods: {
+                  get_initial_date: function(){
+                  }
+
+              },
               data: function() {
+                  // Aloituspäivämäärä
+                  let date = new Date();
+                  date.setDate(date.getDate() + 60);
+                  //date.setDate(date.getDate() + this.show_days_ahead);
+                  
                   return {
+                      displayed_matches_count: 0,
                       matches: this.initial_matches,
-                      date: this.initial_date,
+                      date: date,
                       id: this._uid,
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString()
@@ -302,13 +317,20 @@ Vue.component('vue-double-booking', {
 });
 
 Vue.component('vue-tuplat', {
-              props: ["duplicates"],
+              props: ["duplicates", "tuplabuukkaukset_lkm"],
               template: `
                       <div>
-                          <h1>Tuplabuukkaukset <span style="font-size: 18px;" class="referee-label">{{duplicates.length}}</span></h1>
+                          <h1>Tuplabuukkaukset <span style="font-size: 18px;" class="referee-label">{{displayed_items_count}}</span></h1>
                           <vue-double-booking v-for="item in duplicates" :double_booking_item="item"></vue-double-booking>
                       </div>
               `,
+              computed: {
+                  displayed_items_count: function(){
+                      let count = this.duplicates.filter((d)=> d.referee.displayed).length;
+                      this.$emit('input', count);
+                      return count;
+                  }
+              },
               data: function() {
                   return {
                       id: this._uid,
@@ -415,7 +437,7 @@ Vue.component('vue-tehtavat', {
                   },
                   handleChecks: function(){
                       // Ladataan ja talletetaan localStoragesta
-                      console.log("checked: " + this.series.filter((s)=> s.displayed).length);
+                      //console.log("checked: " + this.series.filter((s)=> s.displayed).length);
                             
                   },
                   
@@ -427,6 +449,6 @@ Vue.component('vue-tehtavat', {
                   this.local_series = this.series;
                   this.matches = this.initial_matches;
                   this.handleChecks();
-                  console.log("Updated: " + this.referees.length + " referees, " + this.initial_matches.length + " matches  " + this.series.length + " series");
+                  //console.log("Updated: " + this.referees.length + " referees, " + this.initial_matches.length + " matches  " + this.series.length + " series");
               }
 });

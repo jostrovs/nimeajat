@@ -29,24 +29,37 @@
     <div style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; background: yellow; border: 3px solid red;" id="loader">Ladataan tietoja...</div>
     
     <div id="app">
-        
         <ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#tuplat">Tuplabuukkaukset</a></li>
-			<li><a data-toggle="tab" href="#tyhjat">Nimeämättömät ottelut</a></li>
+			<li class="active"><a data-toggle="tab" href="#etusivu">Etusivu</a></li>
+			<li>
+                <a data-toggle="tab" href="#tuplat">
+                    Tuplabuukkaukset
+                    <span v-if="tuplabuukkaukset_lkm > 0" class="referee-label">{{tuplabuukkaukset_lkm}}</span>
+                </a>
+            </li>
+			<li>
+                <a data-toggle="tab" href="#tyhjat">
+                    Nimeämättömät ottelut
+                    <span v-if="nimeamattomat_lkm > 0" class="referee-label">{{nimeamattomat_lkm}}</span>
+                </a>
+            </li>
 			<li><a data-toggle="tab" href="#tehtavat">Tehtävämäärät</a></li>
 			<li><a data-toggle="tab" href="#asetukset">Asetukset</a></li>
 		</ul>
 
 		<div class="tab-content">
      		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
-			<div id="tehtavat" class="tab-pane fade in active">
-                <vue-tehtavat  v-if="loader_count < 1" :series="series_of_workload_referee_matches" :initial_matches="matches_of_workload_referees" :referees="workload_referees"></vue-tehtavat>
+			<div id="etusivu" class="tab-pane fade in active">
+                <h1>Etusivu</h1>
 			</div>
 			<div id="tuplat" class="tab-pane fade">
-                <vue-tuplat  v-if="loader_count < 1" :duplicates="double_booking"></vue-tuplat>
+                <vue-tuplat v-model="tuplabuukkaukset_lkm" v-if="loader_count < 1" :duplicates="double_booking"></vue-tuplat>
+			</div>
+			<div id="tehtavat" class="tab-pane fade">
+                <vue-tehtavat  v-if="loader_count < 1" :series="series_of_workload_referee_matches" :initial_matches="matches_of_workload_referees" :referees="workload_referees"></vue-tehtavat>
 			</div>
 			<div id="tyhjat" class="tab-pane fade">
-                <vue-matches  v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :initial_date="datestring"></vue-matches>
+                <vue-matches  v-model="nimeamattomat_lkm" v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :initial_date="datestring"></vue-matches>
 			</div>
 			<div id="asetukset" class="tab-pane fade">
                 <button @click="saveCookies">Save</button>

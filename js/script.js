@@ -290,17 +290,15 @@ var match_without_date = function(m){
     return m.datetime < new Date(2029, 1, 1, 1, 1, 1, 1);
 };
 
-var order_match = function(a,b){
-    a.datetime < b.datetime;
-    return date_a < date_b;
-};
-
 $(document).ready(function () {
     initialSettings();
 
     var app = new Vue({
         el: '#app',
         data: {
+            show_days_ahead: 60,
+            nimeamattomat_lkm: 0,
+            tuplabuukkaukset_lkm: 0,
             alertShown: false,
             datestring: "2016-12-31",
             //date: new Date("2016-12-31"),
@@ -335,7 +333,7 @@ $(document).ready(function () {
             matches_of_workload_referees: function(){
                 let ret = this.matches.filter((m)=>m.isWorkloadDisplayed(this.refereeMap));
                 ret = ret.sort(function(a,b){ return a.datetime-b.datetime;});
-                console.log("matches_of_workload_referees");
+                //console.log("matches_of_workload_referees");
                 return ret;
             },
             
