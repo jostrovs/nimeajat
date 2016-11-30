@@ -324,6 +324,13 @@ $(document).ready(function () {
             this.loadCompetitions();
         },
         computed: {
+            last_shown_day: function(){
+                var now = new Date();
+                now.setDate(now.getDate() + this.show_days_ahead);
+                let ret = now.toLocaleDateString();
+                return ret;                
+            },
+            
             matches_of_selected_referees: function(){
                 let ret = this.matches.filter((m)=>m.isDisplayed(this.refereeMap));
                 ret = this.matches.sort(function(a,b){ return a.datetime-b.datetime;});
@@ -341,7 +348,7 @@ $(document).ready(function () {
                 // Poimitaan otteluista sarjat
                 var inc = [];
                 var ret = [];
-                let notSelectedSerieIds = Lockr.get("notSelectedSerieIds");
+                let notSelectedSerieIds = Lockr.get("notSelectedSerieIds", []);
                 for(let match of this.matches_of_workload_referees){
                     if(inc.includes(match.category.id) == false){
                         inc.push(match.category.id);
@@ -483,6 +490,9 @@ $(document).ready(function () {
             },
 
             saveCookies: function(){
+                // Show days ahead
+                Lockr.set(PREFIX + "ShowDaysAhead", this.show_days_ahead);
+
                 // competitions, categories & groups
                 var comp=[], cat=[], gro = [], tea=[];
                 for(let competition of this.competitions){
@@ -514,6 +524,9 @@ $(document).ready(function () {
             },
             loadCookies: function(){
                 const PREFIX = "TUOMARILISTA_";
+
+                this.show_days_ahead = Lockr.get(PREFIX + "ShowDaysAhead", "60");
+
                 let comp = Lockr.getArr(PREFIX + "Competitions");
                 let cat = Lockr.getArr(PREFIX + "Categories");
                 let gro = Lockr.getArr(PREFIX + "Groups");

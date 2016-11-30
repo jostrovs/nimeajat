@@ -225,30 +225,27 @@ Vue.component('vue-matches', {
               props: ['initial_matches', 'show_days_ahead', 'nimeamattomat_lkm'],
               computed: {
                   matches_before: function(){
-                      let dt = this.date;
+                      let dt = new Date();
+                      let yesterday = new Date();
+                      dt.setDate(dt.getDate() + this.show_days_ahead);
+                      yesterday.setDate(yesterday.getDate()-1);
                       let ret = this.initial_matches.filter((m)=>m.datetime <= dt);
+                      ret = ret.filter((m)=>m.datetime >= yesterday);
                       
                       this.displayed_matches_count = ret.filter((m)=> m.isDisplayed()).length;
                       this.$emit('input', this.displayed_matches_count);
+
+                      console.log("matches_before: " + this.displayed_matches_count);
+
                       return ret;
                   }
               },
               template: `
-                      <div class="panel panel-default ottelulista">
-                          <div class="panel-heading">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" :href="collapseHref">
-                                   <p>Nimeämättömiä otteluita yhteensä {{displayed_matches_count}}</p>
-                                </a>
-                            </h4>
-                          </div>
-                          <div :id="collapseId" class="panel-collapse collapse in">
-                                <p>
-                                    Näytetään ottelut, joista puuttuu tuomareita ennen päivämäärää: {{date.toLocaleDateString()}}
-                                </p>                                
-                                <vue-match v-for="match in matches_before" :match="match"></vue-match>
-                          </div>
-              
+                    <div>
+                        <h3>Nimeämättömiä otteluita yhteensä {{displayed_matches_count}}</h3>
+                        <p>Näytetään ottelut, joista puuttuu tuomareita ennen päivämäärää: {{date.toLocaleDateString()}}</p>                                
+                        <vue-match v-for="match in matches_before" :match="match"></vue-match>
+                    </div>
               `,
               methods: {
                   get_initial_date: function(){
@@ -258,8 +255,8 @@ Vue.component('vue-matches', {
               data: function() {
                   // Aloituspäivämäärä
                   let date = new Date();
-                  date.setDate(date.getDate() + 60);
-                  //date.setDate(date.getDate() + this.show_days_ahead);
+                  //date.setDate(date.getDate() + 60);
+                  date.setDate(date.getDate() + this.show_days_ahead);
                   
                   return {
                       displayed_matches_count: 0,

@@ -59,12 +59,16 @@
                 <vue-tehtavat  v-if="loader_count < 1" :series="series_of_workload_referee_matches" :initial_matches="matches_of_workload_referees" :referees="workload_referees"></vue-tehtavat>
 			</div>
 			<div id="tyhjat" class="tab-pane fade">
-                <vue-matches  v-model="nimeamattomat_lkm" v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :initial_date="datestring"></vue-matches>
+                <vue-matches  v-model="nimeamattomat_lkm" v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :show_days_ahead="show_days_ahead"></vue-matches>
 			</div>
 			<div id="asetukset" class="tab-pane fade">
                 <button @click="saveCookies">Save</button>
                 <button @click="loadCookies">Load</button>
                 
+                <hr>
+                
+                Näytetään nimeämättömät ottelut <input type="number" v-model="show_days_ahead"></input> päivää eteenpäin, eli ennen päivää: {{last_shown_day}}
+
                 <hr>
                 
                 <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
