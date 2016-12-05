@@ -25,6 +25,8 @@ class Match{
         this.id = torneoMatch.match_id;
         this.torneoMatch = torneoMatch;
         this.displayed = true;
+        this.hasTime = true;
+        
         this.referees = [];
         this.href="https://lentopallo.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
 
@@ -54,6 +56,7 @@ class Match{
     }
 
     toTimeString(){
+        if(this.hasTime === false) return "--:--";
         let h = this.datetime.getHours().toString();
         if(h.length < 2) h = "0" + h;
         let m = this.datetime.getMinutes().toString();
@@ -100,10 +103,16 @@ class Match{
     fill_date(){
         let a = this.torneoMatch;
         let da = a.date.split("-");
-        if(da.length < 3) da = ["2030", "1", "1"];
+        if(da.length < 3){
+            da = ["2030", "1", "1"];
+             this.displayed = false;
+        }
         
         let ta = a.time.split(":");
-        if(ta.length < 3) ta = ["23", "59", "59"];
+        if(ta.length < 3){
+             ta = ["23", "59", "59"];
+             this.hasTime = false;
+        }
         
         let date_a = new Date(da[0], da[1]-1, da[2], ta[0], ta[1], ta[2], 0);
         this.datetime = date_a;
@@ -173,6 +182,12 @@ class Match{
 
     isValidDate(){
         return this.datetime > new Date() && this.datetime.getFullYear()<2030;
+    }
+
+    getVenue(){
+        let ret = this.torneoMatch.venue_name;
+        if(!ret) return "----";
+        return ret;
     }
 }
 

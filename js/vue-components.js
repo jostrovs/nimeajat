@@ -60,7 +60,7 @@ Vue.component('vue-referees', {
                                       <th><a @click="setSort('luokka')">Luokka</a></th>
                                       <th><a @click="setSort('posti')">Posti</a></th>
                                       <th><a @click="setSort('kunta')">Kunta</a></th>
-                                      <th>Tuplat</td>
+                                      <!--th>Tuplat</td-->
                                       <th>Määrät</td>
                                   </tr>
                                   <tr v-for="referee in sorted_referees" v-if="isDisplayed(referee)">
@@ -70,7 +70,7 @@ Vue.component('vue-referees', {
                                       <td>{{referee.Luokka}}</td>
                                       <td>{{referee.PostiNo}}</td>
                                       <td>{{referee.Kunta}}</td>
-                                      <td><input type="checkbox" v-model="referee.showDouble"></td>
+                                      <!--td><input type="checkbox" v-model="referee.showDouble"></td-->
                                       <td><input type="checkbox" v-model="referee.showWorkLoad"></td>
                                   </tr>
                             <!--div class="panel-footer">Panel Footer</div-->
@@ -277,7 +277,7 @@ Vue.component('vue-match', {
                       <a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a> 
                       <span class="ajankohta-label">{{match.datetime.toLocaleDateString()}} 
                       klo {{match.toTimeString()}}</span>
-                      <span class="pelipaikka-label">{{match.torneoMatch.venue_name}}</span>
+                      <span class="pelipaikka-label">{{match.getVenue()}}</span>
                       {{match.torneoMatch.team_A_name}} -
                       {{match.torneoMatch.team_B_name}}
                       <span v-if="match.referee_status!==''">
@@ -344,7 +344,7 @@ Vue.component('vue-tehtavat', {
                           <template v-for="sarja in local_series">
                               <span style="border: 1px solid purple; padding: 3px; margin: 5px;"><input type="checkbox" v-model="sarja.displayed"> {{sarja.id}}</span>
                           </template>
-                          <button id="saveSarja" @click="save">Save</button>
+                          <button id="saveSarja" @click="save">Talleta valitut sarjat</button>
                           <table>
                               <tr>
                                   <th>Nimi</th>
@@ -358,28 +358,28 @@ Vue.component('vue-tehtavat', {
                                   <th>Huhtikuu</th>
                               </tr>
                               <tr v-for="referee in referees">
-                                   <td>{{referee.name}}</td>
+                                   <td><a :href="referee.href + '&alkupvm=2016-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                    <td>{{referee.Luokka}}</td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'lokakuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <a v-for="match in getMatches(referee.id, 'lokakuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'marraskuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <a v-for="match in getMatches(referee.id, 'marraskuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'joulukuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <a v-for="match in getMatches(referee.id, 'joulukuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'tammikuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <a v-for="match in getMatches(referee.id, 'tammikuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'helmikuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <a v-for="match in getMatches(referee.id, 'helmikuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'maaliskuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <a v-for="match in getMatches(referee.id, 'maaliskuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'huhtikuu')" :href="match.category_href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <a v-for="match in getMatches(referee.id, 'huhtikuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
                                    </td>
                               </tr>
                           </table>

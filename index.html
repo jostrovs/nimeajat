@@ -1,0 +1,141 @@
+<!doctype html>
+
+<html lang="fi">
+
+<head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Tuomarinimeäjien sivu</title>
+    <meta name="description" content="Lentopalloerotuomarinimeäjien sivu">
+    <meta name="author" content="Jori Ostrovskij">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="js/jquery-3.1.1.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/moment.js"></script>
+    <script src="js/lockr.js"></script>
+    <script src="js/tuomari-set.js"></script>
+    <script src="js/vue-components.js"></script>
+    <script src="js/script.js"></script>
+</head>
+
+<body>
+    <div style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; background: yellow; border: 3px solid red;" id="loader">Ladataan tietoja...</div>
+    
+    <div id="app">
+        <ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#etusivu">Etusivu</a></li>
+			<li>
+                <a data-toggle="tab" href="#tuplat">
+                    Tuplabuukkaukset
+                    <span v-if="tuplabuukkaukset_lkm > 0" class="referee-label">{{tuplabuukkaukset_lkm}}</span>
+                </a>
+            </li>
+			<li>
+                <a data-toggle="tab" href="#tyhjat">
+                    Nimeämättömät ottelut
+                    <span v-if="nimeamattomat_lkm > 0" class="referee-label">{{nimeamattomat_lkm}}</span>
+                </a>
+            </li>
+			<li><a data-toggle="tab" href="#tehtavat">Tehtävämäärät</a></li>
+			<li><a data-toggle="tab" href="#asetukset">Asetukset</a></li>
+		</ul>
+
+		<div class="tab-content">
+     		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
+			<div id="etusivu" class="tab-pane fade in active">
+                <h1>Nimeäjien työkalu</h1>
+                <p>Tämä sivu on laadittu lentopallon tuomarinimeäjien avuksi.</p>
+
+                <hr>
+                
+                <h3>Toiminnot</h3>
+                
+                <p><b>Tuplabuukkaukset</b> Näyttää sellaiset tapaukset, joissa tuomarille on nimetty kaksi peliä samalle päivälle. Huom: juniorien pelit on oletusarvoisesti suodatettu pois, eivätkä näy tässä.</p>
+                <p><b>Nimeämättömät ottelut</b> Näyttää ottelut, joista puuttuu tuomari, ja sen, mikä tehtävä on täyttämättä.</p>
+                <p><b>Tehtävämäärät</b> Näyttää tuomarikohtaisesti kuukausittaiset ottelut sarjoittain. Tämä on tarkoitettu avuksi juuri nimettyjen tehtävien määrän tarkistamiseen, eli käytettäväksi silloin kun mietitään, kenelle nimeäisin jonkun ottelun; onko jollakulla liian pieni tai liian suuri työmäärä.</p>
+
+                <hr>
+
+                <h3>Käyttöohje</h3>
+                <p><b>Omien tuomareiden valinta</b></p>
+                <p>Ensimmäinen toimenpide, joka työkalua käytettäessä pitäisi suorittaa, on tuomareiden valinta. Asetukset-välilehdellä on pitkä lista tuomareista. Kunkin rivin ensimmäisenä on ruksitettava laatikko, josta voi valita tuomarin ns. omaksi tuomariksi. Useimpia nimeäjiä kiinnostaa vain joidenkin tiettyjen tuomareiden ottelut ja tehtävät, ja tältä listalta pitäisi valita heidät. Kun oma lista tuomareista on saatu naksuteltua, voi ruksata kohdan "Näytä vain valitut tuomarit", jolloin muut eivät edes näy listalla. Listan yläpuolella oleva rivi valintalaatikkoja
+                suodattaa tuomareita näkyviin tuomariluokan mukaan. Listan voi järjestää sarakkeiden otsikoita napauttamalla. Postinumeron mukaan järjestäminen lienee tehokkaimpia tapoja.</p>
+
+                <p>Kun halutut tuomarit on valittu, niin viimeistään silloin kannattaa ensimmäisen kerran tallettaa asetukset ao. painikkeesta. Asetukset talletetaan selaimen local storageen, eli ne täytyy tehdä erikseen jokaisella tietokoneella ja puhelimella ja tabletilla, jokaisella selaimella, jota käytät.</p>
+
+                <p>Torneopal tarjoaa tällä hetkellä tuomareiden tiedoista ainoastaan nimen ja Id-numeron, ja kaikki muut tiedot on täytetty tulospalvelun tuomarilistauksen perusteella, listaus on siis luettu kerran ja tiedot talletettu silloin. Kaikkien tuomareiden tietoja ei tulospalvelunkaan listalta ole löytynyt, ja tällaisten tuomareiden tuomariluokaksi on merkitty "Ei". Tästä samasta syystä heidän kohdaltaan ei löydy täältäkään muita tietoja kuin nimi ja se Id. Nämä tuomarit ovat oletettavasti pääosin sellaisia, joilla ei ole voimassaolevaa lisenssiä, mutta jos noissa tiedoissa ilmenee
+                päivitystarvetta, niin minulle voi ilmoitella.</p>
+
+                <p><b>Tehtävämäärät-listalla näkyvien tuomareiden valinta</b></p>
+                <p>Tuomarilistassa on myös valintalaatikko sarakkeessa "Määrät". Tällä valinnalla valitaan omien tuomareiden joukosta ne, jotka halutaan listata Tehtävämäärät-sivulla. Nimeäjä voi esim. nimetä vain liiton sarjojen pelejä ja häntä kiinnostaa siksi juuri niitä pelejä viheltävien tuomareiden tehtävämäärät, mutta hän haluaa silti saada varoituksen siitä, että jollain lähituomarilla on tuplabuukkaus.</p>
+
+                <p><b>Valitut sarjat</b></p>
+                <p>Seuraavaksi valitaan ne sarjat, joiden otteluita halutaan tarkastella. (Tuomarilistan saa pienennettyä "Tuomarit: valittu..." -otsaketta napauttamalla). Oletusarvoisesti on valittu kaikki liiton aikuisten sarjat, mutta ruksaamalla jonkun alueista, saa näkyviin kaikki sen alaiset sarjat, lohkot ja joukkueet. Näkyviin tai pois voi valita kerralla kokonaisen alueen, sarjan tai lohkon, ja näiden sisältä voi vielä valita, jos haluaa nähdä vain joidenkin tiettyjen joukkueiden <b>koti</b>ottelut. </p>
+                <p>Kun halutut sarjat on valittu, niin talletetaan jälleen asetukset, ja sivusto onkin käyttökunnossa.</p>
+
+                <p><b>Tuplabuukkaukset</b></p>
+                <p>Tämä välilehti luettelee kaikki tapaukset, joissa jollain tuomarilla on samana päivänä kaksi ottelua, ja linkit ko. tuomarin ottelulistaan ja noiden ottelujen tietoihin.</p>
+                <p><b>Huom!</b> Täällä näkyvät vain asetuksissa omiksi valittujen tuomareiden tuplabuukkaukset. Juniorien pelit on myös suodatettu oletusarvoisesti pois, joten nekään eivät täällä näy. Tarkoitus on, että jos tällä välilehdellä jotain näkyy, niin se täytyy aina tapauskohtaisesti tarkistaa.</p>
+
+                <p><b>Nimeämättömät ottelut</b></p>
+                <p>Tämä välilehti luettelee kaikki ottelut asetusten määräämään päivämäärään saakka, joista puuttuu joku tuomareista. Liiga- ja 1-sarjapeleissä se tarkoittaa PT, VT ja rajatuomarit, M2- ja M3- sarjoissa PT ja VT ja muissa sarjoissa PT. 
+                <p><b>Huom!</b> Täällä näkyvät vain niiden sarjojen ja joukkueiden kotiottelut, jotka on valittu näytettäviksi.</p>
+
+                <p><b>Tehtävämäärät</b></p>
+                <p>Tämä välilehti on vain informatiivisuuden vuoksi, eikä varoita mistään. Näytettävät sarjat täytetään valittujen tuomareiden mukaisesti, ja valintaruuduissa tehtävät suodatukset voi tallettaa.</p>
+
+                <hr>
+
+                <p><b>Palautetta ja kehitystä</b></p>
+                <p>Sivujen toiminnasta voi antaa palautetta minulle, joko suoraan sähköpostilla tai aluekouluttajien foorumilla olevaan viestiketjuun <a href="http://lentopalloerotuomarit.fi/foorumi/viewtopic.php?f=19&t=257" target="_blank">http://lentopalloerotuomarit.fi/foorumi/viewtopic.php?f=19&t=257</a> . Alkuvaiheessa olisi erityisen tärkeää kertoa kaikista tilanteista, joissa näytetyt tiedot ovat jollain tapaa vääriä. Asetusten toimintalogiikka on tehty siten, että siinä valitaan aina niitä tuomareita ja sarjoja jne, joita <i>ei</i> näytetä. Tällöin tapauksessa, jossa järjestelmään tulee uusia otteluita, lohkoja tuomareita jne, tulevat uudet aina näkyviin, kunnes ne erikseen käydään asetuksista piilottamassa. Ensimmäisellä avauskerralla olen valinnut näkyviksi liiton sarjojen aikuisten pelit ja     
+                neljä liigatuomaria.</p>
+
+                <p>Sivusto on vielä kehitysvaiheessa, joten vikoja saattaa hyvinkin ilmetä. Kehitän sivuja edelleen aktiivisesti. Parannusehdotuksia saa kernaasti esittää. Tässä muodossaan sivu palvelee niitä tarpeita joita minulla nimeäjänä on, mutta se ei välttämättä sovi kaikille. Osa sarjoista on pysyvästi suodatettu pois näkyvistä, joten jos et saa jotain itsellesi tärkeää sarjaa lainkaan näkyviin, saattaa syy olla siinä. Kerro asiasta, niin asia saadaan helposti korjattua.</p>
+
+                <p>Sellainen välilehti on jossain vaiheessa ainakin tulossa, joka kertoo väärille tuomareille nimetyistä otteluista. Joskus ottelu voi lipsahtaa viereiselle nimelle, ja listalla voisi esittää tapaukset, joissa valittujen sarjojen ottelu on nimetty tuomarille, joka ei löydy valittujen joujosta.</p> 
+
+                <hr>
+
+                <p>Huom! Kehitysvaiheessa sivu toimii Chromella ja Firefoxilla, joten jos sivu ei tunnu toimivan lainkaan, niin kokeile ensin ajantasaisella selaimella.</p>
+
+                <p>-Jori<br><img src="ema.png"></p> 
+
+                <hr>
+                <p>Viimeisin päivitys: 1.12.2016 08:04</p>
+
+			</div>
+			<div id="tuplat" class="tab-pane fade">
+                <vue-tuplat v-model="tuplabuukkaukset_lkm" v-if="loader_count < 1" :duplicates="double_booking"></vue-tuplat>
+			</div>
+			<div id="tehtavat" class="tab-pane fade">
+                <vue-tehtavat  v-if="loader_count < 1" :series="series_of_workload_referee_matches" :initial_matches="matches_of_workload_referees" :referees="workload_referees"></vue-tehtavat>
+			</div>
+			<div id="tyhjat" class="tab-pane fade">
+                <vue-matches  v-model="nimeamattomat_lkm" v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :show_days_ahead="show_days_ahead"></vue-matches>
+			</div>
+			<div id="asetukset" class="tab-pane fade">
+                <button @click="saveCookies">Tallenna asetukset</button>
+                <button @click="loadCookies">Lataa asetukset</button>
+                
+                <hr>
+                
+                Näytetään nimeämättömät ottelut <input type="number" v-model="show_days_ahead"></input> päivää eteenpäin, eli ennen päivää: {{last_shown_day}}
+
+                <hr>
+                
+                <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
+                <vue-competitions  v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+			</div>
+		</div>        
+
+    </div>
+</body>
+
+</html>
