@@ -114,6 +114,7 @@ th, td {
 }
 
 .referee-label {
+    cursor: pointer;
     background: red;
     color: white;
     padding: 2px;
@@ -122,12 +123,14 @@ th, td {
 }
 
 .lohko-label {
+    cursor: pointer;
     background: #f7f7f7;
     padding: 2px;
     border-radius: 4px;
     margin-right: 5px;
 }
 .pelipaikka-label {
+    cursor: pointer;
     background: #f3fff3;
     padding: 2px;
     border-radius: 4px;
@@ -140,6 +143,7 @@ th, td {
     margin-right: 5px;
 }
 .sarja-label {
+    cursor: pointer;
     background: lightgray;
     color: black;
     padding: 2px;
@@ -147,6 +151,7 @@ th, td {
     margin-right: 5px;
 }
 .workload-label {
+    cursor: pointer;
     background: lightgray;
     color: black;
     padding: 2px;
@@ -189,3 +194,36 @@ th, td {
     color: white;
 }
 
+#overlay { 
+    z-index: 800; 
+    position: fixed;
+    top: 0px; 
+    left: 0px; 
+    height: 100%; 
+    width: 100%; 
+    background: #555; 
+    opacity: 0.5;    
+}
+
+.match_popup {
+    font-size: 14px;
+    position: absolute;
+    z-index: 999; 
+    background: #fff; 
+    border: 2px solid #383; 
+    padding: 20px; 
+    display: none;
+    color: black;
+}
+
+.match_label_highlight {
+    border: 3px double #a3a;
+    padding: 3px;
+}
+
+.box {
+    white-space: nowrap;
+    display: inline-block !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

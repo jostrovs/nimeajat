@@ -45,7 +45,7 @@ class Match{
 
         this.isDisplayed = function(){
             return this.displayed && this.competition.displayed && this.group.displayed && this.category.displayed &&
-                   this.isTeamDisplayed();
+                   this.isTeamDisplayed() && this.hasTime;
         }
 
         this.isTeamDisplayed = function(){
@@ -395,7 +395,9 @@ $(document).ready(function () {
             },
 
             matches_with_incomplete_referees: function(){
-                let matches_without_referee =this.matches_of_displayed_categories.filter((m)=>m.referee_status.length > 0);
+                let matches_without_referee =this.matches_of_displayed_categories
+                                             .filter((m)=>m.referee_status.length > 0)
+                                             .sort((m1, m2)=> m1.datetime-m2.datetime);
                 return matches_without_referee;  
             },
         },

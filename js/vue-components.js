@@ -272,19 +272,26 @@ Vue.component('vue-match', {
               props: ['match', 'forceDisplay'],
               template: `
                   <div class='match' v-if="forceDisplay || match.isDisplayed()">
-                      <a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> 
-                      <a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> 
-                      <a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a> 
-                      <span class="ajankohta-label">{{match.datetime.toLocaleDateString()}} 
-                      klo {{match.toTimeString()}}</span>
-                      <span class="pelipaikka-label">{{match.getVenue()}}</span>
-                      {{match.torneoMatch.team_A_name}} -
-                      {{match.torneoMatch.team_B_name}}
-                      <span v-if="match.referee_status!==''">
-                          Puuttuu: 
-                          <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
-                              {{referee}}
+                      <div class="box" style="min-width:30px;"><a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> </div>
+                      <div class="box" style="min-width:70px;"><a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> </div>
+                      <div class="box" style="min-width:60px;"><a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a></div>
+                      <div class="box" style="width:150px;"> 
+                          <span class="ajankohta-label">{{match.datetime.toLocaleDateString()}}
+                                                        klo {{match.toTimeString()}}
                           </span>
+                      </div>
+                      <div class="box" style="width:170px;"><span class="pelipaikka-label">{{match.getVenue()}}</span></div>
+                      <div class="box" style="width:180px;">
+                        {{match.torneoMatch.team_A_name}} -
+                        {{match.torneoMatch.team_B_name}}
+                      </div>
+                      <div class="box">
+                        <span v-if="match.referee_status!==''">
+                            Puuttuu: 
+                            <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
+                                {{referee}}
+                            </span>
+                        </span>
                       </span>
                   </div>
               `,
@@ -361,25 +368,25 @@ Vue.component('vue-tehtavat', {
                                    <td><a :href="referee.href + '&alkupvm=2016-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                    <td>{{referee.Luokka}}</td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'lokakuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <vue-workload-month :matches="getMatches(referee.id, 'lokakuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'marraskuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <vue-workload-month :matches="getMatches(referee.id, 'marraskuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'joulukuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <vue-workload-month :matches="getMatches(referee.id, 'joulukuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'tammikuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <vue-workload-month :matches="getMatches(referee.id, 'tammikuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'helmikuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <vue-workload-month :matches="getMatches(referee.id, 'helmikuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'maaliskuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <vue-workload-month :matches="getMatches(referee.id, 'maaliskuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <a v-for="match in getMatches(referee.id, 'huhtikuu')" :href="match.href" target="_blank"><span class="workload-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a>
+                                       <vue-workload-month :matches="getMatches(referee.id, 'huhtikuu')"></vue-workload-month>
                                    </td>
                               </tr>
                           </table>
@@ -447,5 +454,87 @@ Vue.component('vue-tehtavat', {
                   this.matches = this.initial_matches;
                   this.handleChecks();
                   //console.log("Updated: " + this.referees.length + " referees, " + this.initial_matches.length + " matches  " + this.series.length + " series");
+              }
+});
+
+Vue.component('vue-workload-month', {
+              props: ["matches"],
+              template: `
+                      <div>
+                          <vue-workload-match v-for="match in matches" :match="match"></vue-workload-match>
+                      </div>
+              `,
+              data: function() {
+                  return {
+                      //local_series: this.series,
+                      id: this._uid,
+                      collapseId: this._uid,
+                      collapseHref: "#" + this._uid.toString()
+                  }
+              },
+});
+Vue.component('vue-workload-match', {
+              props: ["match"],
+              template: `
+                      <span :id="id" class="workload-label" :class="match.torneoMatch.category_id" @click="showPopup">
+                        <div class="match_popup" :id="popupId"  @click="hidePopup($event)">
+                            <p>
+                                <a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> 
+                                <a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> 
+                                <a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a> 
+                                {{match.datetime.toLocaleDateString()}} 
+                                klo {{match.toTimeString()}}
+                                {{match.getVenue()}}
+                                {{match.torneoMatch.team_A_name}} -
+                                {{match.torneoMatch.team_B_name}}
+                            </p>
+                        </div>
+                        {{match.torneoMatch.category_id}}
+                      </span>
+              `,
+              data: function() {
+                  return {
+                      //local_series: this.series,
+                      popupActive: false,
+                      id: this._uid,
+                      popupId: this._uid + "_popup",
+                      collapseId: this._uid,
+                      collapseHref: "#" + this._uid.toString()
+                  }
+              },
+              methods: {
+                  showPopup: function(){
+                      if(this.popupActive) return;
+                      $("#overlay").show();
+                      
+                      let span = $("#" + this.id);
+                      span.addClass("match_label_highlight");
+                      let position = span.position();
+
+                      var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+                      let height = parseInt(span.css("height"), 10);
+
+                      position.top += 24;
+
+                      let div = $("#" + this.popupId);
+                      div.show();
+                      //div.css("z-index", "1003");
+                      //div.css("background", "white");
+                      div.css("top", position.top);
+                      div.css("left", "100px");
+                      div.css("width", 0.7*w);
+                      this.popupActive = true;
+                  },
+                  hidePopup: function(event){
+                      let span = $("#" + this.id);
+                      span.removeClass("match_label_highlight");
+
+                      $("#" + this.popupId).hide();
+                      $("#overlay").hide();
+                      var self=this;
+                      setTimeout(function(){
+                          self.popupActive = false;
+                      }, 0);
+                  }
               }
 });

@@ -26,11 +26,13 @@
 </head>
 
 <body>
+    <div id="overlay" style="display: none"></div>
+    <div id="popup" style="display: none"></div>
     <div style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; background: yellow; border: 3px solid red;" id="loader">Ladataan tietoja...</div>
     
     <div id="app">
         <ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#etusivu">Etusivu</a></li>
+			<li class="active"><a data-toggle="tab" href="#etusivu">Etusivu</a>  </li>
 			<li>
                 <a data-toggle="tab" href="#tuplat">
                     Tuplabuukkaukset
@@ -52,6 +54,11 @@
 			<div id="etusivu" class="tab-pane fade in active">
                 <h1>Nimeäjien työkalu</h1>
                 <p>Tämä sivu on laadittu lentopallon tuomarinimeäjien avuksi.</p>
+
+                <hr>
+
+                <p><span class="referee-label">Uutta!</span> Tehtävämääräluettelossa tehtäviä osoittavista laatikoista klikkaamalla aukeaa ottelun tiedot.</p>
+                <p><span class="referee-label">Uutta!</span> Nimeämättömien pelien listalla ei näytetä otteluita, joilla ei ole kellonaikaa.</p>
 
                 <hr>
                 
