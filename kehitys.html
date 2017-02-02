@@ -6,7 +6,7 @@
     <meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Tuomarinimeäjien sivu</title>
+    <title>KEHITYSSIVU</title>
     <meta name="description" content="Lentopalloerotuomarinimeäjien sivu">
     <meta name="author" content="Jori Ostrovskij">
 
@@ -23,28 +23,38 @@
     <script src="js/tuomari-set.js"></script>
     <script src="js/vue-components.js"></script>
     <script src="js/script.js"></script>
+    <script>
+        $(document).ready(function(){
+            DEVELOPMENT = true;
+        });
+    </script>
 </head>
 
 <body>
+    <div id="overlay" style="display: none"></div>
+    <div id="popup" style="display: none"></div>
     <div style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; background: yellow; border: 3px solid red;" id="loader">Ladataan tietoja...</div>
-    
+
+    <h1>*** KEHITYS ***</h1>
+
     <div id="app">
         <ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#etusivu">Etusivu</a></li>
+			<li class="active"><a data-toggle="tab" href="#etusivu">Etusivu</a>  </li>
 			<li>
                 <a data-toggle="tab" href="#tuplat">
-                    Tuplat
+                    Tuplabuukkaukset
                     <span v-if="tuplabuukkaukset_lkm > 0" class="referee-label">{{tuplabuukkaukset_lkm}}</span>
                 </a>
             </li>
 			<li>
                 <a data-toggle="tab" href="#tyhjat">
-                    Tyhjät
+                    Nimeämättömät ottelut
                     <span v-if="nimeamattomat_lkm > 0" class="referee-label">{{nimeamattomat_lkm}}</span>
                 </a>
             </li>
-			<li><a data-toggle="tab" href="#tehtavat">Tehtävät</a></li>
+			<li><a data-toggle="tab" href="#tehtavat">Tehtävämäärät</a></li>
 			<li><a data-toggle="tab" href="#asetukset">Asetukset</a></li>
+			<li><a data-toggle="tab" href="#tuovie">Tuo/vie</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -52,6 +62,12 @@
 			<div id="etusivu" class="tab-pane fade in active">
                 <h1>Nimeäjien työkalu</h1>
                 <p>Tämä sivu on laadittu lentopallon tuomarinimeäjien avuksi.</p>
+
+                <hr>
+
+                <p><span class="referee-label">Uutta!</span> 18.1.2017: Talletettujen asetusten siirto toiseen selaimeen.</p>
+                <p><span class="referee-label">Uutta!</span> 16.1.2017: Tehtävämääräluettelossa tehtäviä osoittavista laatikoista klikkaamalla aukeaa ottelun tiedot.</p>
+                <p><span class="referee-label">Uutta!</span> 13.1.2017: Nimeämättömien pelien listalla ei näytetä otteluita, joilla ei ole kellonaikaa.</p>
 
                 <hr>
                 
@@ -106,10 +122,6 @@
                 <p>Huom! Kehitysvaiheessa sivu toimii Chromella ja Firefoxilla, joten jos sivu ei tunnu toimivan lainkaan, niin kokeile ensin ajantasaisella selaimella.</p>
 
                 <p>-Jori<br><img src="ema.png"></p> 
-
-                <hr>
-                <p>Viimeisin päivitys: 1.12.2016 08:04</p>
-
 			</div>
 			<div id="tuplat" class="tab-pane fade">
                 <vue-tuplat v-model="tuplabuukkaukset_lkm" v-if="loader_count < 1" :duplicates="double_booking"></vue-tuplat>
@@ -132,6 +144,36 @@
                 
                 <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
                 <vue-competitions  v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+			</div>
+			<div id="tuovie" class="tab-pane fade">
+                
+                <h2>Tuo/vie</h2>
+
+                <p>Kun asetukset on saatu kuntoon yhdellä selaimella esim. PC:llä, olisi mukavaa saada samat asetukset siirrettyä muille laitteille ilman työlästä uudelleennaksuttelua. 
+                Se onnistuu täällä.</p>
+                <p><b>HUOM!</b> Käytä vie-toimintoa vain heti sen jälkeen, kun olet tallettanut ja ladannut asetukset "Asetukset"-välilehdellä! Näin varmistetaan se, että siirrettäviin asetuksiin ole tullut muutoksia.</p>
+
+                <hr>
+
+                <h4>Esimerkki: Asetusten vienti PC:ltä kännykkään</h4>
+                <p>1. Lataa sivu uudestaan.<br>
+                   2. Tule selaimella tälle sivulle ja kopioi <b>KAIKKI</b> teksti ylemmästä alla olevasta laatikosta. <br>
+                   3. Siirrä jollain konstilla teksti PC:ltä puhelimeen.<br>
+                   4. Liitä puhelimessa teksti alempaan allaolevista laatikoista ja paina "Tallenna asetukset"-painiketta.<br>
+                   5. Lataa sivu uudestaan, jotta varmistat uusien asetusten olevan käytössä.</p>
+
+                <button @click="importCookies">Tallenna asetukset</button>
+                
+                <button @click="clearCookies">Tyhjennä asetukset</button>
+                
+                <hr>
+                
+                <label>Kopioi tästä laatikosta viedäksesi asetukset toiseen selaimeen:</label><br>
+                <textarea style="width: 100%" rows="5" cols="40" readonly v-model="cookies.vie"></textarea>
+                
+                <hr>
+
+                <vue-input-area label="Liitä tähän laatikkoon tuodaksesi asetukset toisesta selaimesta" v-model="cookies.tuo"></vue-input-area>
 			</div>
 		</div>        
 

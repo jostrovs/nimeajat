@@ -1,5 +1,5 @@
 const PREFIX = "TUOMARILISTA_";
-
+var DEVELOPMENT = false;
 var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
@@ -10,7 +10,8 @@ var initialSettings = function(){
 
     let refe = Lockr.getArr(PREFIX + "Referees");
     if(refe.length < 1){
-        for(let i=1164;i<2500;++i){
+        refe = [];
+        for(let i=1164;i<2600;++i){
             if(i != 1202 && i != 1288 && i!= 1225 && i != 1201){
                 refe.push(i.toString());                
             }
@@ -26,7 +27,8 @@ class Match{
         this.torneoMatch = torneoMatch;
         this.displayed = true;
         this.hasTime = true;
-        
+        this.played = torneoMatch.status == 'Played';
+
         this.referees = [];
         this.href="https://lentopallo.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
 
@@ -197,6 +199,16 @@ class Category {
         this.displayed = true;
         this.id = torneoCategory.category_id;
         this.name = torneoCategory.category_name;
+        this.groups=[];
+        this.development=false;
+        if(DEVELOPMENT) this.development=true;
+    }
+
+    isFinished(){
+        for(let group of this.groups){
+            if(!group.isFinished()) return false;
+        }
+        return true;
     }
 }
 
@@ -206,6 +218,16 @@ class Competition {
         this.displayed = true;
         this.name = torneoCompetition.competition_name;
         this.id = torneoCompetition.competition_id;
+        this.categories = [];
+        this.development=false;
+        if(DEVELOPMENT) this.development=true;
+    }
+
+    isFinished(){
+        for(let category of this.categories){
+            if(!category.isFinished()) return false;
+        }
+        return true;
     }
 }
 
@@ -217,6 +239,15 @@ class Group {
         this.displayed = true;
         this.matches = [];
         this.teams = [];
+        this.development=false;
+        if(DEVELOPMENT) this.development=true;
+    }
+
+    isFinished(){
+        for(let match of this.matches){
+            if(!match.played) return false;
+        }
+        return true;
     }
 
     fillTeams(){
@@ -327,7 +358,8 @@ $(document).ready(function () {
             ids: [], 
             refereeMap: null,
             double_booking: [],
-            loader_count: 0            
+            loader_count: 0,
+            cookies: { vie: {}, tuo: ""},
         },
         
         created: function () {
@@ -437,8 +469,10 @@ $(document).ready(function () {
             loadCompetitions: function(){
                 var self = this;
 
+                console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
+                        console.log("  getCategories: " + torneoCompetition.competition_id);
                         let url = "https://lentopallo.torneopal.fi/taso/rest/getCategories?api_key=qfzy3wsw9cqu25kq5zre&competition_id=" + torneoCompetition.competition_id;
                         if(SKIP_COMPETITION.includes(torneoCompetition.competition_id)) continue; 
                         let competition = new Competition(torneoCompetition);
@@ -460,6 +494,7 @@ $(document).ready(function () {
                                 if(skip_this) continue;
 
                                 // Lohkot & ottelut
+                                console.log("    getCategory: " + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id);
                                 let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id + "&matches=1";
                                 //console.log(url2);
                                 ++self.loader_count;
@@ -506,6 +541,34 @@ $(document).ready(function () {
                 
             },
 
+            clearCookies: function(){
+                Lockr.set(PREFIX + "ShowDaysAhead", 60);
+                Lockr.set(PREFIX + "Competitions", []);
+                Lockr.set(PREFIX + "Categories", []);
+                Lockr.set(PREFIX + "Groups", []);
+                Lockr.set(PREFIX + "Teams", []);
+                Lockr.set(PREFIX + "Referees", []);
+                Lockr.set(PREFIX + "RefereeDoubles", []);
+                Lockr.set(PREFIX + "RefereeWorkload", []);
+
+                this.loadCookies();
+            },
+
+            importCookies: function(){
+                let json = JSON.parse(this.cookies.tuo);
+
+                Lockr.set(PREFIX + "ShowDaysAhead", json.ShowDaysAhead);
+                Lockr.set(PREFIX + "Competitions", json.Competitions);
+                Lockr.set(PREFIX + "Categories", json.Categories);
+                Lockr.set(PREFIX + "Groups", json.Groups);
+                Lockr.set(PREFIX + "Teams", json.Teams);
+                Lockr.set(PREFIX + "Referees", json.Referees);
+                Lockr.set(PREFIX + "RefereeDoubles", json.RefereeDoubles);
+                Lockr.set(PREFIX + "RefereeWorkload", json.RefereeWorkload);
+
+                this.loadCookies();
+            },
+
             saveCookies: function(){
                 // Show days ahead
                 Lockr.set(PREFIX + "ShowDaysAhead", this.show_days_ahead);
@@ -542,12 +605,14 @@ $(document).ready(function () {
             loadCookies: function(){
                 const PREFIX = "TUOMARILISTA_";
 
-                this.show_days_ahead = Lockr.get(PREFIX + "ShowDaysAhead", "60");
+                let json = {};
 
-                let comp = Lockr.getArr(PREFIX + "Competitions");
-                let cat = Lockr.getArr(PREFIX + "Categories");
-                let gro = Lockr.getArr(PREFIX + "Groups");
-                let tea = Lockr.getArr(PREFIX + "Teams");
+                this.show_days_ahead = json.ShowDaysAhead = Lockr.get(PREFIX + "ShowDaysAhead", "60");
+
+                let comp = json.Competitions = Lockr.getArr(PREFIX + "Competitions");
+                let cat = json.Categories = Lockr.getArr(PREFIX + "Categories");
+                let gro = json.Groups = Lockr.getArr(PREFIX + "Groups");
+                let tea = json.Teams = Lockr.getArr(PREFIX + "Teams");
 
                 if(comp.length < 1) comp = ["vb2016a"];
 
@@ -582,15 +647,17 @@ $(document).ready(function () {
                     }
                 }
 
-                let disp = Lockr.getArr(PREFIX + "Referees");
-                let doub = Lockr.getArr(PREFIX + "RefereeDoubles");
-                let work = Lockr.getArr(PREFIX + "RefereeWorkload");
-
+                let disp = json.Referees = Lockr.getArr(PREFIX + "Referees");
+                let doub = json.RefereeDoubles = Lockr.getArr(PREFIX + "RefereeDoubles");
+                let work = json.RefereeWorkload = Lockr.getArr(PREFIX + "RefereeWorkload");
+    
                 for(let referee of this.referees){
                     if(disp.includes(referee.id)) referee.displayed = false;
                     if(doub.includes(referee.id)) referee.showDouble = false;
                     if(work.includes(referee.id)) referee.showWorkLoad = false;
                 }
+
+                this.cookies.vie = json;
             },
             getReferee: function(id){
                 for(let referee of this.referees){

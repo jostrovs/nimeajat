@@ -47,6 +47,7 @@
             </li>
 			<li><a data-toggle="tab" href="#tehtavat">Tehtävämäärät</a></li>
 			<li><a data-toggle="tab" href="#asetukset">Asetukset</a></li>
+			<li><a data-toggle="tab" href="#tuovie">Tuo/vie</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -57,8 +58,7 @@
 
                 <hr>
 
-                <p><span class="referee-label">Uutta!</span> Tehtävämääräluettelossa tehtäviä osoittavista laatikoista klikkaamalla aukeaa ottelun tiedot.</p>
-                <p><span class="referee-label">Uutta!</span> Nimeämättömien pelien listalla ei näytetä otteluita, joilla ei ole kellonaikaa.</p>
+                <p><span class="referee-label">Uutta!</span> 2.2.2017: Tehtävämäärien näytössä voi kuukauden nimeä klikkaamalla piilottaa tai näyttää sen kuukauden tehtävät. Asetuksen saa talletettua ko. sivun talletuspainikkeella.</p>
 
                 <hr>
                 
@@ -87,6 +87,8 @@
                 <p>Seuraavaksi valitaan ne sarjat, joiden otteluita halutaan tarkastella. (Tuomarilistan saa pienennettyä "Tuomarit: valittu..." -otsaketta napauttamalla). Oletusarvoisesti on valittu kaikki liiton aikuisten sarjat, mutta ruksaamalla jonkun alueista, saa näkyviin kaikki sen alaiset sarjat, lohkot ja joukkueet. Näkyviin tai pois voi valita kerralla kokonaisen alueen, sarjan tai lohkon, ja näiden sisältä voi vielä valita, jos haluaa nähdä vain joidenkin tiettyjen joukkueiden <b>koti</b>ottelut. </p>
                 <p>Kun halutut sarjat on valittu, niin talletetaan jälleen asetukset, ja sivusto onkin käyttökunnossa.</p>
 
+                <p>Taulukossa kuukauden nimeä kilkkaamalla voi piilottaa/palauttaa ko. kuukauden tehtävät. Valinnat tallettuvat ko-sivun talletuspainikkeella.</p>
+
                 <p><b>Tuplabuukkaukset</b></p>
                 <p>Tämä välilehti luettelee kaikki tapaukset, joissa jollain tuomarilla on samana päivänä kaksi ottelua, ja linkit ko. tuomarin ottelulistaan ja noiden ottelujen tietoihin.</p>
                 <p><b>Huom!</b> Täällä näkyvät vain asetuksissa omiksi valittujen tuomareiden tuplabuukkaukset. Juniorien pelit on myös suodatettu oletusarvoisesti pois, joten nekään eivät täällä näy. Tarkoitus on, että jos tällä välilehdellä jotain näkyy, niin se täytyy aina tapauskohtaisesti tarkistaa.</p>
@@ -113,10 +115,6 @@
                 <p>Huom! Kehitysvaiheessa sivu toimii Chromella ja Firefoxilla, joten jos sivu ei tunnu toimivan lainkaan, niin kokeile ensin ajantasaisella selaimella.</p>
 
                 <p>-Jori<br><img src="ema.png"></p> 
-
-                <hr>
-                <p>Viimeisin päivitys: 1.12.2016 08:04</p>
-
 			</div>
 			<div id="tuplat" class="tab-pane fade">
                 <vue-tuplat v-model="tuplabuukkaukset_lkm" v-if="loader_count < 1" :duplicates="double_booking"></vue-tuplat>
@@ -139,6 +137,36 @@
                 
                 <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
                 <vue-competitions  v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+			</div>
+			<div id="tuovie" class="tab-pane fade">
+                
+                <h2>Tuo/vie</h2>
+
+                <p>Kun asetukset on saatu kuntoon yhdellä selaimella esim. PC:llä, olisi mukavaa saada samat asetukset siirrettyä muille laitteille ilman työlästä uudelleennaksuttelua. 
+                Se onnistuu täällä.</p>
+                <p><b>HUOM!</b> Käytä vie-toimintoa vain heti sen jälkeen, kun olet tallettanut ja ladannut asetukset "Asetukset"-välilehdellä! Näin varmistetaan se, että siirrettäviin asetuksiin ole tullut muutoksia.</p>
+
+                <hr>
+
+                <h4>Esimerkki: Asetusten vienti PC:ltä kännykkään</h4>
+                <p>1. Lataa sivu uudestaan.<br>
+                   2. Tule selaimella tälle sivulle ja kopioi <b>KAIKKI</b> teksti ylemmästä alla olevasta laatikosta. <br>
+                   3. Siirrä jollain konstilla teksti PC:ltä puhelimeen.<br>
+                   4. Liitä puhelimessa teksti alempaan allaolevista laatikoista ja paina "Tallenna asetukset"-painiketta.<br>
+                   5. Lataa sivu uudestaan, jotta varmistat uusien asetusten olevan käytössä.</p>
+
+                <button @click="importCookies">Tallenna asetukset</button>
+                
+                <button @click="clearCookies">Tyhjennä asetukset</button>
+                
+                <hr>
+                
+                <label>Kopioi tästä laatikosta viedäksesi asetukset toiseen selaimeen:</label><br>
+                <textarea style="width: 100%" rows="5" cols="40" readonly v-model="cookies.vie"></textarea>
+                
+                <hr>
+
+                <vue-input-area label="Liitä tähän laatikkoon tuodaksesi asetukset toisesta selaimesta" v-model="cookies.tuo"></vue-input-area>
 			</div>
 		</div>        
 

@@ -227,3 +227,13 @@ th, td {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.monthActive {
+    color: white;
+}
+
+.monthInactive {
+    color: #ddd;
+    font-weight: normal;
+    font-size: 9pt;
+}

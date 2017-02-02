@@ -36,6 +36,25 @@ Vue.component('vue-date-input', {
                     }
                 },
 });
+Vue.component('vue-input-area', {
+                template: `
+                    <div class="form-group">
+                        <label :for="randomId">{{ label }}:</label>
+                        <textarea rows="5" cols="40" :id="randomId" :value="value" @input="onInput" class="form-control"></textarea>
+                    </div>
+                `,
+                props: ['value', 'label'],
+                data: function () {
+                    return {
+                        randomId: this._uid
+                    }
+                },
+                methods: {
+                    onInput: function (event) {
+                        this.$emit('input', event.target.value)
+                    }
+                },
+});
 Vue.component('vue-referees', {
               props: ['referees'],
               template: `
@@ -46,13 +65,13 @@ Vue.component('vue-referees', {
                             </h4>
                           </div>
                           <div :id="collapseId" class="panel-collapse collapse in">
-                              <button id="kaikki" @click="select_all_referees()">Valitse kaikki</button>
+                              <button id="kaikki"  style="margin-top: 3px;" @click="select_all_referees()">Valitse kaikki</button>
                               <button id="ei_mitaan" @click="select_no_referees()">Tyhjennä valinnat</button>
                               <td><input type="checkbox" v-model="selectedOnly"> Näytä vain valitut tuomarit</td>
                               <template v-for="luokka in classes">
                                   <span style="border: 1px solid purple; padding: 3px; margin: 5px;"><input type="checkbox" v-model="luokka.displayed"> {{luokka.Luokka}}</span>
                               </template>
-                              <table>
+                              <table style="margin-top: 5px;">
                                   <tr>
                                       <th>&nbsp;</td>
                                       <th><a @click="setSort('id')">Id</a></th>
@@ -66,7 +85,7 @@ Vue.component('vue-referees', {
                                   <tr v-for="referee in sorted_referees" v-if="isDisplayed(referee)">
                                       <td><input type="checkbox" v-model="referee.displayed"></td>
                                       <td>{{referee.id}}</td>
-                                      <td>{{referee.name}}</td>
+                                      <td><a :href="referee.href + '&alkupvm=2016-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                       <td>{{referee.Luokka}}</td>
                                       <td>{{referee.PostiNo}}</td>
                                       <td>{{referee.Kunta}}</td>
@@ -187,17 +206,20 @@ Vue.component('vue-competitions', {
                             </h4>
                           </div>
                           <div :id="collapseId" class="panel-collapse collapse in">
-                                <ul>
+                              <ul>
                                     <li v-for="competition in competitions">
                                         <input type="checkbox" v-model="competition.displayed">
                                         {{competition.name}}
+                                        <span v-if="competition.development && competition.isFinished()">LOPPU comp: {{competition.id}}</span>
                                         <ul>
                                             <li v-for="category in competition.categories" v-if="competition.displayed">
                                                 <input type="checkbox" v-model="category.displayed">
                                                 {{category.name}}
+                                                <span v-if="competition.development && category.isFinished()">LOPPU  comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>
                                                     <li v-for="group in category.groups" v-if="category.displayed">
                                                         <input type="checkbox" v-model="group.displayed"> {{group.name}}
+                                                        <span v-if="competition.development && group.isFinished()">LOPPU comp: {{competition.id}}  cat: {{category.id}}  gro: {{group.id}}</span>
                                                         <ul>
                                                             <li v-for="team in group.teams" v-if="group.displayed">
                                                                 <input type="checkbox" v-model="team.displayed"> {{team.name}}
@@ -351,42 +373,42 @@ Vue.component('vue-tehtavat', {
                           <template v-for="sarja in local_series">
                               <span style="border: 1px solid purple; padding: 3px; margin: 5px;"><input type="checkbox" v-model="sarja.displayed"> {{sarja.id}}</span>
                           </template>
-                          <button id="saveSarja" @click="save">Talleta valitut sarjat</button>
-                          <table>
+                          <button id="saveSarja" @click="save">Talleta valitut sarjat ja näytettävät kuukaudet</button>
+                          <table style="margin-top: 3px;">
                               <tr>
                                   <th>Nimi</th>
                                   <th>Luokka</th>
-                                  <th>Lokakuu</th>
-                                  <th>Marraskuu</th>
-                                  <th>Joulukuu</th>
-                                  <th>Tammikuu</th>
-                                  <th>Helmikuu</th>
-                                  <th>Maaliskuu</th>
-                                  <th>Huhtikuu</th>
+                                  <th><a :class="{ monthActive: loka_displayed, monthInactive: !loka_displayed}" @click="toggle('lokakuu')">Lokakuu</a></th>
+                                  <th><a :class="{ monthActive: marras_displayed, monthInactive: !marras_displayed}" @click="toggle('marraskuu')">Marraskuu</a></th>
+                                  <th><a :class="{ monthActive: joulu_displayed, monthInactive: !joulu_displayed}" @click="toggle('joulukuu')">Joulukuu</a></th>
+                                  <th><a :class="{ monthActive: tammi_displayed, monthInactive: !tammi_displayed}" @click="toggle('tammikuu')">Tammikuu</a></th>
+                                  <th><a :class="{ monthActive: helmi_displayed, monthInactive: !helmi_displayed}" @click="toggle('helmikuu')">Helmikuu</a></th>
+                                  <th><a :class="{ monthActive: maalis_displayed, monthInactive: !maalis_displayed}" @click="toggle('maaliskuu')">Maaliskuu</a></th>
+                                  <th><a :class="{ monthActive: huhti_displayed, monthInactive: !huhti_displayed}" @click="toggle('huhtikuu')">Huhtikuu</a></th>
                               </tr>
                               <tr v-for="referee in referees">
                                    <td><a :href="referee.href + '&alkupvm=2016-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                    <td>{{referee.Luokka}}</td>
                                    <td class="workload-month">
-                                       <vue-workload-month :matches="getMatches(referee.id, 'lokakuu')"></vue-workload-month>
+                                       <vue-workload-month v-if="loka_displayed" :matches="getMatches(referee.id, 'lokakuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <vue-workload-month :matches="getMatches(referee.id, 'marraskuu')"></vue-workload-month>
+                                       <vue-workload-month v-if="marras_displayed" :matches="getMatches(referee.id, 'marraskuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <vue-workload-month :matches="getMatches(referee.id, 'joulukuu')"></vue-workload-month>
+                                       <vue-workload-month  v-if="joulu_displayed" :matches="getMatches(referee.id, 'joulukuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <vue-workload-month :matches="getMatches(referee.id, 'tammikuu')"></vue-workload-month>
+                                       <vue-workload-month  v-if="tammi_displayed" :matches="getMatches(referee.id, 'tammikuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <vue-workload-month :matches="getMatches(referee.id, 'helmikuu')"></vue-workload-month>
+                                       <vue-workload-month  v-if="helmi_displayed" :matches="getMatches(referee.id, 'helmikuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <vue-workload-month :matches="getMatches(referee.id, 'maaliskuu')"></vue-workload-month>
+                                       <vue-workload-month  v-if="maalis_displayed" :matches="getMatches(referee.id, 'maaliskuu')"></vue-workload-month>
                                    </td>
                                    <td class="workload-month">
-                                       <vue-workload-month :matches="getMatches(referee.id, 'huhtikuu')"></vue-workload-month>
+                                       <vue-workload-month  v-if="huhti_displayed" :matches="getMatches(referee.id, 'huhtikuu')"></vue-workload-month>
                                    </td>
                               </tr>
                           </table>
@@ -396,6 +418,13 @@ Vue.component('vue-tehtavat', {
                   return {
                       //local_series: this.series,
                       local_series: [],
+                      loka_displayed: true,
+                      marras_displayed: true,
+                      joulu_displayed: true,
+                      tammi_displayed: true,
+                      helmi_displayed: true,
+                      maalis_displayed: true,
+                      huhti_displayed: true,
                       matches: [],
                       id: this._uid,
                       collapseId: this._uid,
@@ -410,6 +439,49 @@ Vue.component('vue-tehtavat', {
                           if(sarja.displayed === false) list.push(sarja.id);
                       }
                       Lockr.set("notSelectedSerieIds", list);
+
+                      // Talletetaan kuukaudet
+                      Lockr.set("loka_displayed", this.loka_displayed);
+                      Lockr.set("marras_displayed", this.marras_displayed);
+                      Lockr.set("joulu_displayed", this.joulu_displayed);
+                      Lockr.set("tammi_displayed", this.tammi_displayed);
+                      Lockr.set("helmi_displayed", this.helmi_displayed);
+                      Lockr.set("maalis_displayed", this.maalis_displayed);
+                      Lockr.set("huhti_displayed", this.huhti_displayed);
+                  },
+                  toggle: function(month){
+                      switch(month.toLowerCase()){
+                          case 'lokakuu':
+                              this.loka_displayed = !this.loka_displayed;
+                              break;
+                          case 'marraskuu':
+                              this.marras_displayed = !this.marras_displayed;
+                              break;
+                          case 'joulukuu':
+                              this.joulu_displayed = !this.joulu_displayed;
+                              break;
+                          case 'tammikuu':
+                              this.tammi_displayed = !this.tammi_displayed;
+                              break;
+                          case 'helmikuu':
+                              this.helmi_displayed = !this.helmi_displayed;
+                              break;
+                          case 'maaliskuu':
+                              this.maalis_displayed = !this.maalis_displayed;
+                              break;
+                          case 'huhtikuu':
+                              this.huhti_displayed = !this.huhti_displayed;
+                              break;
+                      }
+                  },
+                  loadMonths: function(){
+                      this.loka_displayed = Lockr.get("loka_displayed", true);
+                      this.marras_displayed = Lockr.get("marras_displayed", true);
+                      this.joulu_displayed = Lockr.get("joulu_displayed", true);
+                      this.tammi_displayed = Lockr.get("tammi_displayed", true);
+                      this.helmi_displayed = Lockr.get("helmi_displayed", true);
+                      this.maalis_displayed = Lockr.get("maalis_displayed", true);
+                      this.huhti_displayed = Lockr.get("huhti_displayed", true);
                   },
                   getMatches: function(referee_id, month){
                       var self = this;
@@ -445,6 +517,9 @@ Vue.component('vue-tehtavat', {
                             
                   },
                   
+              },
+              created: function(){
+                  this.loadMonths();
               },
               beforeUpdate: function(){
                   this.handleChecks();
@@ -538,3 +613,4 @@ Vue.component('vue-workload-match', {
                   }
               }
 });
+
