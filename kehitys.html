@@ -15,6 +15,7 @@
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 
+    <script src="js/jos-global.js"></script>
     <script src="js/jquery-3.1.1.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="js/vue.js"></script>
@@ -22,12 +23,12 @@
     <script src="js/lockr.js"></script>
     <script src="js/tuomari-set.js"></script>
     <script src="js/vue-components.js"></script>
-    <script src="js/script.js"></script>
-    <script>
-        $(document).ready(function(){
-            DEVELOPMENT = true;
-        });
+    <script> var MASTERS = false; 
+             var NORMAL = true;
+             var DEVELOPMENT = true;
     </script>
+    <script src="js/skip.js"></script>
+    <script src="js/script.js"></script>
 </head>
 
 <body>
@@ -60,7 +61,7 @@
 		<div class="tab-content">
      		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
 			<div id="etusivu" class="tab-pane fade in active">
-                <h1>Nimeäjien työkalu</h1>
+                <h1>Nimeäjien työkalu * DEVELOPMENT</h1>
                 <p>Tämä sivu on laadittu lentopallon tuomarinimeäjien avuksi.</p>
 
                 <hr>

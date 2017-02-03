@@ -215,7 +215,7 @@ Vue.component('vue-competitions', {
                                             <li v-for="category in competition.categories" v-if="competition.displayed">
                                                 <input type="checkbox" v-model="category.displayed">
                                                 {{category.name}}
-                                                <span v-if="competition.development && category.isFinished()">LOPPU  comp: {{competition.id}}  cat: {{category.id}}</span>
+                                                <span v-if="competition.development" style="background: #fcc;">   comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>
                                                     <li v-for="group in category.groups" v-if="category.displayed">
                                                         <input type="checkbox" v-model="group.displayed"> {{group.name}}
@@ -438,16 +438,16 @@ Vue.component('vue-tehtavat', {
                       for(let sarja of this.local_series){
                           if(sarja.displayed === false) list.push(sarja.id);
                       }
-                      Lockr.set("notSelectedSerieIds", list);
+                      Lockr.set(PREFIX + "notSelectedSerieIds", list);
 
                       // Talletetaan kuukaudet
-                      Lockr.set("loka_displayed", this.loka_displayed);
-                      Lockr.set("marras_displayed", this.marras_displayed);
-                      Lockr.set("joulu_displayed", this.joulu_displayed);
-                      Lockr.set("tammi_displayed", this.tammi_displayed);
-                      Lockr.set("helmi_displayed", this.helmi_displayed);
-                      Lockr.set("maalis_displayed", this.maalis_displayed);
-                      Lockr.set("huhti_displayed", this.huhti_displayed);
+                      Lockr.set(PREFIX + "loka_displayed", this.loka_displayed);
+                      Lockr.set(PREFIX + "marras_displayed", this.marras_displayed);
+                      Lockr.set(PREFIX + "joulu_displayed", this.joulu_displayed);
+                      Lockr.set(PREFIX + "tammi_displayed", this.tammi_displayed);
+                      Lockr.set(PREFIX + "helmi_displayed", this.helmi_displayed);
+                      Lockr.set(PREFIX + "maalis_displayed", this.maalis_displayed);
+                      Lockr.set(PREFIX + "huhti_displayed", this.huhti_displayed);
                   },
                   toggle: function(month){
                       switch(month.toLowerCase()){
@@ -475,13 +475,13 @@ Vue.component('vue-tehtavat', {
                       }
                   },
                   loadMonths: function(){
-                      this.loka_displayed = Lockr.get("loka_displayed", true);
-                      this.marras_displayed = Lockr.get("marras_displayed", true);
-                      this.joulu_displayed = Lockr.get("joulu_displayed", true);
-                      this.tammi_displayed = Lockr.get("tammi_displayed", true);
-                      this.helmi_displayed = Lockr.get("helmi_displayed", true);
-                      this.maalis_displayed = Lockr.get("maalis_displayed", true);
-                      this.huhti_displayed = Lockr.get("huhti_displayed", true);
+                      this.loka_displayed = Lockr.get(PREFIX + "loka_displayed", true);
+                      this.marras_displayed = Lockr.get(PREFIX + "marras_displayed", true);
+                      this.joulu_displayed = Lockr.get(PREFIX + "joulu_displayed", true);
+                      this.tammi_displayed = Lockr.get(PREFIX + "tammi_displayed", true);
+                      this.helmi_displayed = Lockr.get(PREFIX + "helmi_displayed", true);
+                      this.maalis_displayed = Lockr.get(PREFIX + "maalis_displayed", true);
+                      this.huhti_displayed = Lockr.get(PREFIX + "huhti_displayed", true);
                   },
                   getMatches: function(referee_id, month){
                       var self = this;

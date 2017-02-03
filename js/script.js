@@ -1,5 +1,3 @@
-const PREFIX = "TUOMARILISTA_";
-var DEVELOPMENT = false;
 var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
@@ -294,43 +292,6 @@ class Team {
 const REF4 = ["M1", "ML", "MSC", "N1", "NSC"];
 const REF2 = ["M2", "M3"];
 
-const SKIP_COMPETITION = ["aluetesti", "beach2016", "masku2016", "power2016",
-  // Junnuja:
- "vb2016n"];
-
-const SKIP_CATEGORY = ["TB", "PB", "PC", "PD", "PE", "PF", "PD6", "PDAlku", "PDT", "PDalku", "PET", "TD-AM", "TDT", "TE", "TE-Tiikeri", "TPE", "TPF", "TD", "TET", "TPD", "TPD", "TF", "testi", "TESTI", "Testi"];
-
-const SKIP_CATEGORIES = [
-     { competition_id: "vb2016epohj",
-       skip_list: ["NH"] // Ei näemmä nimetä tuomareita
-     },
-     { competition_id: "vb2016esavo",
-       skip_list: ["MES", "NES"] // Ei näemmä nimetä tuomareita
-     },
-     { competition_id: "vb2016ksuomi",
-       skip_list: ["KSDp", "KSEp", "KSDt", "KSEt", "KSD6vs6", "KSEtoim", "KSFtoim"]
-     },
-     { competition_id: "vb2016isuomi",
-       skip_list: ["PB Itä", "PC Itä", "TB Itä", "TC Itä", "PD6vs6", "Itä PD", "TD6vs6"]
-     },
-     { competition_id: "vb2016lsuomi",
-       skip_list: ["PAAM", "PBAM", "PCAM" , "PDAM", "PEAM", "TAAM", "TBAM", "TCAM", "TDAM", "TEAM", "NuoSEKA",
-                   "MKaKS", "MTTS", "NTTS", "MTTS-Aas", "MTTS Ai", "MTTS Al", "MTTS-Ays", "MTTS B"]
-     },
-     { competition_id: "vb2016esuomi",
-       skip_list: ["MKunto"]
-     },
-     { competition_id: "vb2016lappi",
-       skip_list: ["MA", "MB", "NA"]
-     },
-     { competition_id: "vb2016psavo",
-       skip_list: ["MPS", "NPS"]
-     },
-     { competition_id: "vb2016ppohj",
-       skip_list: ["PM", "PN"]
-     },
- ];
-
 var match_without_date = function(m){
     // Pois ottelut, joilla ei ole päivämäärää
     return m.datetime < new Date(2029, 1, 1, 1, 1, 1, 1);
@@ -395,7 +356,7 @@ $(document).ready(function () {
                 // Poimitaan otteluista sarjat
                 var inc = [];
                 var ret = [];
-                let notSelectedSerieIds = Lockr.get("notSelectedSerieIds", []);
+                let notSelectedSerieIds = Lockr.get(PREFIX + "notSelectedSerieIds", []);
                 for(let match of this.matches_of_workload_referees){
                     if(inc.includes(match.category.id) == false){
                         inc.push(match.category.id);
@@ -472,6 +433,10 @@ $(document).ready(function () {
                 console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
+                        if(SKIP_COMPETITION.includes(torneoCompetition.competition_id)){
+                            console.log("  getCategories: " + torneoCompetition.competition_id + " SKIPPED");
+                            continue;
+                        }
                         console.log("  getCategories: " + torneoCompetition.competition_id);
                         let url = "https://lentopallo.torneopal.fi/taso/rest/getCategories?api_key=qfzy3wsw9cqu25kq5zre&competition_id=" + torneoCompetition.competition_id;
                         if(SKIP_COMPETITION.includes(torneoCompetition.competition_id)) continue; 
@@ -497,10 +462,10 @@ $(document).ready(function () {
                                 console.log("    getCategory: " + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id);
                                 let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id + "&matches=1";
                                 //console.log(url2);
-                                ++self.loader_count;
+                                self.loader(1);
                                 $.get(url2, function(data){
                                     if(data.call.status === "error"){
-                                        --self.loader_count;
+                                        self.loader(-1);
                                         return;
                                     }
 
@@ -527,18 +492,25 @@ $(document).ready(function () {
                                     }
                                     category.groups = my_groups;
                                     competition.categories.push(category);
-                                    $("#loader").text("Ladataan tietoja, sarjoja jäljellä " + self.loader_count + "...");
-                                    if(--self.loader_count < 1){
-                                        self.loadCookies();
-                                        self.checkDoubleBooking();
-                                        $("#loader").hide();
-                                    }
+                                    self.loader(-1);
                                 });
                             }
                         });
                     }
                 });
                 
+            },
+
+            loader: function(delta){
+                this.loader_count = this.loader_count + delta;
+                console.log("LOADER: " + this.loader_count);
+                $("#loader").text("Ladataan tietoja, sarjoja jäljellä " + this.loader_count + "...");
+
+                if(this.loader_count < 1){
+                    this.loadCookies();
+                    this.checkDoubleBooking();
+                    $("#loader").hide();
+                }
             },
 
             clearCookies: function(){

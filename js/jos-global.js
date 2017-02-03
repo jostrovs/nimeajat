@@ -1,0 +1,3 @@
+var DEVELOPMENT=false;
+var PREFIX = "TUOMARILISTA_";
+
