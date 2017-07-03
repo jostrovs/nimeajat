@@ -48,6 +48,7 @@
                 </a>
             </li>
 			<li><a data-toggle="tab" href="#tehtavat">Tehtävämäärät</a></li>
+			<li><a data-toggle="tab" href="#lähipelit">Lähipelit</a></li>
 			<li><a data-toggle="tab" href="#asetukset">Asetukset</a></li>
 			<li><a data-toggle="tab" href="#tuovie">Tuo/vie</a></li>
 		</ul>
@@ -118,6 +119,15 @@
 
                 <vue-input-area label="Liitä tähän laatikkoon tuodaksesi asetukset toisesta selaimesta" v-model="cookies.tuo"></vue-input-area>
 			</div>
+    		<div id="lähipelit" class="tab-pane fade">
+                
+			    <h2>Valittujen sarjojen pelit lähiaikoina</h2>
+                <p>Näytetään ottelut viikon verran taaksepäin ja eteenpäin samaan päivään asti kuin nimeämättömien pelien listalla.</p>
+
+                <vue-all-matches :initial_matches="all_matches" :show_days_ahead="show_days_ahead"></vue-all-matches>
+
+            </div>
+             
 		</div>        
 
     </div>

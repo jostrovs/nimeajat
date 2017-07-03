@@ -108,7 +108,7 @@ Vue.component('vue-referees', {
                                 {Luokka: 'Ei', displayed: false},
                       ],
                       displayedClasses: ["Liiga", "Pääsarja", "I", "II", "III", "O", "NT"],
-                      selectedOnly: false,
+                      selectedOnly: true,
                       id: this._uid,
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString(),
@@ -209,12 +209,18 @@ Vue.component('vue-competitions', {
                               <ul>
                                     <li v-for="competition in competitions">
                                         <input type="checkbox" v-model="competition.displayed">
-                                        {{competition.name}}
+                                        {{competition.name}}  {{(competition.id)}}
                                         <span v-if="competition.development && competition.isFinished()">LOPPU comp: {{competition.id}}</span>
+
                                         <ul>
+                                            <li v-if="!competition.loaded && competition.displayed">
+                                                <span> EJOO LADATTU!</span>
+                                                <button @click="loadCategoriesOnParent(competition)">Lataa</button>
+                                            </li>
+
                                             <li v-for="category in competition.categories" v-if="competition.displayed">
                                                 <input type="checkbox" v-model="category.displayed">
-                                                {{category.name}}
+                                                {{category.name}}  {{(category.id)}}
                                                 <span v-if="competition.development" style="background: #fcc;">   comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>
                                                     <li v-for="group in category.groups" v-if="category.displayed">
@@ -241,7 +247,13 @@ Vue.component('vue-competitions', {
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString()
                   }
-              }
+              },
+              methods: {
+                  loadCategoriesOnParent: function(competition){
+                      competition.displayed = true;
+                      this.$emit('load_categories_from_child', competition.id)
+                  }
+              },
 });
 Vue.component('vue-matches', {
               props: ['initial_matches', 'show_days_ahead', 'nimeamattomat_lkm'],
@@ -267,6 +279,75 @@ Vue.component('vue-matches', {
                         <h3>Nimeämättömiä otteluita yhteensä {{displayed_matches_count}}</h3>
                         <p>Näytetään ottelut, joista puuttuu tuomareita ennen päivämäärää: {{date.toLocaleDateString()}}</p>                                
                         <vue-match v-for="match in matches_before" :match="match"></vue-match>
+                    </div>
+              `,
+              methods: {
+                  get_initial_date: function(){
+                  }
+
+              },
+              data: function() {
+                  // Aloituspäivämäärä
+                  let date = new Date();
+                  //date.setDate(date.getDate() + 60);
+                  date.setDate(date.getDate() + this.show_days_ahead);
+                  
+                  return {
+                      displayed_matches_count: 0,
+                      matches: this.initial_matches,
+                      date: date,
+                      id: this._uid,
+                      collapseId: this._uid,
+                      collapseHref: "#" + this._uid.toString()
+                  }
+              },
+});
+Vue.component('vue-all-matches', {
+              props: ['initial_matches', 'show_days_ahead'],
+              computed: {
+                  matches_before: function(){
+                      let dt = new Date();
+                      let yesterday = new Date();
+                      dt.setDate(dt.getDate() +  + this.show_days_ahead);
+                      yesterday.setDate(yesterday.getDate()-7);
+                      let ret = this.initial_matches.filter((m)=>m.datetime <= dt);
+                      ret = ret.filter((m)=>m.datetime >= yesterday);
+                      
+                      return ret.sort((m1, m2)=>m1.datetime-m2.datetime);
+                  }
+              },
+              template: `
+                    <div>
+                        <div v-for="match in matches_before" :class="{played: match.played}">
+                            <div class='match' v-if="match.isDisplayed()" style="margin: 0px; padding: 2px;">
+                                <div class="box" style="width:150px;"> 
+                                    <span class="ajankohta-label">{{match.datetime.toLocaleDateString()}}
+                                                                    klo {{match.toTimeString()}}
+                                    </span>
+                                </div>
+                                <div class="box" style="min-width:60px;"><a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> </div>
+                                <div class="box" style="min-width:70px;"><a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> </div>
+                                <div class="box" style="min-width:60px;"><a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a></div>
+                                <div class="box" style="width:170px;"><span class="pelipaikka-label">{{match.getVenue()}}</span></div>
+                                <div class="box" style="width:180px;">
+                                    {{match.torneoMatch.team_A_name}} -
+                                    {{match.torneoMatch.team_B_name}}
+                                </div>
+                                <div class="box">
+                                    <span v-if="match.referee_status!==''">
+                                        Puuttuu: 
+                                        <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
+                                            {{referee}}
+                                        </span>
+                                    </span>
+                                    <span v-if="match.referee_status==''">
+                                        <span v-for="referee in match.referees" class='referee-list-label'>
+                                            {{referee}}
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>                        
+                        </div>
                     </div>
               `,
               methods: {

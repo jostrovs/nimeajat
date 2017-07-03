@@ -1,3 +1,5 @@
 var DEVELOPMENT=false;
 var PREFIX = "TUOMARILISTA_";
+var CACHE = "CACHE_";
+
 

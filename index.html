@@ -30,7 +30,9 @@
 <body>
     <div id="overlay" style="display: none"></div>
     <div id="popup" style="display: none"></div>
-    <div style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; background: yellow; border: 3px solid red;" id="loader">Ladataan tietoja...</div>
+    <div onclick="$('#loader').hide();" style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; background: yellow; border: 3px solid red;" id="loader">
+        Ladataan tietoja...
+    </div>
     
     <div id="app">
         <ul class="nav nav-tabs">
@@ -43,12 +45,15 @@
             </li>
 			<li>
                 <a data-toggle="tab" href="#tyhjat">
-                    Nimeämättömät ottelut
+                    Nimeämättömät
                     <span v-if="nimeamattomat_lkm > 0" class="referee-label">{{nimeamattomat_lkm}}</span>
                 </a>
             </li>
 			<li><a data-toggle="tab" href="#tehtavat">Tehtävämäärät</a></li>
+			<li><a data-toggle="tab" href="#lähipelit">Lähipelit</a></li>
 			<li><a data-toggle="tab" href="#asetukset">Asetukset</a></li>
+			<li><a data-toggle="tab" href="#tuomarit">Tuomarit</a></li>
+			<li><a data-toggle="tab" href="#sarjat">Sarjat</a></li>
 			<li><a data-toggle="tab" href="#tuovie">Tuo/vie</a></li>
 		</ul>
 
@@ -63,8 +68,14 @@
 
                 <hr>
 
-                <p><span class="referee-label">Uutta!</span> 3.2.2017: Juniorien ja mastersien sarjoille on tehty omat sivut.</p>
-                <p><span class="referee-label">Uutta!</span> 2.2.2017: Tehtävämäärien näytössä voi kuukauden nimeä klikkaamalla piilottaa tai näyttää sen kuukauden tehtävät. Asetuksen saa talletettua ko. sivun talletuspainikkeella.</p>
+                <!--<div style="background: red; padding: 12px;">
+                <h1 style="color: white;">HUOM!</h1>
+                <p style="font-size: 18px; color: white;">Tuomareiden tietojen haku Torneopalista ei tällä hetkellä toimi, ja sen vuoksi ei ole mahdollista saada tietoa tuplabuukkauksista tai tehtävämääristäkään. Poistan tämän ilmoituksen, kun sivut jälleen toimivat.</p>
+                </div>
+                <hr>-->
+
+                <!--<p><span class="referee-label">Uutta!</span> 15.2.2017: Lista lähiaikoina pelattavista otteluista.</p>
+                <p><span class="referee-label">Uutta!</span> 3.2.2017: Juniorien ja mastersien sarjoille on tehty omat sivut.</p>-->
 
                 <hr>
                 
@@ -73,6 +84,7 @@
                 <p><b>Tuplabuukkaukset</b> Näyttää sellaiset tapaukset, joissa tuomarille on nimetty kaksi peliä samalle päivälle. Huom: juniorien ja mastersien pelit on oletusarvoisesti suodatettu pois, eivätkä näy tässä.</p>
                 <p><b>Nimeämättömät ottelut</b> Näyttää ottelut, joista puuttuu tuomari, ja sen, mikä tehtävä on täyttämättä.</p>
                 <p><b>Tehtävämäärät</b> Näyttää tuomarikohtaisesti kuukausittaiset ottelut sarjoittain. Tämä on tarkoitettu avuksi juuri nimettyjen tehtävien määrän tarkistamiseen, eli käytettäväksi silloin kun mietitään, kenelle nimeäisin jonkun ottelun; onko jollakulla liian pieni tai liian suuri työmäärä.</p>
+                <p><b>Lähipelit</b> Näyttää aikajärjestyksessä listan kaikkien valittujen sarjojen otteluista siihen päivään saakka, joka on valittu näytettäväksi nimeämättömien pelien kohdalla.</p>
 
                 <hr>
 
@@ -106,6 +118,9 @@
                 <p><b>Tehtävämäärät</b></p>
                 <p>Tämä välilehti on vain informatiivisuuden vuoksi, eikä varoita mistään. Näytettävät sarjat täytetään valittujen tuomareiden mukaisesti, ja valintaruuduissa tehtävät suodatukset voi tallettaa.</p>
 
+                <p><b>Lähipelit</b></p>
+                <p>Myös tämä välilehti on vain informatiivisuuden vuoksi, eikä varoita mistään. Tämän kautta saa katsauksen valittujen sarjojan lähiaikoina tulevista / menneistä peleistä.</p>
+
                 <hr>
 
                 <p><b>Palautetta ja kehitystä</b></p>
@@ -137,11 +152,17 @@
                 
                 <hr>
                 
-                Näytetään nimeämättömät ottelut <input type="number" v-model="show_days_ahead"></input> päivää eteenpäin, eli ennen päivää: {{last_shown_day}}
+                Näytetään nimeämättömät ottelut <input type="number" v-model="show_days_ahead"></input> päivää eteenpäin, eli ennen päivää: {{last_shown_day}} <br>
 
                 <hr>
                 
                 <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
+                <vue-competitions  v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+			</div>
+			<div id="tuomarit" class="tab-pane fade">
+                <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
+			</div>
+			<div id="sarjat" class="tab-pane fade">
                 <vue-competitions  v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
 			</div>
 			<div id="tuovie" class="tab-pane fade">
@@ -174,7 +195,15 @@
 
                 <vue-input-area label="Liitä tähän laatikkoon tuodaksesi asetukset toisesta selaimesta" v-model="cookies.tuo"></vue-input-area>
 			</div>
-		</div>        
+    		<div id="lähipelit" class="tab-pane fade">
+                
+			    <h2>Valittujen sarjojen pelit lähiaikoina</h2>
+                <p>Näytetään ottelut viikon verran taaksepäin ja eteenpäin samaan päivään asti kuin nimeämättömien pelien listalla.</p>
+
+                <vue-all-matches :initial_matches="all_matches" :show_days_ahead="show_days_ahead"></vue-all-matches>
+
+            </div>
+        </div>        
 
     </div>
 </body>

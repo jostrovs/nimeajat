@@ -2,7 +2,9 @@ const SKIP_COMPETITION = ["SARJAPOHJA", "aluetesti", "beach2016", "masku2016", "
 
   // Junnuja:
  "vb2016n",
- "vb2016v"
+ "vb2016v",
+
+
  ];
 
 const SKIP_CATEGORY = ["TB", "PB", "PC", "PD", "PE", "PF", "PD6", "PDAlku", "PDT", "PDalku", "PET", "TD-AM", "TDT", "TE", "TE-Tiikeri", "TPE", "TPF", "TD", "TET", "TPD", "TPD", "TF", "testi", "TESTI", "Testi"];
@@ -37,4 +39,5 @@ const SKIP_CATEGORIES = [
        skip_list: ["PM", "PN"]
      },
  ];
+
 

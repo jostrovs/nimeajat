@@ -122,6 +122,15 @@ th, td {
     margin-right: 5px;
 }
 
+.referee-list-label {
+    cursor: pointer;
+    background: #7f7;
+    color: black;
+    padding: 2px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
 .lohko-label {
     cursor: pointer;
     background: #f7f7f7;
@@ -214,6 +223,10 @@ th, td {
     padding: 20px; 
     display: none;
     color: black;
+}
+
+.played {
+    background: #faa;
 }
 
 .match_label_highlight {
