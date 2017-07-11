@@ -60,6 +60,17 @@
 		<div class="tab-content">
      		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
 			<div id="etusivu" class="tab-pane fade in active">
+                <div style="color: red; font-size: 20px;">
+                    <p>Sarjojen talletus ei toimi oikein. Kun category on skipattu, se ei tule talletettavien cookien listalle lainkaan
+                    => ko. sarja ilmestyy uudelleenladattaessa jälleen uutena.</p>
+                    <p>Voisi kokeilla toisenlaista cookiesysteemiä:<br>
+                       1. Talletetaan poistetut competitionit<br>
+                       2. Talletetaan poistetut categoryt muodossa "competition . category". Jos nyt alussa olevaa competitionia ei löydy skipatuista eikä ladatuista, niin vanha asetus on säilytettävä
+                       3. Lohkoille sama kuin categoryille
+                       4. Joukkueille sama kuin categoryille
+                    </p>
+                </div>
+                
                 <h1>Nimeäjien työkalu <span style="background: salmon;">KEHITYS</span></h1>
                 <p>Tämä sivu on laadittu lentopallon tuomarinimeäjien avuksi.</p>
                 <p>Tällä sivulla näkyvät vain aikuisten sarjojen pelit. Juniorien ja mastersien pelit ovat omilla sivuillaan:<br>
@@ -169,7 +180,9 @@
                 
                 <hr>
                 
-                <vue-competitions @load_categories_from_child="loadCategoriesFromChild"  v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+                <vue-competitions @load_categories_from_child="loadCategoriesFromChild" 
+                                  @load_groups_from_child="loadGroupsFromChild"
+                                   v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
 			</div>
 			<div id="tuovie" class="tab-pane fade">
                 

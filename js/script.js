@@ -18,6 +18,14 @@ var initialSettings = function(){
     }
 };
 
+var cookieMatch = function(needle, haystack){
+    for(let hay of haystack){
+        if(hay===needle) return true;
+        if(hay.startsWith(needle+".")) return true;
+    }
+    return false;
+};
+
 class Match{
     constructor(torneoMatch, competition, category, group){
         this.number = torneoMatch.match_number;
@@ -200,6 +208,7 @@ class Category {
         this.groups=[];
         this.development=false;
         this.isNew=true;
+        this.loaded = false;
         if(DEVELOPMENT) this.development=true;
     }
 
@@ -342,6 +351,7 @@ $(document).ready(function () {
             competitionSkip: [],
             categorySkip: [],
             groupSkip: [],
+            teamSkip: [],
         },
         
         created: function () {
@@ -498,12 +508,27 @@ $(document).ready(function () {
                 this.loadCategories(competition);
             },
 
+            loadGroupsFromChild: function(competition_id, category_id){
+                // Sarjanäkymästä tuli käsky ladata lohkot annetulle sarjalle
+                this.dontLoadCookies = true;
+                $("#loader").show();
+                let competition = this.getCompetition(competition_id);
+                let pos=0;
+                for(let category of competition.categories){
+                    if(category.id === category_id){
+                        this.loadGroups(competition, category, pos);
+                    }
+                    pos++;
+                }
+            },
+
             loadCompetitions: function(){
                 var self = this;
 
                 //console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
+                        console.log("Competition: ")
                         let competition = new Competition(torneoCompetition);
                         competition.categories = [];
 
@@ -530,44 +555,58 @@ $(document).ready(function () {
                     //console.log(data);
                     for(let torneoCategory of data.categories){
                         
-                        if(self.isSkipCategory(torneoCompetition.competition_id, torneoCategory.category_id)) continue;
-
-                        // Lohkot & ottelut
-                        //console.log("    getCategory: " + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id);
-                        let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + torneoCategory.category_id + "&competition_id=" + torneoCategory.competition_id + "&matches=1";
-                        //console.log(url2);
-                        self.loader(1);
-                        $.get(url2, function(data){
-                            if(data.call.status === "error"){
-                                self.loader(-1);
-                                return;
-                            }
-
-                            let detailedTorneoCategory = data.category
-                            
-                            let category = new Category(data.category);
-
-                            let my_groups = [];
-
-                            for(let torneoGroup of detailedTorneoCategory.groups){
-                                let group = new Group(torneoGroup);
-
-                                for(let torneoMatch of detailedTorneoCategory.matches){
-                                    if(torneoMatch.group_id !== group.id) continue;
-                                    //console.log(self.matches.length);
-                                    let match = new Match(torneoMatch, competition, category, group);
-                                    if(match.datetime < new Date(2030,1,1,0,0,0,0)){
-                                        self.matches.push(match);
-                                        group.matches.push(match);
-                                    }
-                                }
-                                group.fillTeams();
-                                my_groups.push(group);
-                            }
-                            category.groups = my_groups;
+                        let category = new Category(torneoCategory);
+                        if(self.isSkipCategory(torneoCompetition.competition_id, torneoCategory.category_id)){
                             competition.categories.push(category);
-                            self.loader(-1);
-                        });
+                            continue;
+                        } else {
+                            self.loadGroups(competition, category);
+                        }
+
+                    }
+                });
+            },
+
+            loadGroups: function(competition, category, pushPosition=-1){
+                // Lohkot & ottelut
+                let self = this;
+                let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + category.torneoCategory.category_id + "&competition_id=" + category.torneoCategory.competition_id + "&matches=1";
+                self.loader(1);
+                let retCategory;
+                $.get(url2, function(data){
+                    if(data.call.status === "error"){
+                        self.loader(-1);
+                        return;
+                    }
+
+                    let detailedTorneoCategory = data.category;
+                    
+                    retCategory = new Category(data.category);
+
+                    let my_groups = [];
+
+                    for(let torneoGroup of detailedTorneoCategory.groups){
+                        let group = new Group(torneoGroup);
+
+                        for(let torneoMatch of detailedTorneoCategory.matches){
+                            if(torneoMatch.group_id !== group.id) continue;
+                            //console.log(self.matches.length);
+                            let match = new Match(torneoMatch, competition, retCategory, group);
+                            if(match.datetime < new Date(2030,1,1,0,0,0,0)){
+                                self.matches.push(match);
+                                group.matches.push(match);
+                            }
+                        }
+                        group.fillTeams();
+                        my_groups.push(group);
+                    }
+                    retCategory.groups = my_groups;
+                    
+                    self.loader(-1);
+
+                    if(pushPosition < 0) competition.categories.push(retCategory);
+                    else {
+                        competition.categories.splice(pushPosition, 1, retCategory);
                     }
                 });
             },
@@ -630,6 +669,13 @@ $(document).ready(function () {
                         }
                     }
                 }
+
+                // Aiemmin talletetuista asetuksista poimitaan kaikki kategoriat, joiden competition-osa ei ole erikseen competitions-listalla.
+                // Vastaavasti poimitaan kaikki groupit, joiden competition + category -osa ei ole erikseen listalla
+                // Joukkueista poimitaan ne, joiden competition + category + group -osa ei ole erikseen listalla
+                var prevCat, prevGroup, prevTeam;
+                prevCat, prevGroup, prevTeam = this.retainCookies(comp, cat, gro, tea);
+
                 Lockr.set(PREFIX + "Competitions", comp);
                 Lockr.set(PREFIX + "Categories", cat);
                 Lockr.set(PREFIX + "Groups", gro);
@@ -646,6 +692,35 @@ $(document).ready(function () {
                 Lockr.set(PREFIX + "RefereeWorkload", workload);
             },
 
+            retainCookies: function(comp, cat, gro, tea){
+                // Aiemmin talletetuista asetuksista poimitaan kaikki kategoriat, joiden competition-osa ei ole erikseen competitions-listalla.
+                // Vastaavasti poimitaan kaikki groupit, joiden competition + category -osa ei ole erikseen listalla
+                // Joukkueista poimitaan ne, joiden competition + category + group -osa ei ole erikseen listalla
+
+                let getComp = (cat_)=> cat_.split(".")[0];
+                let getCat = (gro_)=> { let arr = gro_.split("."); return arr[0] + "." + arr[1]; }
+                let getGro = (tea_)=> { let arr = tea_.split("."); return arr[0] + "." + arr[1] + "." + arr[2]; }
+
+                let retCat = this.categorySkip, 
+                    retGro = this.groupSkip, 
+                    retTea = this.teamSkip;
+                
+                // Suodatetaan kilpailun mukaan
+                retCat = retCat.filter((c)=>cookieMatch(getComp(c), comp) == false);
+                retGro = retGro.filter((c)=>cookieMatch(getComp(c), comp) == false);
+                retTea = retTea.filter((c)=>cookieMatch(getComp(c), comp) == false);
+
+                // Suodatetaan kategorian mukaan
+                retGro = retGro.filter((c)=>cookieMatch(getCat(c), cat) == false);
+                retTea = retTea.filter((c)=>cookieMatch(getCat(c), cat) == false);
+
+                // Suodatetaan groupin mukaan
+                retTea = retTea.filter((c)=>cookieMatch(getGro(c), gro) == false);
+                
+                return retCat, retGro, retTea;
+
+            },
+
             loadSkips: function(){
                 const PREFIX = "TUOMARILISTA_";
 
@@ -654,6 +729,7 @@ $(document).ready(function () {
                 this.competitionSkip = Lockr.getArr(PREFIX + "Competitions");
                 this.categorySkip = Lockr.getArr(PREFIX + "Categories");
                 this.groupSkip = Lockr.getArr(PREFIX + "Groups");
+                this.teamSkip = Lockr.getArr(PREFIX + "Teams");
             },
 
             loadCookies: function(){
@@ -663,10 +739,10 @@ $(document).ready(function () {
 
                 this.show_days_ahead = json.ShowDaysAhead = Lockr.get(PREFIX + "ShowDaysAhead", "60");
 
-                let comp = json.Competitions = Lockr.getArr(PREFIX + "Competitions");
-                let cat = json.Categories = Lockr.getArr(PREFIX + "Categories");
-                let gro = json.Groups = Lockr.getArr(PREFIX + "Groups");
-                let tea = json.Teams = Lockr.getArr(PREFIX + "Teams");
+                let comp = this.competitionSkip = json.Competitions = Lockr.getArr(PREFIX + "Competitions");
+                let cat = this.categorySkip = json.Categories = Lockr.getArr(PREFIX + "Categories");
+                let gro = this.groupSkip = json.Groups = Lockr.getArr(PREFIX + "Groups");
+                let tea = this.teamSkip = json.Teams = Lockr.getArr(PREFIX + "Teams");
 
                 if(comp.length < 1) comp = ["vb2016a"];
 

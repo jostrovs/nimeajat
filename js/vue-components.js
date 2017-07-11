@@ -221,6 +221,9 @@ Vue.component('vue-competitions', {
                                             <li v-for="category in competition.categories" v-if="competition.displayed">
                                                 <input type="checkbox" v-model="category.displayed">
                                                 {{category.name}}  {{(category.id)}}
+
+                                                <button @click="loadGroupsOnParent(competition, category)">Lataa cat</button>
+
                                                 <span v-if="competition.development" style="background: #fcc;">   comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>
                                                     <li v-for="group in category.groups" v-if="category.displayed">
@@ -249,9 +252,18 @@ Vue.component('vue-competitions', {
                   }
               },
               methods: {
+                  alert: function(mgg){
+                      alert(mgg);
+                  },
+                  
                   loadCategoriesOnParent: function(competition){
                       competition.displayed = true;
                       this.$emit('load_categories_from_child', competition.id)
+                  },
+
+                  loadGroupsOnParent: function(competition, category){
+                      category.displayed = true;
+                      this.$emit('load_groups_from_child', competition.id, category.id)
                   }
               },
 });
@@ -433,7 +445,7 @@ Vue.component('vue-tuplat', {
               `,
               computed: {
                   displayed_items_count: function(){
-                      let count = this.duplicates.filter((d)=> d.referee.displayed).length;
+                      let count = this.duplicates.filter((d)=> d.referee!=null && d.referee.displayed).length;
                       this.$emit('input', count);
                       return count;
                   }
