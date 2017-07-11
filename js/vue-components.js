@@ -65,12 +65,21 @@ Vue.component('vue-referees', {
                             </h4>
                           </div>
                           <div :id="collapseId" class="panel-collapse collapse in">
-                              <button id="kaikki"  style="margin-top: 3px;" @click="select_all_referees()">Valitse kaikki</button>
-                              <button id="ei_mitaan" @click="select_no_referees()">Tyhjennä valinnat</button>
-                              <td><input type="checkbox" v-model="selectedOnly"> Näytä vain valitut tuomarit</td>
-                              <template v-for="luokka in classes">
-                                  <span style="border: 1px solid purple; padding: 3px; margin: 5px;"><input type="checkbox" v-model="luokka.displayed"> {{luokka.Luokka}}</span>
-                              </template>
+                              <div>
+                                  <button class="myButton" id="kaikki"  @click="select_all_referees()">Valitse kaikki</button>
+                                  <button class="myButton" id="ei_mitaan" @click="select_no_referees()">Tyhjennä valinnat</button>
+                              </div>
+
+                              <div style="margin-top: 3px;">
+                                  <span class="checkbox-label" style="margin-bottom: 3px;"><input type="checkbox" v-model="selectedOnly"> Näytä vain valitut tuomarit</span>
+                              </div>
+
+                              <div style="margin-top: 6px">
+                                <template v-for="luokka in classes">
+                                    <span class="checkbox-label"><input type="checkbox" v-model="luokka.displayed"> {{luokka.Luokka}}</span>
+                                </template>
+                              </div>
+
                               <table style="margin-top: 5px;">
                                   <tr>
                                       <th>&nbsp;</td>
@@ -212,7 +221,7 @@ Vue.component('vue-competitions', {
                                         {{competition.name}}  {{(competition.id)}}
                                         <span v-if="competition.development && competition.isFinished()">LOPPU comp: {{competition.id}}</span>
 
-                                        <button v-if="!competition.loaded && competition.displayed" @click="loadCategoriesOnParent(competition)">Lataa</button>
+                                        <button class="btn" v-if="!competition.loaded && competition.displayed" @click="loadCategoriesOnParent(competition)">Lataa</button>
 
                                         <ul>
 
@@ -220,7 +229,7 @@ Vue.component('vue-competitions', {
                                                 <input type="checkbox" v-model="category.displayed">
                                                 {{category.name}}  {{(category.id)}}
 
-                                                <button v-if="!category.loaded && category.displayed" @click="loadGroupsOnParent(competition, category)">Lataa</button>
+                                                <button class="btn" v-if="!category.loaded && category.displayed" @click="loadGroupsOnParent(competition, category)">Lataa</button>
 
                                                 <span v-if="competition.development" style="background: #fcc;">   comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>
@@ -461,10 +470,15 @@ Vue.component('vue-tehtavat', {
               template: `
                       <div>
                           <h1>Tehtävämäärät</h1>
-                          <template v-for="sarja in local_series">
-                              <span style="border: 1px solid purple; padding: 3px; margin: 5px;"><input type="checkbox" v-model="sarja.displayed"> {{sarja.id}}</span>
-                          </template>
-                          <button id="saveSarja" @click="save">Talleta valitut sarjat ja näytettävät kuukaudet</button>
+                          <div>
+                            <template v-for="sarja in local_series">
+                                <span class="checkbox-label"><input type="checkbox" v-model="sarja.displayed"> {{sarja.id}}</span>
+                            </template>
+                          </div>
+
+                          <div style="margin-top: 5px">
+                              <button class="myButton" id="saveSarja" @click="save">Talleta valitut sarjat ja näytettävät kuukaudet</button>
+                          </div>
                           <table style="margin-top: 3px;">
                               <tr>
                                   <th>Nimi</th>

@@ -528,7 +528,6 @@ $(document).ready(function () {
                 //console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
-                        console.log("Competition: ")
                         let competition = new Competition(torneoCompetition);
                         competition.categories = [];
 
