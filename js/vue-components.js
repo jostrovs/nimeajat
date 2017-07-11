@@ -221,7 +221,7 @@ Vue.component('vue-competitions', {
                                         {{competition.name}}  {{(competition.id)}}
                                         <span v-if="competition.development && competition.isFinished()">LOPPU comp: {{competition.id}}</span>
 
-                                        <button class="btn" v-if="!competition.loaded && competition.displayed" @click="loadCategoriesOnParent(competition)">Lataa</button>
+                                        <button class="myButton" v-if="!competition.loaded && competition.displayed" @click="loadCategoriesOnParent(competition)">Lataa</button>
 
                                         <ul>
 
@@ -229,7 +229,7 @@ Vue.component('vue-competitions', {
                                                 <input type="checkbox" v-model="category.displayed">
                                                 {{category.name}}  {{(category.id)}}
 
-                                                <button class="btn" v-if="!category.loaded && category.displayed" @click="loadGroupsOnParent(competition, category)">Lataa</button>
+                                                <button class="myButton" v-if="!category.loaded && category.displayed" @click="loadGroupsOnParent(competition, category)">Lataa</button>
 
                                                 <span v-if="competition.development" style="background: #fcc;">   comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>
@@ -288,15 +288,13 @@ Vue.component('vue-matches', {
                       this.displayed_matches_count = ret.filter((m)=> m.isDisplayed()).length;
                       this.$emit('input', this.displayed_matches_count);
 
-                      console.log("matches_before: " + this.displayed_matches_count);
-
                       return ret;
                   }
               },
               template: `
                     <div>
                         <h3>Nimeämättömiä otteluita yhteensä {{displayed_matches_count}}</h3>
-                        <p>Näytetään ottelut, joista puuttuu tuomareita ennen päivämäärää: {{date.toLocaleDateString()}}</p>                                
+                        <!--p>Näytetään ottelut, joista puuttuu tuomareita ennen päivämäärää: {{date.toLocaleDateString()}}</p-->                                
                         <vue-match v-for="match in matches_before" :match="match"></vue-match>
                     </div>
               `,
@@ -428,7 +426,7 @@ Vue.component('vue-match', {
 Vue.component('vue-double-booking', {
               props: ['double_booking_item'],
               template: `
-                  <div class='double-booking' v-if="double_booking_item.referee.displayed">
+                  <div class='double-booking' v-if="double_booking_item.referee != null && double_booking_item.referee.displayed">
                       Tuomari: <a :href="double_booking_item.referee.href" target="_blank">{{double_booking_item.referee.name}}</a><br>
                       <vue-match v-for="match in double_booking_item.matches" :match="match" forceDisplay="true"></vue-match>
                   </div>

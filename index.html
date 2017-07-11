@@ -30,7 +30,9 @@
 <body>
     <div id="overlay" style="display: none"></div>
     <div id="popup" style="display: none"></div>
-    <div onclick="$('#loader').hide();" style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; background: yellow; border: 3px solid red;" id="loader">
+    <div onclick="$('#loader').hide();" style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; 
+                                               background: linear-gradient(to top, #fefcea 0%,#efdd69 100%); 
+                                               border: 3px solid #a00;" id="loader">
         Ladataan tietoja...
     </div>
     
@@ -51,7 +53,6 @@
             </li>
 			<li><a data-toggle="tab" href="#tehtavat">Tehtävämäärät</a></li>
 			<li><a data-toggle="tab" href="#lähipelit">Lähipelit</a></li>
-			<li><a data-toggle="tab" href="#asetukset">Asetukset</a></li>
 			<li><a data-toggle="tab" href="#tuomarit">Tuomarit</a></li>
 			<li><a data-toggle="tab" href="#sarjat">Sarjat</a></li>
 			<li><a data-toggle="tab" href="#tuovie">Tuo/vie</a></li>
@@ -60,6 +61,7 @@
 		<div class="tab-content">
      		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
 			<div id="etusivu" class="tab-pane fade in active">
+                                
                 <h1>Nimeäjien työkalu</h1>
                 <p>Tämä sivu on laadittu lentopallon tuomarinimeäjien avuksi.</p>
                 <p>Tällä sivulla näkyvät vain aikuisten sarjojen pelit. Juniorien ja mastersien pelit ovat omilla sivuillaan:<br>
@@ -74,8 +76,7 @@
                 </div>
                 <hr>-->
 
-                <!--<p><span class="referee-label">Uutta!</span> 15.2.2017: Lista lähiaikoina pelattavista otteluista.</p>
-                <p><span class="referee-label">Uutta!</span> 3.2.2017: Juniorien ja mastersien sarjoille on tehty omat sivut.</p>-->
+                <p><span class="referee-label">Uutta!</span> 11.7.2017: Sarjojen valintaa on uudistettu siten, että ladattavien tietojen määrä on pienentynyt reilusti. Aiemmin sivulle ladattiin aina kaikkien sarjojen tiedot riippumatta siitä haluttiinko niitä ikinä nähdä vai ei. Nyt ladataan vain tarvittavat sarjat, ja jos uusi sarja ruksataan käyttöön, sen tiedot eivät automaattisesti ilmesty näkyviin, vaan ne voidaan ladata erillisellä painikkeella tai ladata koko sivu uudelleen (F5).</p>
 
                 <hr>
                 
@@ -144,26 +145,32 @@
                 <vue-tehtavat  v-if="loader_count < 1" :series="series_of_workload_referee_matches" :initial_matches="matches_of_workload_referees" :referees="workload_referees"></vue-tehtavat>
 			</div>
 			<div id="tyhjat" class="tab-pane fade">
-                <vue-matches  v-model="nimeamattomat_lkm" v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :show_days_ahead="show_days_ahead"></vue-matches>
-			</div>
-			<div id="asetukset" class="tab-pane fade">
-                <button @click="saveCookies">Tallenna asetukset</button>
-                <button @click="loadCookies">Lataa asetukset</button>
+                <button class="myButton" @click="saveCookies">Tallenna asetukset</button>
+                <button class="myButton" @click="loadCookies">Lataa asetukset</button>
                 
-                <hr>
-                
-                Näytetään nimeämättömät ottelut <input type="number" v-model="show_days_ahead"></input> päivää eteenpäin, eli ennen päivää: {{last_shown_day}} <br>
+                Näytetään nimeämättömät ottelut <input size="4" type="number" v-model="show_days_ahead" class="myInput"></input> päivää eteenpäin, eli ennen päivää: {{last_shown_day}} <br>
 
                 <hr>
-                
-                <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
-                <vue-competitions  v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+
+                <vue-matches  v-model="nimeamattomat_lkm" v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :show_days_ahead="show_days_ahead"></vue-matches>
 			</div>
 			<div id="tuomarit" class="tab-pane fade">
+                <button class="myButton" @click="saveCookies">Tallenna asetukset</button>
+                <button class="myButton" @click="loadCookies">Lataa asetukset</button>
+                
+                <hr>
+                
                 <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
 			</div>
 			<div id="sarjat" class="tab-pane fade">
-                <vue-competitions  v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+                <button class="myButton" @click="saveCookies">Tallenna asetukset</button>
+                <button class="myButton" @click="loadCookies">Lataa asetukset</button>
+                
+                <hr>
+                
+                <vue-competitions @load_categories_from_child="loadCategoriesFromChild" 
+                                  @load_groups_from_child="loadGroupsFromChild"
+                                   v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
 			</div>
 			<div id="tuovie" class="tab-pane fade">
                 
@@ -182,9 +189,9 @@
                    4. Liitä puhelimessa teksti alempaan allaolevista laatikoista ja paina "Tallenna asetukset"-painiketta.<br>
                    5. Lataa sivu uudestaan, jotta varmistat uusien asetusten olevan käytössä.</p>
 
-                <button @click="importCookies">Tallenna asetukset</button>
+                <button class="myButton" @click="importCookies">Tallenna asetukset</button>
                 
-                <button @click="clearCookies">Tyhjennä asetukset</button>
+                <button class="myButton" @click="clearCookies">Tyhjennä asetukset</button>
                 
                 <hr>
                 

@@ -309,4 +309,9 @@ th, td {
 	top:1px;
 }
 
-
+.myInput {
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    width: 60px;
+    padding: 4px 8px;
+}
