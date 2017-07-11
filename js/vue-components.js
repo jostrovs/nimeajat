@@ -212,17 +212,15 @@ Vue.component('vue-competitions', {
                                         {{competition.name}}  {{(competition.id)}}
                                         <span v-if="competition.development && competition.isFinished()">LOPPU comp: {{competition.id}}</span>
 
+                                        <button v-if="!competition.loaded && competition.displayed" @click="loadCategoriesOnParent(competition)">Lataa</button>
+
                                         <ul>
-                                            <li v-if="!competition.loaded && competition.displayed">
-                                                <span> EJOO LADATTU!</span>
-                                                <button @click="loadCategoriesOnParent(competition)">Lataa</button>
-                                            </li>
 
                                             <li v-for="category in competition.categories" v-if="competition.displayed">
                                                 <input type="checkbox" v-model="category.displayed">
                                                 {{category.name}}  {{(category.id)}}
 
-                                                <button @click="loadGroupsOnParent(competition, category)">Lataa cat</button>
+                                                <button v-if="!category.loaded && category.displayed" @click="loadGroupsOnParent(competition, category)">Lataa</button>
 
                                                 <span v-if="competition.development" style="background: #fcc;">   comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>

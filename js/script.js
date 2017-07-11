@@ -557,6 +557,7 @@ $(document).ready(function () {
                         
                         let category = new Category(torneoCategory);
                         if(self.isSkipCategory(torneoCompetition.competition_id, torneoCategory.category_id)){
+                            category.displayed = false;
                             competition.categories.push(category);
                             continue;
                         } else {
@@ -601,7 +602,8 @@ $(document).ready(function () {
                         my_groups.push(group);
                     }
                     retCategory.groups = my_groups;
-                    
+                    retCategory.loaded = true;
+
                     self.loader(-1);
 
                     if(pushPosition < 0) competition.categories.push(retCategory);
