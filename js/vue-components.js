@@ -64,7 +64,7 @@ Vue.component('vue-referees', {
                                 <a data-toggle="collapse" :href="collapseHref">Tuomarit: valittu {{selected_referees.length}}/{{referees.length}}</a>
                             </h4>
                           </div>
-                          <div :id="collapseId" class="panel-collapse collapse in">
+                          <div id="tuomaritCollapse" class="panel-collapse collapse in">
                               <div>
                                   <button class="myButton" id="kaikki"  @click="select_all_referees()">Valitse kaikki</button>
                                   <button class="myButton" id="ei_mitaan" @click="select_no_referees()">Tyhjennä valinnat</button>
@@ -79,8 +79,9 @@ Vue.component('vue-referees', {
                                     <span class="checkbox-label"><input type="checkbox" v-model="luokka.displayed"> {{luokka.Luokka}}</span>
                                 </template>
                               </div>
-
-                              <table style="margin-top: 5px;">
+ 
+                              <div style="margin-top: 10px; max-height: 60vh; overflow-y: scroll;">
+                                <table style="margin-top: 5px;"> 
                                   <tr>
                                       <th>&nbsp;</td>
                                       <th><a @click="setSort('id')">Id</a></th>
@@ -101,6 +102,9 @@ Vue.component('vue-referees', {
                                       <!--td><input type="checkbox" v-model="referee.showDouble"></td-->
                                       <td><input type="checkbox" v-model="referee.showWorkLoad"></td>
                                   </tr>
+                            
+                            
+                              </div>
                             <!--div class="panel-footer">Panel Footer</div-->
                           </div>
               
@@ -214,7 +218,7 @@ Vue.component('vue-competitions', {
                                 <a data-toggle="collapse" :href="collapseHref">Sarjat ja lohkot:</a>
                             </h4>
                           </div>
-                          <div :id="collapseId" class="panel-collapse collapse in">
+                          <div id="sarjatCollapse" class="panel-collapse collapse in" style="max-height: 70vh; overflow-y: scroll;">
                               <ul>
                                     <li v-for="competition in competitions">
                                         <input type="checkbox" v-model="competition.displayed">
