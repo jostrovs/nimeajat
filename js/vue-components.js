@@ -59,28 +59,28 @@ Vue.component('vue-referees', {
               props: ['referees'],
               template: `
                       <div class="panel panel-default tuomarilista">
-                          <div class="panel-heading">
+                          <div id="tuomarit-panel-heading" class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" :href="collapseHref">Tuomarit: valittu {{selected_referees.length}}/{{referees.length}}</a>
                             </h4>
                           </div>
                           <div id="tuomaritCollapse" class="panel-collapse collapse in">
-                              <div>
+                              <div id="tuomarit-panel-buttons">
                                   <button class="myButton" id="kaikki"  @click="select_all_referees()">Valitse kaikki</button>
                                   <button class="myButton" id="ei_mitaan" @click="select_no_referees()">Tyhjennä valinnat</button>
                               </div>
 
-                              <div style="margin-top: 3px;">
+                              <div id="tuomarit-vain-valitut" style="margin-top: 3px;">
                                   <span class="checkbox-label" style="margin-bottom: 3px;"><input type="checkbox" v-model="selectedOnly"> Näytä vain valitut tuomarit</span>
                               </div>
 
-                              <div style="margin-top: 6px">
+                              <div id="tuomarit-luokat" style="margin-top: 6px">
                                 <template v-for="luokka in classes">
                                     <span class="checkbox-label"><input type="checkbox" v-model="luokka.displayed"> {{luokka.Luokka}}</span>
                                 </template>
                               </div>
  
-                              <div style="margin-top: 10px; max-height: 60vh; overflow-y: scroll;">
+                              <div id="tuomarit-lista" style="margin-top: 10px; overflow-y: scroll;">
                                 <table style="margin-top: 5px;"> 
                                   <tr>
                                       <th>&nbsp;</td>
@@ -213,12 +213,12 @@ Vue.component('vue-competitions', {
               props: ['competitions'],
               template: `
                       <div class="panel panel-default sarjalista">
-                          <div class="panel-heading">
+                          <div id="sarjat-panel-heading" class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" :href="collapseHref">Sarjat ja lohkot:</a>
                             </h4>
                           </div>
-                          <div id="sarjatCollapse" class="panel-collapse collapse in" style="max-height: 70vh; overflow-y: scroll;">
+                          <div id="sarjatCollapse" class="panel-collapse collapse in" style="overflow-y: scroll;">
                               <ul>
                                     <li v-for="competition in competitions">
                                         <input type="checkbox" v-model="competition.displayed">

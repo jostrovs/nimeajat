@@ -18,6 +18,48 @@ var initialSettings = function(){
     }
 };
 
+let resizeTimeout = 0;
+var resizeWindow = function(){
+    if(resizeTimeout != 0) clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function(){
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+
+        // Navbar placeholder
+        let navbar = parseInt($("#navbar").css("height"),10);
+        $(".navbar-placeholder").height(navbar + "px");
+
+        // Tuomarilista
+        let tuomaritButtonit = parseInt($("#tuomaritButtonit").css("height"),10);
+        let tuomaritPanelHeading = parseInt($("#tuomarit-panel-heading").css("height"),10);
+        let tuomaritPanelButtons = parseInt($("#tuomarit-panel-buttons").css("height"),10);
+        let tuomaritVainValitut = parseInt($("#tuomarit-vain-valitut").css("height"),10);
+        let tuomaritLuokat = parseInt($("#tuomarit-luokat").css("height"),10);
+
+        let tuomaritMinus = navbar + tuomaritButtonit + tuomaritPanelHeading + tuomaritPanelButtons + tuomaritVainValitut + tuomaritLuokat;
+        if(tuomaritMinus < navbar+1) tuomaritMinus = 217;
+        let tuomaritLista = height - tuomaritMinus - 60;
+        if(tuomaritLista < 200) tuomaritLista = 200;
+        $("#tuomarit-lista").css("max-height", tuomaritLista.toString() + "px");
+
+        // Sarjat
+        let sarjatButtonit = parseInt($("#sarjat-buttonit").css("height"),10);
+        let sarjatPanelHeading = parseInt($("#sarjat-panel-heading").css("height"),10);
+
+        let sarjatMinus = navbar + sarjatButtonit + sarjatPanelHeading;
+        if(sarjatMinus < navbar+1) sarjatMinus = 137;
+        let sarjat = height - sarjatMinus - 40;
+        if(sarjat < 200) sarjat = 200;
+        $("#sarjatCollapse").css("max-height", sarjat.toString() + "px");
+
+
+        ////
+        console.log(`(${width},${height})`);
+        console.log(`sarjat: ${sarjat}`);
+        resizeTimeout = 0;
+    },100);
+};
+
 var cookieMatch = function(needle, haystack){
     for(let hay of haystack){
         if(hay===needle) return true;
@@ -325,6 +367,9 @@ var match_without_date = function(m){
 $(document).ready(function () {
     initialSettings();
 
+    $(window).resize(resizeWindow);
+    resizeWindow();
+
     var app = new Vue({
         el: '#app',
         data: {
@@ -434,6 +479,8 @@ $(document).ready(function () {
             }
         },
         methods: {
+            resize: resizeWindow,
+            
             loadReferees: function(){
                 var self = this;
                 self.refereeMap = new Map();

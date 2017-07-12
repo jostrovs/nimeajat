@@ -37,31 +37,30 @@
     </div>
     
     <div id="app">
-        <ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#etusivu">Etusivu</a>  </li>
+        <ul id="navbar" class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#etusivu" @click="resize()">Etusivu</a>  </li>
 			<li>
-                <a data-toggle="tab" href="#tuplat">
+                <a data-toggle="tab" href="#tuplat" @click="resize()">
                     Tuplat
                     <span v-if="tuplabuukkaukset_lkm > 0" class="referee-label">{{tuplabuukkaukset_lkm}}</span>
                 </a>
             </li>
 			<li>
-                <a data-toggle="tab" href="#tyhjat">
+                <a data-toggle="tab" href="#tyhjat" @click="resize()">
                     Tyhjät
                     <span v-if="nimeamattomat_lkm > 0" class="referee-label">{{nimeamattomat_lkm}}</span>
                 </a>
             </li>
-			<li><a data-toggle="tab" href="#tehtavat">Määrät</a></li>
-			<li><a data-toggle="tab" href="#lähipelit">Lähipelit</a></li>
-			<li><a data-toggle="tab" href="#tuomarit">Tuomarit</a></li>
-			<li><a data-toggle="tab" href="#sarjat">Sarjat</a></li>
-			<li><a data-toggle="tab" href="#tuovie">Tuo/vie</a></li>
+			<li><a data-toggle="tab" href="#tehtavat" @click="resize()">Määrät</a></li>
+			<li><a data-toggle="tab" href="#lähipelit" @click="resize()">Lähipelit</a></li>
+			<li><a data-toggle="tab" href="#tuomarit" @click="resize()">Tuomarit</a></li>
+			<li><a data-toggle="tab" href="#sarjat" @click="resize()">Sarjat</a></li>
+			<li><a data-toggle="tab" href="#tuovie" @click="resize()">Tuo/vie</a></li>
 		</ul>
 
 		<div class="tab-content">
      		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
 			<div id="etusivu" class="tab-pane fade in active">
-                                
                 <h1>Nimeäjien työkalu</h1>
                 <p>Tämä sivu on laadittu lentopallon tuomarinimeäjien avuksi.</p>
                 <p>Tällä sivulla näkyvät vain aikuisten sarjojen pelit. Juniorien ja mastersien pelit ovat omilla sivuillaan:<br>
@@ -155,19 +154,23 @@
                 <vue-matches  v-model="nimeamattomat_lkm" v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :show_days_ahead="show_days_ahead"></vue-matches>
 			</div>
 			<div id="tuomarit" class="tab-pane fade">
-                <button class="myButton" @click="saveCookies">Tallenna asetukset</button>
-                <button class="myButton" @click="loadCookies">Lataa asetukset</button>
-                
-                <hr>
-                
+                <div id="tuomaritButtonit">
+                    <button class="myButton" @click="saveCookies">Tallenna asetukset</button>
+                    <button class="myButton" @click="loadCookies">Lataa asetukset</button>
+                    
+                    <hr>
+                </div>
+
                 <vue-referees v-if="loader_count < 1" :referees="referees"></vue-referees>
 			</div>
 			<div id="sarjat" class="tab-pane fade">
-                <button class="myButton" @click="saveCookies">Tallenna asetukset</button>
-                <button class="myButton" @click="loadCookies">Lataa asetukset</button>
-                
-                <hr>
-                
+                <div id="sarjat-buttonit">
+                    <button class="myButton" @click="saveCookies">Tallenna asetukset</button>
+                    <button class="myButton" @click="loadCookies">Lataa asetukset</button>
+                    
+                    <hr>
+                </div>
+
                 <vue-competitions @load_categories_from_child="loadCategoriesFromChild" 
                                   @load_groups_from_child="loadGroupsFromChild"
                                    v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
