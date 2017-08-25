@@ -490,6 +490,10 @@ $(document).ready(function () {
 
                 $.get(url, function(data){
                     self.referees = [];
+                    if(data.call.status == "error"){
+                        alert("Tuomarien tietojen haku epäonnistui.");
+                        return;
+                    }
                     for(let referee of data.referees){
                         
                         let newReferee = new Referee(referee);
