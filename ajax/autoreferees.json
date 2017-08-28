@@ -1,0 +1,41 @@
+{"referees":[
+    {
+        "first_name": "Esa",
+        "last_name": "Kukkonen",
+        "referee_id": "1713",
+        "gsm": "0414609706",
+        "posti": "04430",
+        "kunta": "J&Auml;RVENP&Auml;&Auml;",
+        "email": "esao.kukkonen@kolumbus.fi",
+        "lk": "I-luokka"
+    },
+    {
+        "first_name": "Juha",
+        "last_name": "Silvanto",
+        "referee_id": "1312",
+        "gsm": "0505547647",
+        "posti": "28430",
+        "kunta": "PORI",
+        "email": "silvannonjuha@gmail.com",
+        "lk": "I-luokka"
+    },
+    {
+        "first_name": "Tommi",
+        "last_name": "Tuomari",
+        "referee_id": "2330",
+        "gsm": "",
+        "posti": "",
+        "kunta": "",
+        "email": "tommi.virkkunen@torneopal.com",
+        "lk": "III-luokka"
+    },
+    {
+        "first_name": "Esa",
+        "last_name": "Virta",
+        "referee_id": "1201",
+        "gsm": "044-2715171",
+        "posti": "31600",
+        "kunta": "JOKIOINEN",
+        "email": "esa.virta@surffi.net",
+        "lk": "Liiga"
+    }]}

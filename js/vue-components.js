@@ -95,7 +95,7 @@ Vue.component('vue-referees', {
                                   <tr v-for="referee in sorted_referees" v-if="isDisplayed(referee)">
                                       <td><input type="checkbox" v-model="referee.displayed"></td>
                                       <td>{{referee.id}}</td>
-                                      <td><a :href="referee.href + '&alkupvm=2016-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
+                                      <td><a :href="referee.href + '&alkupvm=2017-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                       <td>{{referee.Luokka}}</td>
                                       <td>{{referee.PostiNo}}</td>
                                       <td>{{referee.Kunta}}</td>
