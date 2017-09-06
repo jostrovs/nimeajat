@@ -2,7 +2,7 @@ var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
     if(comp.length < 1){
-        comp = ["SARJAPOHJA", "vb2016epohj", "vb2016esavo", "vb2016esuomi", "vb2016isuomi", "vb2016ksuomi", "vb2016lappi", "vb2016lsuomi", "vb2016pkarjala", "vb2016ppohj", "vb2016psavo"];
+        comp = ["SARJAPOHJA", "vb2017epohj", "vb2017esavo", "vb2017esuomi", "vb2017isuomi", "vb2017ksuomi", "vb2017lappi", "vb2017lsuomi", "vb2017pkarjala", "vb2017ppohj", "vb2017psavo"];
         Lockr.set(PREFIX + "Competitions", comp);
     }
 
@@ -400,7 +400,7 @@ $(document).ready(function () {
             nimeamattomat_lkm: 0,
             tuplabuukkaukset_lkm: 0,
             alertShown: false,
-            datestring: "2016-12-31",
+            datestring: "2017-12-31",
             //date: new Date("2016-12-31"),
             matches: [],
             categories: [],
@@ -510,7 +510,7 @@ $(document).ready(function () {
 
                 var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
                 //url = "/ajax/referees.json";
-                url = "./../ajax/autoreferees.json";
+                url = "./ajax/autoreferees.json";
 
                 $.get(url, function(data){
                     self.referees = [];
@@ -527,7 +527,7 @@ $(document).ready(function () {
                         // newReferee.Luokka = tuomariDetails.Luokka;
                         switch(newReferee.Luokka){
                             case "Liiga": newReferee.LuokkaNo = 0; break;
-                            case "Pääsarja": newReferee.LuokkaNo = 1; break;
+                            case "PS": newReferee.LuokkaNo = 1; break;
                             case "I": newReferee.LuokkaNo = 2; break;
                             case "I-luokka": newReferee.LuokkaNo = 2; break;
                             case "II": newReferee.LuokkaNo = 3; break;
@@ -606,6 +606,7 @@ $(document).ready(function () {
                 //console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
+                        if(torneoCompetition.season_id != "2017-18") continue;
                         let competition = new Competition(torneoCompetition);
                         competition.categories = [];
 
@@ -634,6 +635,9 @@ $(document).ready(function () {
                         console.log("Ladataan: " + competition.id + ": " + torneoCategory.category_id);
 
                         let category = new Category(torneoCategory);
+
+                        if(torneoCategory.category_id == 'TESTI') continue;
+
                         if(self.isSkipCategory(torneoCompetition.competition_id, torneoCategory.category_id)){
                             category.displayed = false;
                             competition.categories.push(category);
@@ -836,7 +840,7 @@ $(document).ready(function () {
                 let gro = this.groupSkip = json.Groups = Lockr.getArr(PREFIX + "Groups");
                 let tea = this.teamSkip = json.Teams = Lockr.getArr(PREFIX + "Teams");
 
-                if(comp.length < 1) comp = ["vb2016a"];
+                if(comp.length < 1) comp = ["vb2017a"];
 
                 for(let competition of this.competitions){
                     // Käsitellään kilpailujen ruksit

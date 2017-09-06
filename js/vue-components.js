@@ -112,15 +112,15 @@ Vue.component('vue-referees', {
               data: function() {
                   return {
                       classes: [{Luokka: 'Liiga', displayed: true},
-                                {Luokka: 'Pääsarja', displayed: true},
+                                {Luokka: 'PS', displayed: true},
                                 {Luokka: 'I', displayed: true},
                                 {Luokka: 'II', displayed: true},
                                 {Luokka: 'III', displayed: true},
                                 {Luokka: 'O', displayed: true},
                                 {Luokka: 'NT', displayed: true},
-                                {Luokka: 'Ei', displayed: false},
+                                {Luokka: 'Ei', displayed: true},
                       ],
-                      displayedClasses: ["Liiga", "Pääsarja", "I", "II", "III", "O", "NT"],
+                      displayedClasses: ["Liiga", "PS", "I", "II", "III", "O", "NT"],
                       selectedOnly: true,
                       id: this._uid,
                       collapseId: this._uid,
@@ -485,6 +485,7 @@ Vue.component('vue-tehtavat', {
                               <tr>
                                   <th>Nimi</th>
                                   <th>Luokka</th>
+                                  <th><a :class="{ monthActive: syys_displayed, monthInactive: !syys_displayed}" @click="toggle('syyskuu')">Syyskuu</a></th>
                                   <th><a :class="{ monthActive: loka_displayed, monthInactive: !loka_displayed}" @click="toggle('lokakuu')">Lokakuu</a></th>
                                   <th><a :class="{ monthActive: marras_displayed, monthInactive: !marras_displayed}" @click="toggle('marraskuu')">Marraskuu</a></th>
                                   <th><a :class="{ monthActive: joulu_displayed, monthInactive: !joulu_displayed}" @click="toggle('joulukuu')">Joulukuu</a></th>
@@ -494,8 +495,11 @@ Vue.component('vue-tehtavat', {
                                   <th><a :class="{ monthActive: huhti_displayed, monthInactive: !huhti_displayed}" @click="toggle('huhtikuu')">Huhtikuu</a></th>
                               </tr>
                               <tr v-for="referee in referees">
-                                   <td><a :href="referee.href + '&alkupvm=2016-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
+                                   <td><a :href="referee.href + '&alkupvm=2017-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                    <td>{{referee.Luokka}}</td>
+                                   <td class="workload-month">
+                                       <vue-workload-month v-if="syys_displayed" :matches="getMatches(referee.id, 'syyskuu')"></vue-workload-month>
+                                   </td>
                                    <td class="workload-month">
                                        <vue-workload-month v-if="loka_displayed" :matches="getMatches(referee.id, 'lokakuu')"></vue-workload-month>
                                    </td>
@@ -525,6 +529,7 @@ Vue.component('vue-tehtavat', {
                   return {
                       //local_series: this.series,
                       local_series: [],
+                      syys_displayed: true,
                       loka_displayed: true,
                       marras_displayed: true,
                       joulu_displayed: true,
@@ -548,6 +553,7 @@ Vue.component('vue-tehtavat', {
                       Lockr.set(PREFIX + "notSelectedSerieIds", list);
 
                       // Talletetaan kuukaudet
+                      Lockr.set(PREFIX + "syys_displayed", this.syys_displayed);
                       Lockr.set(PREFIX + "loka_displayed", this.loka_displayed);
                       Lockr.set(PREFIX + "marras_displayed", this.marras_displayed);
                       Lockr.set(PREFIX + "joulu_displayed", this.joulu_displayed);
@@ -558,6 +564,9 @@ Vue.component('vue-tehtavat', {
                   },
                   toggle: function(month){
                       switch(month.toLowerCase()){
+                          case 'syyskuu':
+                              this.syys_displayed = !this.syys_displayed;
+                              break;
                           case 'lokakuu':
                               this.loka_displayed = !this.loka_displayed;
                               break;
@@ -582,6 +591,7 @@ Vue.component('vue-tehtavat', {
                       }
                   },
                   loadMonths: function(){
+                      this.syys_displayed = Lockr.get(PREFIX + "syys_displayed", true);
                       this.loka_displayed = Lockr.get(PREFIX + "loka_displayed", true);
                       this.marras_displayed = Lockr.get(PREFIX + "marras_displayed", true);
                       this.joulu_displayed = Lockr.get(PREFIX + "joulu_displayed", true);
@@ -601,20 +611,22 @@ Vue.component('vue-tehtavat', {
                       }
 
                       switch(month.toLowerCase()){
+                          case 'syyskuu':
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 8 && m.datetime.getFullYear() == 2017); break;
                           case 'lokakuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2016); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2017); break;
                           case 'marraskuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2016); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2017); break;
                           case 'joulukuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2016); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2017); break;
                           case 'tammikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2017); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2018); break;
                           case 'helmikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2017); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2018); break;
                           case 'maaliskuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2017); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2018); break;
                           case 'huhtikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2017); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2018); break;
                       }
                       return ret;
                   },
