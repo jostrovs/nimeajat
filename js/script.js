@@ -199,6 +199,10 @@ class Match{
         }   
     }
 
+    hasReferees(){
+        return this.referees.length > 0;
+    }
+
     fill_referees(){
         // Asetetaan ottelulle tieto tuomarien statuksesta
         let m = this.torneoMatch;
@@ -632,7 +636,7 @@ $(document).ready(function () {
                     if(data.call.status === "error") return;
                     //console.log(data);
                     for(let torneoCategory of data.categories){
-                        console.log("Ladataan: " + competition.id + ": " + torneoCategory.category_id);
+                        //console.log("Ladataan: " + competition.id + ": " + torneoCategory.category_id);
 
                         let category = new Category(torneoCategory);
 
@@ -677,7 +681,7 @@ $(document).ready(function () {
 
                     for(let torneoGroup of detailedTorneoCategory.groups){
                         let group = new Group(torneoGroup);
-                        console.log("L              " + competition.id + ": " + detailedTorneoCategory.category_id + " - " + group.id);
+                        //console.log("L              " + competition.id + ": " + detailedTorneoCategory.category_id + " - " + group.id);
                         
                         for(let torneoMatch of detailedTorneoCategory.matches){
                             if(torneoMatch.group_id !== group.id) continue;
@@ -708,12 +712,13 @@ $(document).ready(function () {
 
             loader: function(delta){
                 this.loader_count = this.loader_count + delta;
-                console.log("LOADER: " + this.loader_count);
+                //console.log("LOADER: " + this.loader_count);
                 $("#loader").text("Ladataan tietoja, sarjoja jäljellä " + this.loader_count + "...");
 
                 if(this.loader_count < 1){
                     if(!this.dontLoadCookies) this.loadCookies();
                     this.checkDoubleBooking();
+                    this.checkForeignReferees();
                     $("#loader").hide();
                 }
             },
@@ -848,11 +853,11 @@ $(document).ready(function () {
                         if(competition.id === compItem) competition.displayed = false;
                     }
 
-                    console.log(competition.id);
+                    //console.log(competition.id);
 
                     for(let category of competition.categories){
                         // Käsitellään sarjojen ruksit
-                        console.log("C    " + category.id);
+                        //console.log("C    " + category.id);
                         
                         for(let catItem of cat){
                             let arr = catItem.split(".");
@@ -865,7 +870,7 @@ $(document).ready(function () {
 
                         for(let group of category.groups){
                             // Käsitellään lohkojen ruksit
-                            console.log("C        " + group.id);
+                            //console.log("C        " + group.id);
                             for(let groItem of gro){
                                 let arr = groItem.split(".");
                                 if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2]) group.displayed = false;
@@ -873,7 +878,7 @@ $(document).ready(function () {
                             
                             for(let team of group.teams){
                                 // Käsitellään joukkueiden ruksit
-                                console.log("C            " + team.id + " - " + team.name);
+                                //console.log("C            " + team.id + " - " + team.name);
                                 for(let teaItem of tea){
                                 let arr = teaItem.split(".");
                                     if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2] && team.id === arr[3]) team.displayed = false;
@@ -907,6 +912,26 @@ $(document).ready(function () {
                 }
                 return null;
             },
+            
+            checkForeignReferees: function(){
+                // Käydään läpi kaikki ottelut ja näytetään tapaukset, joissa otteluun on nimetty ei-omaksi valittu tuomari
+                let referee_ids = "";
+                for(let referee of this.referees){
+                    if(referee.displayed) referee_ids += ", " + referee.id;
+                }
+
+                let list = this.matches_of_displayed_categories.filter((m)=>m.isValidDate() && m.hasReferees() && m.isDisplayed());
+                list = list.sort(function(a,b){return a.datetime -b.datetime;});
+                for(let match of list){
+                    for(let id of match.referee_ids){
+                        if(referee_ids.indexOf(id)<0){
+                            // Otteluun on valittu vieras tuomari
+                            console.log("VIERAS TUOMARI:" + match.referees.join(", ") + "    " + match.torneoMatch.team_A_name + "-" + match.torneoMatch.team_B_name);
+                        }
+                    }
+                }
+            },
+            
             checkDoubleBooking: function(){
                 // Käydään läpi kaikki ottelut ja merkitään tuplabuukkaukset eri listalle.
                 this.double_booking = [];
