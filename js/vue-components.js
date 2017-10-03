@@ -340,6 +340,7 @@ Vue.component('vue-all-matches', {
               template: `
                     <div>
                         <div v-for="match in matches_before" :class="{played: match.played}">
+                            <vue-week-separator v-if="match.weekSeparator" :week="match.week"></vue-week-separator>
                             <div class='match' v-if="match.isDisplayed()" style="margin: 0px; padding: 2px;">
                             <div class="box" style="width:170px;"> 
                                 <span class="ajankohta-label">
@@ -394,42 +395,53 @@ Vue.component('vue-all-matches', {
                   }
               },
 });
+Vue.component('vue-week-separator', {
+    props: ['week'],
+    template: `
+        <div>
+            <div style="display: inline-block; color: #aaf; font-size: 10px;">Vko: {{week}}</div>
+            <div style="display: inline-block; border: 0.5px solid #ddf; height: 1px; width: 80%; vertical-align: top; margin-top: 9px;"></div>
+        </div>
+    `,
+})
+
 Vue.component('vue-match', {
-              props: ['match', 'forceDisplay'],
-              template: `
-                  <div class='match' v-if="forceDisplay || match.isDisplayed()">
-                      <div class="box" style="min-width:30px;"><a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> </div>
-                      <div class="box" style="min-width:70px;"><a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> </div>
-                      <div class="box" style="min-width:60px;"><a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a></div>
-                      <div class="box" style="width:170px;"> 
-                          <span class="ajankohta-label">
-                              <div class="ib" style="width: 20px;">{{match.weekday}}</div>
-                              <div class="ib" style="width: 70px; text-align: right;">{{match.datetime.toLocaleDateString()}}</div>
-                              klo {{match.toTimeString()}}
-                          </span>
-                      </div>
-                      <div class="box" style="width:170px;"><span class="pelipaikka-label">{{match.getVenue()}}</span></div>
-                      <div class="box" style="width:180px;">
-                        {{match.torneoMatch.team_A_name}} -
-                        {{match.torneoMatch.team_B_name}}
-                      </div>
-                      <div class="box">
-                        <span v-if="match.referee_status!==''">
-                            Puuttuu: 
-                            <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
-                                {{referee}}
-                            </span>
-                        </span>
-                      </span>
-                  </div>
-              `,
-              data: function() {
-                  return {
-                      id: this._uid,
-                      collapseId: this._uid,
-                      collapseHref: "#" + this._uid.toString()
-                  }
-              }
+    props: ['match', 'forceDisplay'],
+    template: `
+            <div class='match' v-if="forceDisplay || match.isDisplayed()">
+                <vue-week-separator v-if="match.weekSeparator" :week="match.week"></vue-week-separator>
+                <div class="box" style="min-width:30px;"><a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> </div>
+                <div class="box" style="min-width:70px;"><a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> </div>
+                <div class="box" style="min-width:60px;"><a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a></div>
+                <div class="box" style="width:170px;"> 
+                    <span class="ajankohta-label">
+                        <div class="ib" style="width: 20px;">{{match.weekday}}</div>
+                        <div class="ib" style="width: 70px; text-align: right;">{{match.datetime.toLocaleDateString()}}</div>
+                        klo {{match.toTimeString()}}
+                    </span>
+                </div>
+                <div class="box" style="width:170px;"><span class="pelipaikka-label">{{match.getVenue()}}</span></div>
+                <div class="box" style="width:180px;">
+                {{match.torneoMatch.team_A_name}} -
+                {{match.torneoMatch.team_B_name}}
+                </div>
+                <div class="box">
+                <span v-if="match.referee_status!==''">
+                    Puuttuu: 
+                    <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
+                        {{referee}}
+                    </span>
+                </span>
+                </span>
+            </div>
+    `,
+    data: function() {
+        return {
+            id: this._uid,
+            collapseId: this._uid,
+            collapseHref: "#" + this._uid.toString()
+        }
+    }
 });
 Vue.component('vue-double-booking', {
               props: ['double_booking_item'],

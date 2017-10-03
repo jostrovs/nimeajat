@@ -1,3 +1,8 @@
+Date.prototype.getWeek = function() {
+    var onejan = new Date(this.getFullYear(), 0, 1);
+    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() -1) / 7);
+}
+
 var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
@@ -81,6 +86,17 @@ var cookieMatch = function(needle, haystack){
     }
     return false;
 };
+
+function setWeekSeparators(matches){
+    let prev = -1;
+    for(let i=0;i<matches.length;++i){
+        let m = matches[i];
+        if(prev != m.week && prev > -1){
+            m.weekSeparator = true;
+        } 
+        prev = m.week;
+    }
+}
 
 class Match{
     constructor(torneoMatch, competition, category, group){
@@ -197,6 +213,8 @@ class Match{
             case 5: this.weekday = "Pe"; break;
             case 6: this.weekday = "La"; break;
         }   
+
+        this.week = this.datetime.getWeek();
     }
 
     hasReferees(){
@@ -494,14 +512,24 @@ $(document).ready(function () {
 
             matches_with_incomplete_referees: function(){
                 let matches_without_referee =this.matches_of_displayed_categories
+                                             .filter((m)=>m.isDisplayed())
                                              .filter((m)=>m.referee_status.length > 0)
                                              .sort((m1, m2)=> m1.datetime-m2.datetime);
+                
+
+
+                setWeekSeparators(matches_without_referee);
                 return matches_without_referee;  
             },
 
             all_matches: function(){
-                let ret = this.matches_of_displayed_categories;
-
+                if(this.loader_count > 0) return [];
+                let ret = this.matches_of_displayed_categories
+                    .filter((m)=>m.isDisplayed())
+                    .sort((m1, m2)=> m1.datetime-m2.datetime);
+                                
+                setWeekSeparators(ret);
+                                
                 return ret;
             }
         },
