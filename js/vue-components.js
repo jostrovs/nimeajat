@@ -399,7 +399,7 @@ Vue.component('vue-week-separator', {
     props: ['week'],
     template: `
         <div>
-            <div style="display: inline-block; color: #aaf; font-size: 10px;">Vko: {{week}}</div>
+            <div style="display: inline-block; color: #aaf; font-size: 10px;">Viikko {{week}}</div>
             <div style="display: inline-block; border: 0.5px solid #ddf; height: 1px; width: 80%; vertical-align: top; margin-top: 9px;"></div>
         </div>
     `,

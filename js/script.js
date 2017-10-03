@@ -463,12 +463,16 @@ $(document).ready(function () {
             },
             
             matches_of_selected_referees: function(){
+                if(this.loader_count > 0) return [];
+                
                 let ret = this.matches.filter((m)=>m.isDisplayed(this.refereeMap));
                 ret = this.matches.sort(function(a,b){ return a.datetime-b.datetime;});
                 return ret;
             },
 
             matches_of_workload_referees: function(){
+                if(this.loader_count > 0) return [];
+                
                 let ret = this.matches.filter((m)=>m.isWorkloadDisplayed(this.refereeMap));
                 ret = ret.sort(function(a,b){ return a.datetime-b.datetime;});
                 //console.log("matches_of_workload_referees");
@@ -476,6 +480,8 @@ $(document).ready(function () {
             },
             
             series_of_workload_referee_matches: function(){
+                if(this.loader_count > 0) return [];
+                
                 // Poimitaan otteluista sarjat
                 var inc = [];
                 var ret = [];
@@ -493,6 +499,8 @@ $(document).ready(function () {
             },
 
             workload_referees: function(){
+                if(this.loader_count > 0) return [];
+                
                 let ret = this.referees.filter((m)=>m.displayed && m.showWorkLoad);
                 ret = ret.sort(function(a,b){
                     var ret = a.LuokkaNo - b.LuokkaNo;
@@ -507,10 +515,14 @@ $(document).ready(function () {
             },
             
             matches_of_displayed_categories: function(){
+                if(this.loader_count > 0) return [];
+                
                 return this.matches.filter((m)=>m.competition.displayed && m.category.displayed && m.group.displayed);
             },
 
             matches_with_incomplete_referees: function(){
+                if(this.loader_count > 0) return [];
+
                 let matches_without_referee =this.matches_of_displayed_categories
                                              .filter((m)=>m.isDisplayed())
                                              .filter((m)=>m.referee_status.length > 0)
@@ -524,6 +536,7 @@ $(document).ready(function () {
 
             all_matches: function(){
                 if(this.loader_count > 0) return [];
+
                 let ret = this.matches_of_displayed_categories
                     .filter((m)=>m.isDisplayed())
                     .sort((m1, m2)=> m1.datetime-m2.datetime);
