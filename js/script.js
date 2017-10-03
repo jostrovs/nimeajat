@@ -822,8 +822,6 @@ $(document).ready(function () {
             },
 
             loadSkips: function(){
-                const PREFIX = "TUOMARILISTA_";
-
                 let json = {};
 
                 this.competitionSkip = Lockr.getArr(PREFIX + "Competitions");
@@ -834,8 +832,6 @@ $(document).ready(function () {
 
             loadCookies: function(){
                 console.log("Load cookies");
-                const PREFIX = "TUOMARILISTA_";
-
                 let json = {};
 
                 this.show_days_ahead = json.ShowDaysAhead = Lockr.get(PREFIX + "ShowDaysAhead", "60");
