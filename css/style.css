@@ -80,6 +80,10 @@ th, td {
     width: 55px;
 }
 
+.ib {
+    display: inline-block;
+}
+
 @media screen and (max-width: 800px){
     #app {
         margin-left: 5px;
