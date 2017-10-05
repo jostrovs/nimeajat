@@ -91,6 +91,7 @@ function setWeekSeparators(matches){
     let prev = -1;
     for(let i=0;i<matches.length;++i){
         let m = matches[i];
+        if(!m.displayed) continue;
         if(prev != m.week && prev > -1){
             m.weekSeparator = true;
         } 
