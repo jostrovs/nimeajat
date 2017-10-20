@@ -298,7 +298,6 @@ Vue.component('vue-matches', {
               template: `
                     <div>
                         <h3>Nimeämättömiä otteluita yhteensä {{displayed_matches_count}}</h3>
-                        <!--p>Näytetään ottelut, joista puuttuu tuomareita ennen päivämäärää: {{date.toLocaleDateString()}}</p-->                                
                         <vue-match v-for="match in matches_before" :match="match"></vue-match>
                     </div>
               `,
@@ -308,15 +307,10 @@ Vue.component('vue-matches', {
 
               },
               data: function() {
-                  // Aloituspäivämäärä
-                  let date = new Date();
-                  //date.setDate(date.getDate() + 60);
-                  date.setDate(date.getDate() + this.show_days_ahead);
                   
                   return {
                       displayed_matches_count: 0,
                       matches: this.initial_matches,
-                      date: date,
                       id: this._uid,
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString()
@@ -327,12 +321,12 @@ Vue.component('vue-all-matches', {
               props: ['initial_matches', 'show_days_ahead'],
               computed: {
                   matches_before: function(){
-                      let dt = new Date();
-                      let yesterday = new Date();
-                      dt.setDate(dt.getDate() +  + this.show_days_ahead);
-                      yesterday.setDate(yesterday.getDate()-7);
-                      let ret = this.initial_matches.filter((m)=>m.datetime <= dt);
-                      ret = ret.filter((m)=>m.datetime >= yesterday);
+                      let dt = moment();
+                      let yesterday = moment();
+                      dt.add(this.show_days_ahead, 'days');
+                      yesterday.add(-7, 'days');
+                      let ret = this.initial_matches.filter((m)=>{return moment(m.datetime) <= dt});
+                      ret = ret.filter((m)=>moment(m.datetime) >= yesterday);
                       
                       return ret.sort((m1, m2)=>m1.datetime-m2.datetime);
                   }
@@ -380,15 +374,10 @@ Vue.component('vue-all-matches', {
 
               },
               data: function() {
-                  // Aloituspäivämäärä
-                  let date = new Date();
-                  //date.setDate(date.getDate() + 60);
-                  date.setDate(date.getDate() + this.show_days_ahead);
                   
                   return {
                       displayed_matches_count: 0,
                       matches: this.initial_matches,
-                      date: date,
                       id: this._uid,
                       collapseId: this._uid,
                       collapseHref: "#" + this._uid.toString()
