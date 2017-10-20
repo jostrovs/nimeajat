@@ -457,9 +457,9 @@ $(document).ready(function () {
         },
         computed: {
             last_shown_day: function(){
-                var now = new Date();
-                now.setDate(now.getDate() + this.show_days_ahead);
-                let ret = now.toLocaleDateString();
+                var now = moment();
+                now.add(this.show_days_ahead, 'days');
+                let ret = now.format("DD.MM.YYYY");
                 return ret;                
             },
             

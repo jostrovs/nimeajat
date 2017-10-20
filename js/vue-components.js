@@ -282,12 +282,12 @@ Vue.component('vue-matches', {
               props: ['initial_matches', 'show_days_ahead', 'nimeamattomat_lkm'],
               computed: {
                   matches_before: function(){
-                      let dt = new Date();
-                      let yesterday = new Date();
-                      dt.setDate(dt.getDate() + this.show_days_ahead);
-                      yesterday.setDate(yesterday.getDate()-1);
-                      let ret = this.initial_matches.filter((m)=>m.datetime <= dt);
-                      ret = ret.filter((m)=>m.datetime >= yesterday);
+                      let dt = moment();
+                      let yesterday = moment();
+                      dt.add(this.show_days_ahead, 'days');
+                      yesterday.add(-1, 'days');
+                      let ret = this.initial_matches.filter((m)=>moment(m.datetime) <= dt);
+                      ret = ret.filter((m)=>moment(m.datetime) >= yesterday);
                       
                       this.displayed_matches_count = ret.filter((m)=> m.isDisplayed()).length;
                       this.$emit('input', this.displayed_matches_count);
