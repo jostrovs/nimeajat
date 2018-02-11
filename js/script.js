@@ -725,6 +725,12 @@ $(document).ready(function () {
                         let group = new Group(torneoGroup);
                         //console.log("L              " + competition.id + ": " + detailedTorneoCategory.category_id + " - " + group.id);
                         
+                        if(!detailedTorneoCategory.matches){
+                            //debugger;
+                            console.log("    Ei otteluita: " + competition.id + ": " + detailedTorneoCategory.category_id);
+                            continue;
+                        }
+
                         for(let torneoMatch of detailedTorneoCategory.matches){
                             if(torneoMatch.group_id !== group.id) continue;
                             //console.log(self.matches.length);
