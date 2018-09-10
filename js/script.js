@@ -725,6 +725,7 @@ $(document).ready(function () {
                         let group = new Group(torneoGroup);
                         //console.log("L              " + competition.id + ": " + detailedTorneoCategory.category_id + " - " + group.id);
                         
+<<<<<<< HEAD
                         if(detailedTorneoCategory.matches){
                             for(let torneoMatch of detailedTorneoCategory.matches){
                                 if(torneoMatch.group_id !== group.id) continue;
@@ -734,6 +735,21 @@ $(document).ready(function () {
                                     self.matches.push(match);
                                     group.matches.push(match);
                                 }
+=======
+                        if(!detailedTorneoCategory.matches){
+                            //debugger;
+                            console.log("    Ei otteluita: " + competition.id + ": " + detailedTorneoCategory.category_id);
+                            continue;
+                        }
+
+                        for(let torneoMatch of detailedTorneoCategory.matches){
+                            if(torneoMatch.group_id !== group.id) continue;
+                            //console.log(self.matches.length);
+                            let match = new Match(torneoMatch, competition, retCategory, group);
+                            if(match.datetime < new Date(2030,1,1,0,0,0,0)){
+                                self.matches.push(match);
+                                group.matches.push(match);
+>>>>>>> 15f0dc860b88809c050deecd88ebb2c8103aba09
                             }
                         }
                         group.fillTeams();
