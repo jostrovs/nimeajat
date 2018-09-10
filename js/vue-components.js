@@ -95,7 +95,7 @@ Vue.component('vue-referees', {
                                   <tr v-for="referee in sorted_referees" v-if="isDisplayed(referee)">
                                       <td><input type="checkbox" v-model="referee.displayed"></td>
                                       <td>{{referee.id}}</td>
-                                      <td><a :href="referee.href + '&alkupvm=2017-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
+                                      <td><a :href="referee.href + '&alkupvm=2018-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                       <td>{{referee.Luokka}}</td>
                                       <td>{{referee.PostiNo}}</td>
                                       <td>{{referee.Kunta}}</td>
@@ -352,14 +352,12 @@ Vue.component('vue-all-matches', {
                                     {{match.torneoMatch.team_B_name}}
                                 </div>
                                 <div class="box">
+                                    <span v-for="referee in match.referees" class='referee-list-label'>
+                                        {{referee}}
+                                    </span>
                                     <span v-if="match.referee_status!==''">
                                         Puuttuu: 
                                         <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
-                                            {{referee}}
-                                        </span>
-                                    </span>
-                                    <span v-if="match.referee_status==''">
-                                        <span v-for="referee in match.referees" class='referee-list-label'>
                                             {{referee}}
                                         </span>
                                     </span>
@@ -416,7 +414,12 @@ Vue.component('vue-match', {
                 </div>
                 <div class="box">
                 <span v-if="match.referee_status!==''">
-                    Puuttuu: 
+                    <a :href="torneoeditlink" target=_><img src="tp.png"></a>&nbsp;
+        
+                    <span v-for="referee in match.referees" class='referee-list-label'>
+                        {{referee}}
+                    </span>
+
                     <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
                         {{referee}}
                     </span>
@@ -426,6 +429,7 @@ Vue.component('vue-match', {
     `,
     data: function() {
         return {
+            torneoeditlink: "https://lentopallo-extranet.torneopal.fi/taso/ottelu.php?otteluid=" + this.match.id,
             id: this._uid,
             collapseId: this._uid,
             collapseHref: "#" + this._uid.toString()
@@ -500,7 +504,7 @@ Vue.component('vue-tehtavat', {
                                   <th><a :class="{ monthActive: huhti_displayed, monthInactive: !huhti_displayed}" @click="toggle('huhtikuu')">Huhtikuu</a></th>
                               </tr>
                               <tr v-for="referee in referees">
-                                   <td><a :href="referee.href + '&alkupvm=2017-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
+                                   <td><a :href="referee.href + '&alkupvm=2018-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                    <td>{{referee.Luokka}}</td>
                                    <td class="workload-month">
                                        <vue-workload-month v-if="syys_displayed" :matches="getMatches(referee.id, 'syyskuu')"></vue-workload-month>
@@ -617,21 +621,21 @@ Vue.component('vue-tehtavat', {
 
                       switch(month.toLowerCase()){
                           case 'syyskuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 8 && m.datetime.getFullYear() == 2017); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 8 && m.datetime.getFullYear() == 2018); break;
                           case 'lokakuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2017); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2018); break;
                           case 'marraskuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2017); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2018); break;
                           case 'joulukuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2017); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2018); break;
                           case 'tammikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2018); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2019); break;
                           case 'helmikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2018); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2019); break;
                           case 'maaliskuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2018); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2019); break;
                           case 'huhtikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2018); break;
+                              ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2019); break;
                       }
                       return ret;
                   },

@@ -364,7 +364,7 @@ function loadReferees(){
     var self = this;
 
     [start_date, end_date] = dateRange(moment());
-    let startDate = "2017-09-01";
+    let startDate = "2018-08-01";
 
     for(let referee of myReferees){
         var url = `https://lentopallo.torneopal.fi/taso/rest/getMatches?referee_id=${referee.id}&start_date=${startDate}&api_key=qfzy3wsw9cqu25kq5zre`; 

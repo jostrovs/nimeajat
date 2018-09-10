@@ -56,7 +56,7 @@ Vue.component('vue-cell', {
     template: `
         <div class="div-cell cell" :style="style">
             <span v-if="c.tuomari">{{name}}</span>
-            <span v-else-if="c.match" :title="title">{{c.match.category_id}}</span>
+            <span v-else-if="c.match" :title="title">{{match_id}}</span>
             <span v-else>{{c.text}}</span>
         </div>
     `,
@@ -74,6 +74,12 @@ Vue.component('vue-cell', {
         }
     },
     computed: {
+        match_id(){
+            let ret = "";
+            if(this.c && this.c.match && this.c.match) ret = this.c.match.category_id;
+            if(ret.length > 4) ret = ret.substring(0,4);
+            return ret;
+        },
         style: function(){
             let ret = {
                 background: "white",

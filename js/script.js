@@ -7,7 +7,7 @@ var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
     if(comp.length < 1){
-        comp = ["SARJAPOHJA", "vb2017epohj", "vb2017esavo", "vb2017esuomi", "vb2017isuomi", "vb2017ksuomi", "vb2017lappi", "vb2017lsuomi", "vb2017pkarjala", "vb2017ppohj", "vb2017psavo"];
+        comp = ["SARJAPOHJA", "vb2018epohj", "vb2018esavo", "vb2018esuomi", "vb2018isuomi", "vb2018ksuomi", "vb2018lappi", "vb2018lsuomi", "vb2018pkarjala", "vb2018ppohj", "vb2018psavo"];
         Lockr.set(PREFIX + "Competitions", comp);
     }
 
@@ -423,7 +423,7 @@ $(document).ready(function () {
             nimeamattomat_lkm: 0,
             tuplabuukkaukset_lkm: 0,
             alertShown: false,
-            datestring: "2017-12-31",
+            datestring: "2018-12-31",
             //date: new Date("2016-12-31"),
             matches: [],
             categories: [],
@@ -652,7 +652,7 @@ $(document).ready(function () {
                 //console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
-                        if(torneoCompetition.season_id != "2017-18") continue;
+                        if(torneoCompetition.season_id != "2018-19") continue;
                         let competition = new Competition(torneoCompetition);
                         competition.categories = [];
 
@@ -725,13 +725,15 @@ $(document).ready(function () {
                         let group = new Group(torneoGroup);
                         //console.log("L              " + competition.id + ": " + detailedTorneoCategory.category_id + " - " + group.id);
                         
-                        for(let torneoMatch of detailedTorneoCategory.matches){
-                            if(torneoMatch.group_id !== group.id) continue;
-                            //console.log(self.matches.length);
-                            let match = new Match(torneoMatch, competition, retCategory, group);
-                            if(match.datetime < new Date(2030,1,1,0,0,0,0)){
-                                self.matches.push(match);
-                                group.matches.push(match);
+                        if(detailedTorneoCategory.matches){
+                            for(let torneoMatch of detailedTorneoCategory.matches){
+                                if(torneoMatch.group_id !== group.id) continue;
+                                //console.log(self.matches.length);
+                                let match = new Match(torneoMatch, competition, retCategory, group);
+                                if(match.datetime < new Date(2030,1,1,0,0,0,0)){
+                                    self.matches.push(match);
+                                    group.matches.push(match);
+                                }
                             }
                         }
                         group.fillTeams();
@@ -883,7 +885,7 @@ $(document).ready(function () {
                 let gro = this.groupSkip = json.Groups = Lockr.getArr(PREFIX + "Groups");
                 let tea = this.teamSkip = json.Teams = Lockr.getArr(PREFIX + "Teams");
 
-                if(comp.length < 1) comp = ["vb2017a"];
+                if(comp.length < 1) comp = ["vb2018a"];
 
                 for(let competition of this.competitions){
                     // Käsitellään kilpailujen ruksit
