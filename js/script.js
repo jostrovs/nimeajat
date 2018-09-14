@@ -136,6 +136,15 @@ class Match{
         }
 
         this.toCSV = function(){
+            let refe = "";
+            for(let r of this.referees){
+                if(refe.length > 0) refe += "; ";
+                refe += r;
+            }
+
+            let puuttuu = "";
+            if(this.referee_status != '') puuttuu = "Puuttuu: " + this.referee_status;
+
             return this.weekday + "," + 
                    this.datetime.toLocaleDateString() + ",klo," +
                    this.toTimeString() + "," + 
@@ -143,7 +152,10 @@ class Match{
                    this.group.id + "," + 
                    this.torneoMatch.match_number + "," + 
                    this.getVenue() + "," + 
-                   this.torneoMatch.team_A_name + "-" + this.torneoMatch.team_B_name;
+                   this.torneoMatch.team_A_name + "-" + this.torneoMatch.team_B_name + "," + 
+                   refe + "," + 
+                   puuttuu;
+
         }
     }
 
