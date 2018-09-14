@@ -14,13 +14,15 @@
 
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/toastr.min.css">
 
     <script src="js/jos-global.js"></script>
-    <script src="js/jquery-3.1.1.js"></script>
+    <script src="js/lib/jquery-3.1.1.js"></script>
+    <script src="js/lib/toastr.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="js/vue.js"></script>
-    <script src="js/moment.js"></script>
-    <script src="js/lockr.js"></script>
+    <script src="js/lib/vue.js"></script>
+    <script src="js/lib/moment.js"></script>
+    <script src="js/lib/lockr.js"></script>
     <script src="js/tuomari-set.js"></script>
     <script src="js/vue-components.js"></script>
     <script src="js/skip.js"></script>
@@ -215,10 +217,13 @@
     		<div id="lähipelit" class="tab-pane fade">
                 
 			    <h2>Valittujen sarjojen pelit lähiaikoina</h2>
-                <p>Näytetään ottelut viikon verran taaksepäin ja eteenpäin samaan päivään asti kuin nimeämättömien pelien listalla.</p>
+                <p>Näytetään ottelut viikon verran taaksepäin ja eteenpäin samaan päivään asti kuin nimeämättömien pelien listalla.
+                    <button class="myButton" style="float: right" @click="allGamesToClipboard()">Kopioi CSV leikepöydälle</button>
+                </p>
 
                 <vue-all-matches :initial_matches="all_matches" :show_days_ahead="show_days_ahead"></vue-all-matches>
 
+                <textarea id="csvGames" v-if="showCSV" rows=4 readonly></textarea>
             </div>
         </div>        
 

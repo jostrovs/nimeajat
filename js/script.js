@@ -134,6 +134,17 @@ class Match{
             if(!team) return false;
             return team.displayed;
         }
+
+        this.toCSV = function(){
+            return this.weekday + "," + 
+                   this.datetime.toLocaleDateString() + ",klo," +
+                   this.toTimeString() + "," + 
+                   this.torneoMatch.category_id + "," + 
+                   this.group.id + "," + 
+                   this.torneoMatch.match_number + "," + 
+                   this.getVenue() + "," + 
+                   this.torneoMatch.team_A_name + "-" + this.torneoMatch.team_B_name;
+        }
     }
 
     toTimeString(){
@@ -443,6 +454,8 @@ $(document).ready(function () {
             categorySkip: [],
             groupSkip: [],
             teamSkip: [],
+
+            showCSV: false,
         },
         
         created: function () {
@@ -545,7 +558,7 @@ $(document).ready(function () {
                 setWeekSeparators(ret);
                                 
                 return ret;
-            }
+            },
         },
         methods: {
             resize: resizeWindow,
@@ -725,17 +738,6 @@ $(document).ready(function () {
                         let group = new Group(torneoGroup);
                         //console.log("L              " + competition.id + ": " + detailedTorneoCategory.category_id + " - " + group.id);
                         
-<<<<<<< HEAD
-                        if(detailedTorneoCategory.matches){
-                            for(let torneoMatch of detailedTorneoCategory.matches){
-                                if(torneoMatch.group_id !== group.id) continue;
-                                //console.log(self.matches.length);
-                                let match = new Match(torneoMatch, competition, retCategory, group);
-                                if(match.datetime < new Date(2030,1,1,0,0,0,0)){
-                                    self.matches.push(match);
-                                    group.matches.push(match);
-                                }
-=======
                         if(!detailedTorneoCategory.matches){
                             //debugger;
                             console.log("    Ei otteluita: " + competition.id + ": " + detailedTorneoCategory.category_id);
@@ -749,7 +751,6 @@ $(document).ready(function () {
                             if(match.datetime < new Date(2030,1,1,0,0,0,0)){
                                 self.matches.push(match);
                                 group.matches.push(match);
->>>>>>> 15f0dc860b88809c050deecd88ebb2c8103aba09
                             }
                         }
                         group.fillTeams();
@@ -1031,6 +1032,23 @@ $(document).ready(function () {
                     }                    
                 }
             },
+
+            allGamesToClipboard: function(){
+                let self=this;
+                this.showCSV = true;
+                let text = "";
+                for(let match of this.all_matches){
+                    text += match.toCSV() + "\n";
+                }
+
+                setTimeout(function(){
+                    $("#csvGames").text(text);
+                    $("#csvGames").select();
+                    document.execCommand("copy");
+                    self.showCSV = false;
+                    toastr.info("Tiedot on kopioitu leikepöydälle.");
+                }, 10);
+            }
         }
     });
 });

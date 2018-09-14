@@ -318,69 +318,69 @@ Vue.component('vue-matches', {
               },
 });
 Vue.component('vue-all-matches', {
-              props: ['initial_matches', 'show_days_ahead'],
-              computed: {
-                  matches_before: function(){
-                      let dt = moment();
-                      let yesterday = moment();
-                      dt.add(this.show_days_ahead, 'days');
-                      yesterday.add(-7, 'days');
-                      let ret = this.initial_matches.filter((m)=>{return moment(m.datetime) <= dt});
-                      ret = ret.filter((m)=>moment(m.datetime) >= yesterday);
-                      
-                      return ret.sort((m1, m2)=>m1.datetime-m2.datetime);
-                  }
-              },
-              template: `
-                    <div>
-                        <div v-for="match in matches_before" :class="{played: match.played}">
-                            <vue-week-separator v-if="match.weekSeparator" :week="match.week"></vue-week-separator>
-                            <div class='match' v-if="match.isDisplayed()" style="margin: 0px; padding: 2px;">
-                            <div class="box" style="width:170px;"> 
-                                <span class="ajankohta-label">
-                                    <div class="ib" style="width: 20px;">{{match.weekday}}</div>
-                                    <div class="ib" style="width: 70px; text-align: right;">{{match.datetime.toLocaleDateString()}}</div>
-                                    klo {{match.toTimeString()}}
-                                </span>
-                            </div>
-                            <div class="box" style="min-width:60px;"><a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> </div>
-                                <div class="box" style="min-width:70px;"><a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> </div>
-                                <div class="box" style="min-width:60px;"><a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a></div>
-                                <div class="box" style="width:170px;"><span class="pelipaikka-label">{{match.getVenue()}}</span></div>
-                                <div class="box" style="width:180px;">
-                                    {{match.torneoMatch.team_A_name}} -
-                                    {{match.torneoMatch.team_B_name}}
-                                </div>
-                                <div class="box">
-                                    <span v-for="referee in match.referees" class='referee-list-label'>
-                                        {{referee}}
-                                    </span>
-                                    <span v-if="match.referee_status!==''">
-                                        Puuttuu: 
-                                        <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
-                                            {{referee}}
-                                        </span>
-                                    </span>
-                                </span>
-                            </div>                        
-                        </div>
+    props: ['initial_matches', 'show_days_ahead'],
+    computed: {
+        matches_before: function(){
+            let dt = moment();
+            let yesterday = moment();
+            dt.add(this.show_days_ahead, 'days');
+            yesterday.add(-7, 'days');
+            let ret = this.initial_matches.filter((m)=>{return moment(m.datetime) <= dt});
+            ret = ret.filter((m)=>moment(m.datetime) >= yesterday);
+            
+            return ret.sort((m1, m2)=>m1.datetime-m2.datetime);
+        }
+    },
+    template: `
+        <div>
+            <div v-for="match in matches_before" :class="{played: match.played}">
+                <vue-week-separator v-if="match.weekSeparator" :week="match.week"></vue-week-separator>
+                <div class='match' v-if="match.isDisplayed()" style="margin: 0px; padding: 2px;">
+                <div class="box" style="width:170px;"> 
+                    <span class="ajankohta-label">
+                        <div class="ib" style="width: 20px;">{{match.weekday}}</div>
+                        <div class="ib" style="width: 70px; text-align: right;">{{match.datetime.toLocaleDateString()}}</div>
+                        klo {{match.toTimeString()}}
+                    </span>
+                </div>
+                <div class="box" style="min-width:60px;"><a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> </div>
+                    <div class="box" style="min-width:70px;"><a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> </div>
+                    <div class="box" style="min-width:60px;"><a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a></div>
+                    <div class="box" style="width:170px;"><span class="pelipaikka-label">{{match.getVenue()}}</span></div>
+                    <div class="box" style="width:180px;">
+                        {{match.torneoMatch.team_A_name}} -
+                        {{match.torneoMatch.team_B_name}}
                     </div>
-              `,
-              methods: {
-                  get_initial_date: function(){
-                  }
+                    <div class="box">
+                        <span v-for="referee in match.referees" class='referee-list-label'>
+                            {{referee}}
+                        </span>
+                        <span v-if="match.referee_status!==''">
+                            Puuttuu: 
+                            <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
+                                {{referee}}
+                            </span>
+                        </span>
+                    </span>
+                </div>                        
+            </div>
+        </div>
+    `,
+    methods: {
+        get_initial_date: function(){
+        }
 
-              },
-              data: function() {
-                  
-                  return {
-                      displayed_matches_count: 0,
-                      matches: this.initial_matches,
-                      id: this._uid,
-                      collapseId: this._uid,
-                      collapseHref: "#" + this._uid.toString()
-                  }
-              },
+    },
+    data: function() {
+        
+        return {
+            displayed_matches_count: 0,
+            matches: this.initial_matches,
+            id: this._uid,
+            collapseId: this._uid,
+            collapseHref: "#" + this._uid.toString()
+        }
+    },
 });
 Vue.component('vue-week-separator', {
     props: ['week'],
