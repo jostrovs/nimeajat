@@ -216,12 +216,12 @@
 			</div>
     		<div id="lähipelit" class="tab-pane fade">
                 
-			    <h2>Valittujen sarjojen pelit lähiaikoina <button class="myButton" style="float: right" @click="allGamesToClipboard()">Kopioi CSV leikepöydälle</button></h2>
-                <p>Näytetään ottelut viikon verran taaksepäin ja eteenpäin samaan päivään asti kuin nimeämättömien pelien listalla.</p>
+			    <h2>Valittujen sarjojen pelit lähiaikoina</h2>
+                <p>Näytetään ottelut viikon verran taaksepäin ja eteenpäin samaan päivään asti kuin nimeämättömien pelien listalla.
+                    <a :href="toCSV()" style="float: right" download="my_data.csv">Lataa CSV</a>
+                </p>
 
                 <vue-all-matches :initial_matches="all_matches" :show_days_ahead="show_days_ahead"></vue-all-matches>
-
-                <textarea id="csvGames" v-if="showCSV" rows=4 readonly></textarea>
             </div>
         </div>        
 

@@ -468,6 +468,7 @@ $(document).ready(function () {
             teamSkip: [],
 
             showCSV: false,
+            encuri: encodeURI("data:text/csv;charset=utf-8,asd,dfg,wer,sdfg\r\nsdf,dfg,xcv,wer\r\n"),
         },
         
         created: function () {
@@ -571,6 +572,7 @@ $(document).ready(function () {
                                 
                 return ret;
             },
+
         },
         methods: {
             resize: resizeWindow,
@@ -1045,22 +1047,14 @@ $(document).ready(function () {
                 }
             },
 
-            allGamesToClipboard: function(){
-                let self=this;
-                this.showCSV = true;
-                let text = "";
+            toCSV: function(){
+                let text = "data:text/csv;charset=utf-8,";
                 for(let match of this.all_matches){
-                    text += match.toCSV() + "\n";
+                    text += match.toCSV() + "\r\n";
                 }
+                return encodeURI(text);
+            },
 
-                setTimeout(function(){
-                    $("#csvGames").text(text);
-                    $("#csvGames").select();
-                    document.execCommand("copy");
-                    self.showCSV = false;
-                    toastr.info("Tiedot on kopioitu leikepöydälle.");
-                }, 10);
-            }
         }
     });
 });
