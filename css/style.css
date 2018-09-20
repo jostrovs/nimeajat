@@ -223,7 +223,7 @@ th, td {
     color: white;
 }
 
-#overlay { 
+.overlay { 
     z-index: 800; 
     position: fixed;
     top: 0px; 

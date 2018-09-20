@@ -476,6 +476,37 @@ Vue.component('vue-tuplat', {
                   }
               }
 });
+
+Vue.component('vue-esteet', {
+    props: ["name", "src"],
+    template: `
+        <div @click="hidePopup()">
+            <div style="z-index: 100; background: grey; opacity: 0.5; position: fixed; top: 0; left: 0px; width: 100%; height: 100%;">
+            </div>
+            <div class="panel panel-default" style="z-index: 200; position: fixed; top: 100px; left: 100px; width: 80%; height: 80%;">
+                <div class="panel-heading">
+                    <a :href="src" target=_>Tuomarin {{name}} esteet</a>
+                    <button class="btn btn-default" style="padding: 2px 8px 2px 8px; color: red; float: right; margin-right: -5px;" @click="hidePopup()">X</button>
+                </div>
+                <div class="panel-body" style="width: 100%; height: 700px;">    
+                    <iframe id="esteIframe" sandbox style="z-index: 300; width: 100%; height: 660px;" frameborder=0></iframe>
+                </div>
+            </div>
+        </div>
+    `,
+    data: function() {
+        return {
+            
+        }
+    },
+    methods: {
+        hidePopup: function(event){
+            $("#esteet").hide();
+        }
+    }
+});
+
+
 Vue.component('vue-tehtavat', {
               props: ["initial_matches", "referees", "series"],
               template: `
@@ -504,7 +535,7 @@ Vue.component('vue-tehtavat', {
                                   <th><a :class="{ monthActive: huhti_displayed, monthInactive: !huhti_displayed}" @click="toggle('huhtikuu')">Huhtikuu</a></th>
                               </tr>
                               <tr v-for="referee in referees">
-                                   <td><a :href="referee.href + '&alkupvm=2018-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
+                                   <td><img @click="showEste(referee)" src="block.png" height=16 title="Näytä tuomarin esteet" style="cursor: pointer"> <a :href="referee.href + '&alkupvm=2018-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                    <td>{{referee.Luokka}}</td>
                                    <td class="workload-month">
                                        <vue-workload-month v-if="syys_displayed" :matches="getMatches(referee.id, 'syyskuu')"></vue-workload-month>
@@ -532,6 +563,7 @@ Vue.component('vue-tehtavat', {
                                    </td>
                               </tr>
                           </table>
+                          <vue-esteet id="esteet" style="display: none" :name="referee_name" :src="src"></vue-esteet>
                       </div>
               `,
               data: function() {
@@ -549,11 +581,25 @@ Vue.component('vue-tehtavat', {
                       matches: [],
                       id: this._uid,
                       collapseId: this._uid,
-                      collapseHref: "#" + this._uid.toString()
+                      collapseHref: "#" + this._uid.toString(),
+
+                      referee_name: "",
+                      show: true,
+                      src: "",
                   }
               },
               methods: {
-                  save: function(){
+                   showEste(referee){
+                    $("#esteet").show();
+                    this.referee_name = referee.name;
+                    
+                    let src= "https://lentopallo-extranet.torneopal.fi/taso/tuomari.php?tuomari=" + referee.id + "&turnaus=vb2018a&sivu=esteet";
+                    this.src=src;
+
+                    document.getElementById('esteIframe').src = src;
+                   },
+                
+                   save: function(){
                       //Talletetaan valinnat
                       let list = [];
                       for(let sarja of this.local_series){
