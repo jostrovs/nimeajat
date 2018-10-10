@@ -727,6 +727,10 @@ $(document).ready(function () {
                 // Tämä pois??
                 // Lohkot & ottelut
                 let self = this;
+                if(!category || !category.torneoCategory || !category.torneoCategory.category_id){
+                    console.log("Tyhjä category");
+                    return;
+                }
                 let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + category.torneoCategory.category_id + "&competition_id=" + category.torneoCategory.competition_id + "&matches=1";
                 self.loader(1);
                 let retCategory;
