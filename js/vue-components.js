@@ -508,202 +508,216 @@ Vue.component('vue-esteet', {
 
 
 Vue.component('vue-tehtavat', {
-              props: ["initial_matches", "referees", "series"],
-              template: `
-                      <div>
-                          <h1>Tehtävämäärät</h1>
-                          <div>
-                            <template v-for="sarja in local_series">
-                                <span class="checkbox-label"><input type="checkbox" v-model="sarja.displayed"> {{sarja.id}}</span>
-                            </template>
-                          </div>
+    props: ["initial_matches", "referees", "series"],
+    template: `
+            <div>
+                <h1>Tehtävämäärät</h1>
+                <div>
+                <template v-for="sarja in local_series">
+                    <span class="checkbox-label"><input type="checkbox" v-model="sarja.displayed"> {{sarja.id}}</span>
+                </template>
+                </div>
 
-                          <div style="margin-top: 5px">
-                              <button class="myButton" id="saveSarja" @click="save">Talleta valitut sarjat ja näytettävät kuukaudet</button>
-                          </div>
-                          <table style="margin-top: 3px;">
-                              <tr>
-                                  <th>Nimi</th>
-                                  <th>Luokka</th>
-                                  <th><a :class="{ monthActive: syys_displayed, monthInactive: !syys_displayed}" @click="toggle('syyskuu')">Syyskuu</a></th>
-                                  <th><a :class="{ monthActive: loka_displayed, monthInactive: !loka_displayed}" @click="toggle('lokakuu')">Lokakuu</a></th>
-                                  <th><a :class="{ monthActive: marras_displayed, monthInactive: !marras_displayed}" @click="toggle('marraskuu')">Marraskuu</a></th>
-                                  <th><a :class="{ monthActive: joulu_displayed, monthInactive: !joulu_displayed}" @click="toggle('joulukuu')">Joulukuu</a></th>
-                                  <th><a :class="{ monthActive: tammi_displayed, monthInactive: !tammi_displayed}" @click="toggle('tammikuu')">Tammikuu</a></th>
-                                  <th><a :class="{ monthActive: helmi_displayed, monthInactive: !helmi_displayed}" @click="toggle('helmikuu')">Helmikuu</a></th>
-                                  <th><a :class="{ monthActive: maalis_displayed, monthInactive: !maalis_displayed}" @click="toggle('maaliskuu')">Maaliskuu</a></th>
-                                  <th><a :class="{ monthActive: huhti_displayed, monthInactive: !huhti_displayed}" @click="toggle('huhtikuu')">Huhtikuu</a></th>
-                              </tr>
-                              <tr v-for="referee in referees">
-                                   <td><img @click="showEste(referee)" src="block.png" height=16 title="Näytä tuomarin esteet" style="cursor: pointer"> <a :href="referee.href + '&alkupvm=2018-07-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
-                                   <td>{{referee.Luokka}}</td>
-                                   <td class="workload-month">
-                                       <vue-workload-month v-if="syys_displayed" :matches="getMatches(referee.id, 'syyskuu')"></vue-workload-month>
-                                   </td>
-                                   <td class="workload-month">
-                                       <vue-workload-month v-if="loka_displayed" :matches="getMatches(referee.id, 'lokakuu')"></vue-workload-month>
-                                   </td>
-                                   <td class="workload-month">
-                                       <vue-workload-month v-if="marras_displayed" :matches="getMatches(referee.id, 'marraskuu')"></vue-workload-month>
-                                   </td>
-                                   <td class="workload-month">
-                                       <vue-workload-month  v-if="joulu_displayed" :matches="getMatches(referee.id, 'joulukuu')"></vue-workload-month>
-                                   </td>
-                                   <td class="workload-month">
-                                       <vue-workload-month  v-if="tammi_displayed" :matches="getMatches(referee.id, 'tammikuu')"></vue-workload-month>
-                                   </td>
-                                   <td class="workload-month">
-                                       <vue-workload-month  v-if="helmi_displayed" :matches="getMatches(referee.id, 'helmikuu')"></vue-workload-month>
-                                   </td>
-                                   <td class="workload-month">
-                                       <vue-workload-month  v-if="maalis_displayed" :matches="getMatches(referee.id, 'maaliskuu')"></vue-workload-month>
-                                   </td>
-                                   <td class="workload-month">
-                                       <vue-workload-month  v-if="huhti_displayed" :matches="getMatches(referee.id, 'huhtikuu')"></vue-workload-month>
-                                   </td>
-                              </tr>
-                          </table>
-                          <vue-esteet id="esteet" style="display: none" :name="referee_name" :src="src"></vue-esteet>
-                      </div>
-              `,
-              data: function() {
-                  return {
-                      //local_series: this.series,
-                      local_series: [],
-                      syys_displayed: true,
-                      loka_displayed: true,
-                      marras_displayed: true,
-                      joulu_displayed: true,
-                      tammi_displayed: true,
-                      helmi_displayed: true,
-                      maalis_displayed: true,
-                      huhti_displayed: true,
-                      matches: [],
-                      id: this._uid,
-                      collapseId: this._uid,
-                      collapseHref: "#" + this._uid.toString(),
+                <div style="margin-top: 5px">
+                    <button class="myButton" id="saveSarja" @click="save">Talleta valitut sarjat ja näytettävät kuukaudet</button>
+                </div>
+                <table style="margin-top: 3px;">
+                    <tr>
+                        <th>Nimi</th>
+                        <th>Luokka</th>
+                        <th><a :class="{ monthActive: syys_displayed, monthInactive: !syys_displayed}" @click="toggle('syyskuu')">Syyskuu</a></th>
+                        <th><a :class="{ monthActive: loka_displayed, monthInactive: !loka_displayed}" @click="toggle('lokakuu')">Lokakuu</a></th>
+                        <th><a :class="{ monthActive: marras_displayed, monthInactive: !marras_displayed}" @click="toggle('marraskuu')">Marraskuu</a></th>
+                        <th><a :class="{ monthActive: joulu_displayed, monthInactive: !joulu_displayed}" @click="toggle('joulukuu')">Joulukuu</a></th>
+                        <th><a :class="{ monthActive: tammi_displayed, monthInactive: !tammi_displayed}" @click="toggle('tammikuu')">Tammikuu</a></th>
+                        <th><a :class="{ monthActive: helmi_displayed, monthInactive: !helmi_displayed}" @click="toggle('helmikuu')">Helmikuu</a></th>
+                        <th><a :class="{ monthActive: maalis_displayed, monthInactive: !maalis_displayed}" @click="toggle('maaliskuu')">Maaliskuu</a></th>
+                        <th><a :class="{ monthActive: huhti_displayed, monthInactive: !huhti_displayed}" @click="toggle('huhtikuu')">Huhtikuu</a></th>
+                    </tr>
+                    <tr v-for="referee in referees">
+                        <td>
+                            <img @click="showEste(referee)" src="block.png" height=16 title="Näytä tuomarin esteet" style="cursor: pointer">
+                            <a @click="showRefereeWindow(referee)" title="Näytä tuomarin ottelulista" style="cursor: pointer">{{referee.name}}</a>
+                        </td>
+                        <td>{{referee.Luokka}}</td>
+                        <td class="workload-month">
+                            <vue-workload-month v-if="syys_displayed" :matches="getMatches(referee.id, 'syyskuu')"></vue-workload-month>
+                        </td>
+                        <td class="workload-month">
+                            <vue-workload-month v-if="loka_displayed" :matches="getMatches(referee.id, 'lokakuu')"></vue-workload-month>
+                        </td>
+                        <td class="workload-month">
+                            <vue-workload-month v-if="marras_displayed" :matches="getMatches(referee.id, 'marraskuu')"></vue-workload-month>
+                        </td>
+                        <td class="workload-month">
+                            <vue-workload-month  v-if="joulu_displayed" :matches="getMatches(referee.id, 'joulukuu')"></vue-workload-month>
+                        </td>
+                        <td class="workload-month">
+                            <vue-workload-month  v-if="tammi_displayed" :matches="getMatches(referee.id, 'tammikuu')"></vue-workload-month>
+                        </td>
+                        <td class="workload-month">
+                            <vue-workload-month  v-if="helmi_displayed" :matches="getMatches(referee.id, 'helmikuu')"></vue-workload-month>
+                        </td>
+                        <td class="workload-month">
+                            <vue-workload-month  v-if="maalis_displayed" :matches="getMatches(referee.id, 'maaliskuu')"></vue-workload-month>
+                        </td>
+                        <td class="workload-month">
+                            <vue-workload-month  v-if="huhti_displayed" :matches="getMatches(referee.id, 'huhtikuu')"></vue-workload-month>
+                        </td>
+                    </tr>
+                </table>
+                <vue-esteet id="esteet" style="display: none" :name="referee_name" :src="src"></vue-esteet>
+                <vue-referee-window id="referee-window" style="display: none" :name="referee_name" :src="src"></vue-referee-window>
+            </div>
+    `,
+    data: function() {
+        return {
+            //local_series: this.series,
+            local_series: [],
+            syys_displayed: true,
+            loka_displayed: true,
+            marras_displayed: true,
+            joulu_displayed: true,
+            tammi_displayed: true,
+            helmi_displayed: true,
+            maalis_displayed: true,
+            huhti_displayed: true,
+            matches: [],
+            id: this._uid,
+            collapseId: this._uid,
+            collapseHref: "#" + this._uid.toString(),
 
-                      referee_name: "",
-                      show: true,
-                      src: "",
-                  }
-              },
-              methods: {
-                   showEste(referee){
-                    $("#esteet").show();
-                    this.referee_name = referee.name;
-                    
-                    let src= "https://lentopallo-extranet.torneopal.fi/taso/tuomari.php?tuomari=" + referee.id + "&turnaus=vb2018a&sivu=esteet";
-                    this.src=src;
+            referee_name: "",
+            show: true,
+            src: "",
+        }
+    },
+    methods: {
+        showRefereeWindow(referee){
+            $("#referee-window").show();
+            this.referee_name = referee.name;
+            
+            let src= referee.href + "&alkupvm=2018-09-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo";
+            this.src=src;
 
-                    document.getElementById('esteIframe').src = src;
-                   },
+            document.getElementById('refereeIframe').src = src;
+        },
+
+        showEste(referee){
+            $("#esteet").show();
+            this.referee_name = referee.name;
+            
+            let src= "https://lentopallo-extranet.torneopal.fi/taso/tuomari.php?tuomari=" + referee.id + "&turnaus=vb2018a&sivu=esteet";
+            this.src=src;
+
+            document.getElementById('esteIframe').src = src;
+        },
+    
+        save: function(){
+            //Talletetaan valinnat
+            let list = [];
+            for(let sarja of this.local_series){
+                if(sarja.displayed === false) list.push(sarja.id);
+            }
+            Lockr.set(PREFIX + "notSelectedSerieIds", list);
+
+            // Talletetaan kuukaudet
+            Lockr.set(PREFIX + "syys_displayed", this.syys_displayed);
+            Lockr.set(PREFIX + "loka_displayed", this.loka_displayed);
+            Lockr.set(PREFIX + "marras_displayed", this.marras_displayed);
+            Lockr.set(PREFIX + "joulu_displayed", this.joulu_displayed);
+            Lockr.set(PREFIX + "tammi_displayed", this.tammi_displayed);
+            Lockr.set(PREFIX + "helmi_displayed", this.helmi_displayed);
+            Lockr.set(PREFIX + "maalis_displayed", this.maalis_displayed);
+            Lockr.set(PREFIX + "huhti_displayed", this.huhti_displayed);
+        },
+        toggle: function(month){
+            switch(month.toLowerCase()){
+                case 'syyskuu':
+                    this.syys_displayed = !this.syys_displayed;
+                    break;
+                case 'lokakuu':
+                    this.loka_displayed = !this.loka_displayed;
+                    break;
+                case 'marraskuu':
+                    this.marras_displayed = !this.marras_displayed;
+                    break;
+                case 'joulukuu':
+                    this.joulu_displayed = !this.joulu_displayed;
+                    break;
+                case 'tammikuu':
+                    this.tammi_displayed = !this.tammi_displayed;
+                    break;
+                case 'helmikuu':
+                    this.helmi_displayed = !this.helmi_displayed;
+                    break;
+                case 'maaliskuu':
+                    this.maalis_displayed = !this.maalis_displayed;
+                    break;
+                case 'huhtikuu':
+                    this.huhti_displayed = !this.huhti_displayed;
+                    break;
+            }
+        },
+        loadMonths: function(){
+            this.syys_displayed = Lockr.get(PREFIX + "syys_displayed", true);
+            this.loka_displayed = Lockr.get(PREFIX + "loka_displayed", true);
+            this.marras_displayed = Lockr.get(PREFIX + "marras_displayed", true);
+            this.joulu_displayed = Lockr.get(PREFIX + "joulu_displayed", true);
+            this.tammi_displayed = Lockr.get(PREFIX + "tammi_displayed", true);
+            this.helmi_displayed = Lockr.get(PREFIX + "helmi_displayed", true);
+            this.maalis_displayed = Lockr.get(PREFIX + "maalis_displayed", true);
+            this.huhti_displayed = Lockr.get(PREFIX + "huhti_displayed", true);
+        },
+        getMatches: function(referee_id, month){
+            var self = this;
+            let ret = this.matches.filter((m)=> m.referee_ids.includes(referee_id));
+            
+            for(let sarja of this.local_series){
+                if(sarja.displayed === false){
+                    ret = ret.filter((m)=>m.category.id !== sarja.id);
+                }
+            }
+
+            switch(month.toLowerCase()){
+                case 'syyskuu':
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 8 && m.datetime.getFullYear() == 2018); break;
+                case 'lokakuu':
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2018); break;
+                case 'marraskuu':
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2018); break;
+                case 'joulukuu':
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2018); break;
+                case 'tammikuu':
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2019); break;
+                case 'helmikuu':
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2019); break;
+                case 'maaliskuu':
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2019); break;
+                case 'huhtikuu':
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2019); break;
+            }
+            return ret;
+        },
+        handleChecks: function(){
+            // Ladataan ja talletetaan localStoragesta
+            //console.log("checked: " + this.series.filter((s)=> s.displayed).length);
                 
-                   save: function(){
-                      //Talletetaan valinnat
-                      let list = [];
-                      for(let sarja of this.local_series){
-                          if(sarja.displayed === false) list.push(sarja.id);
-                      }
-                      Lockr.set(PREFIX + "notSelectedSerieIds", list);
-
-                      // Talletetaan kuukaudet
-                      Lockr.set(PREFIX + "syys_displayed", this.syys_displayed);
-                      Lockr.set(PREFIX + "loka_displayed", this.loka_displayed);
-                      Lockr.set(PREFIX + "marras_displayed", this.marras_displayed);
-                      Lockr.set(PREFIX + "joulu_displayed", this.joulu_displayed);
-                      Lockr.set(PREFIX + "tammi_displayed", this.tammi_displayed);
-                      Lockr.set(PREFIX + "helmi_displayed", this.helmi_displayed);
-                      Lockr.set(PREFIX + "maalis_displayed", this.maalis_displayed);
-                      Lockr.set(PREFIX + "huhti_displayed", this.huhti_displayed);
-                  },
-                  toggle: function(month){
-                      switch(month.toLowerCase()){
-                          case 'syyskuu':
-                              this.syys_displayed = !this.syys_displayed;
-                              break;
-                          case 'lokakuu':
-                              this.loka_displayed = !this.loka_displayed;
-                              break;
-                          case 'marraskuu':
-                              this.marras_displayed = !this.marras_displayed;
-                              break;
-                          case 'joulukuu':
-                              this.joulu_displayed = !this.joulu_displayed;
-                              break;
-                          case 'tammikuu':
-                              this.tammi_displayed = !this.tammi_displayed;
-                              break;
-                          case 'helmikuu':
-                              this.helmi_displayed = !this.helmi_displayed;
-                              break;
-                          case 'maaliskuu':
-                              this.maalis_displayed = !this.maalis_displayed;
-                              break;
-                          case 'huhtikuu':
-                              this.huhti_displayed = !this.huhti_displayed;
-                              break;
-                      }
-                  },
-                  loadMonths: function(){
-                      this.syys_displayed = Lockr.get(PREFIX + "syys_displayed", true);
-                      this.loka_displayed = Lockr.get(PREFIX + "loka_displayed", true);
-                      this.marras_displayed = Lockr.get(PREFIX + "marras_displayed", true);
-                      this.joulu_displayed = Lockr.get(PREFIX + "joulu_displayed", true);
-                      this.tammi_displayed = Lockr.get(PREFIX + "tammi_displayed", true);
-                      this.helmi_displayed = Lockr.get(PREFIX + "helmi_displayed", true);
-                      this.maalis_displayed = Lockr.get(PREFIX + "maalis_displayed", true);
-                      this.huhti_displayed = Lockr.get(PREFIX + "huhti_displayed", true);
-                  },
-                  getMatches: function(referee_id, month){
-                      var self = this;
-                      let ret = this.matches.filter((m)=> m.referee_ids.includes(referee_id));
-                      
-                      for(let sarja of this.local_series){
-                          if(sarja.displayed === false){
-                              ret = ret.filter((m)=>m.category.id !== sarja.id);
-                          }
-                      }
-
-                      switch(month.toLowerCase()){
-                          case 'syyskuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 8 && m.datetime.getFullYear() == 2018); break;
-                          case 'lokakuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2018); break;
-                          case 'marraskuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2018); break;
-                          case 'joulukuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2018); break;
-                          case 'tammikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2019); break;
-                          case 'helmikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2019); break;
-                          case 'maaliskuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2019); break;
-                          case 'huhtikuu':
-                              ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2019); break;
-                      }
-                      return ret;
-                  },
-                  handleChecks: function(){
-                      // Ladataan ja talletetaan localStoragesta
-                      //console.log("checked: " + this.series.filter((s)=> s.displayed).length);
-                            
-                  },
-                  
-              },
-              created: function(){
-                  this.loadMonths();
-              },
-              beforeUpdate: function(){
-                  this.handleChecks();
-              },
-              updated: function(){
-                  this.local_series = this.series;
-                  this.matches = this.initial_matches;
-                  this.handleChecks();
-                  //console.log("Updated: " + this.referees.length + " referees, " + this.initial_matches.length + " matches  " + this.series.length + " series");
-              }
+        },
+        
+    },
+    created: function(){
+        this.loadMonths();
+    },
+    beforeUpdate: function(){
+        this.handleChecks();
+    },
+    updated: function(){
+        this.local_series = this.series;
+        this.matches = this.initial_matches;
+        this.handleChecks();
+        //console.log("Updated: " + this.referees.length + " referees, " + this.initial_matches.length + " matches  " + this.series.length + " series");
+    }
 });
 
 Vue.component('vue-workload-month', {
@@ -723,68 +737,97 @@ Vue.component('vue-workload-month', {
               },
 });
 Vue.component('vue-workload-match', {
-              props: ["match"],
-              template: `
-                      <span :id="id" class="workload-label" :class="match.torneoMatch.category_id" @click="showPopup">
-                        <div class="match_popup" :id="popupId"  @click="hidePopup($event)">
-                            <p>
-                                <a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> 
-                                <a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> 
-                                <a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a> 
-                                {{match.datetime.toLocaleDateString()}} 
-                                klo {{match.toTimeString()}}
-                                {{match.getVenue()}}
-                                {{match.torneoMatch.team_A_name}} -
-                                {{match.torneoMatch.team_B_name}}
-                            </p>
-                        </div>
-                        {{match.torneoMatch.category_id}}
-                      </span>
-              `,
-              data: function() {
-                  return {
-                      //local_series: this.series,
-                      popupActive: false,
-                      id: this._uid,
-                      popupId: this._uid + "_popup",
-                      collapseId: this._uid,
-                      collapseHref: "#" + this._uid.toString()
-                  }
-              },
-              methods: {
-                  showPopup: function(){
-                      if(this.popupActive) return;
-                      $("#overlay").show();
-                      
-                      let span = $("#" + this.id);
-                      span.addClass("match_label_highlight");
-                      let position = span.position();
+    props: ["match"],
+    template: `
+            <span :id="id" class="workload-label" :class="match.torneoMatch.category_id" @click="showPopup">
+            <div class="match_popup" :id="popupId"  @click="hidePopup($event)">
+                <p>
+                    <a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> 
+                    <a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> 
+                    <a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a> 
+                    {{match.datetime.toLocaleDateString()}} 
+                    klo {{match.toTimeString()}}
+                    {{match.getVenue()}}
+                    {{match.torneoMatch.team_A_name}} -
+                    {{match.torneoMatch.team_B_name}}
+                </p>
+            </div>
+            {{match.torneoMatch.category_id}}
+            </span>
+    `,
+    data: function() {
+        return {
+            //local_series: this.series,
+            popupActive: false,
+            id: this._uid,
+            popupId: this._uid + "_popup",
+            collapseId: this._uid,
+            collapseHref: "#" + this._uid.toString()
+        }
+    },
+    methods: {
+        showPopup: function(){
+            if(this.popupActive) return;
+            $("#overlay").show();
+            
+            let span = $("#" + this.id);
+            span.addClass("match_label_highlight");
+            let position = span.position();
 
-                      var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-                      let height = parseInt(span.css("height"), 10);
+            var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            let height = parseInt(span.css("height"), 10);
 
-                      position.top += 24;
+            position.top += 24;
 
-                      let div = $("#" + this.popupId);
-                      div.show();
-                      //div.css("z-index", "1003");
-                      //div.css("background", "white");
-                      div.css("top", position.top);
-                      div.css("left", "100px");
-                      div.css("width", 0.7*w);
-                      this.popupActive = true;
-                  },
-                  hidePopup: function(event){
-                      let span = $("#" + this.id);
-                      span.removeClass("match_label_highlight");
+            let div = $("#" + this.popupId);
+            div.show();
+            //div.css("z-index", "1003");
+            //div.css("background", "white");
+            div.css("top", position.top);
+            div.css("left", "100px");
+            div.css("width", 0.7*w);
+            this.popupActive = true;
+        },
+        hidePopup: function(event){
+            let span = $("#" + this.id);
+            span.removeClass("match_label_highlight");
 
-                      $("#" + this.popupId).hide();
-                      $("#overlay").hide();
-                      var self=this;
-                      setTimeout(function(){
-                          self.popupActive = false;
-                      }, 0);
-                  }
-              }
+            $("#" + this.popupId).hide();
+            $("#overlay").hide();
+            var self=this;
+            setTimeout(function(){
+                self.popupActive = false;
+            }, 0);
+        }
+    }
+});
+
+Vue.component('vue-referee-window', {
+    props: ["name", "src"],
+    template: `
+        <div @click="hidePopup()">
+            <div style="z-index: 100; background: grey; opacity: 0.5; position: fixed; top: 0; left: 0px; width: 100%; height: 100%;">
+            </div>
+            <div class="panel panel-default" style="z-index: 200; position: fixed; top: 100px; left: 100px; width: 80%; height: 80%;">
+                <div class="panel-heading">
+                    <a :href="src" target=_>Tuomarin {{name}} ottelut</a>
+                    <button class="btn btn-default" style="padding: 2px 8px 2px 8px; color: red; float: right; margin-right: -5px;" @click="hidePopup()">X</button>
+                </div>
+                <div class="panel-body" style="width: 100%; height: 700px;">    
+                    <iframe id="refereeIframe" sandbox style="z-index: 300; width: 100%; height: 660px;" frameborder=0></iframe>
+                </div>
+            </div>
+        </div>
+    `,
+    data: function() {
+        return {
+            
+        }
+    },
+    methods: {
+        hidePopup: function(event){
+            $("#referee-window").hide();
+        }
+    }
 });
 
