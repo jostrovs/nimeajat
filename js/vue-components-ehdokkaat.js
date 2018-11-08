@@ -68,7 +68,7 @@ Vue.component('vue-cell', {
         if(this.cell.match) title = `${this.cell.match.koti}-${this.cell.match.vieras} klo ${this.cell.match.time}`;
         return {
             // text: text,
-            varattu: this.cell.match,
+            varattu: this.cell.match && !this.cell.match.este,
             c: this.cell,
             title: title,
             randomId: this._uid,
@@ -101,6 +101,7 @@ Vue.component('vue-cell', {
                 ret["text-align"] = "left";
                 return ret;
             } 
+            
             if(this.varattu == false){
                 return ret;
             } else {

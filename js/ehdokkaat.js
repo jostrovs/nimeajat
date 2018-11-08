@@ -79,7 +79,9 @@ let tiedot_haettu = "";
 function loadEsteet(){
     $.get("./ajax/esteet.json", function(data){
         esteet = data.kaikki_esteet;
+        
         tiedot_haettu = data.tiedot_haettu;
+
         loadReferees();
     });
 };
@@ -122,12 +124,22 @@ function initVue(){
             end_date: end_date,
             date: moment().format("YYYY-MM-DD"),
             tiedot_haettu: tiedot_haettu,
+            tiedot_haettu_title: "Estetiedot päivitetty: " + tiedot_haettu,
+            ero: {
+                paivat: 0,
+                tunnit: 0,
+                minuutit: 0,
+                sekunnit: 0
+            },
+            interval: 1000,
         },
         
         created: function () {
             if(localStorage.matriisiDate) this.date = moment(localStorage.matriisiDate).format("YYYY-MM-DD");
 
             bus.on("SET_DATE", this.setDate);
+
+            this.laskePaivitys();
         },
 
         watch: {
@@ -140,7 +152,7 @@ function initVue(){
             columns: function(){
                 let ret = [{
                     tuomari: true,
-                    dayName: "Tuomari",
+                    dayName: "",
                     dayNo: 0,
                     endOfWeek: false,
                 }];
@@ -157,9 +169,39 @@ function initVue(){
                     m.add(1, 'days');
                 }
                 return ret;
+            },
+
+            eroTeksti(){
+                let ero = this.ero;
+                if(ero.sekunnit < 60) return `${ero.sekunnit} sekuntia`;
+                this.interval = 60000;
+                if(ero.minuutit < 60) return `${ero.minuutit} minuuttia`;
+                if(ero.tunnit < 24) return `${ero.tunnit} tuntia`;
+                return `${ero.paivat} päivää`;
             }
         },
         methods: {
+            laskePaivitys(){
+                let self=this;
+
+                let now = moment();
+                let haettu = moment(this.tiedot_haettu);
+        
+                let diffDays = now.diff(haettu, 'days');
+                let diffHours = now.diff(haettu, 'hours');
+                let diffMinutes = now.diff(haettu, 'minutes');
+                let diffSeconds = now.diff(haettu, 'seconds');
+        
+                this.ero.paivat = diffDays;
+                this.ero.tunnit = diffHours;
+                this.ero.minuutit = diffMinutes;
+                this.ero.sekunnit = diffSeconds;
+                
+                setTimeout(function(){
+                    self.laskePaivitys();
+                }, self.interval);
+            },
+            
             setDate(newDate){
                 //console.log("In set date");
 

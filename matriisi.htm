@@ -107,7 +107,8 @@
             <div class="div-table">
                 <div class="div-row">
                     <vue-col-header v-for="col in columns" :column="col">
-                        {{col.dayName}}<br>{{col.dayNo}}
+                        <span :title="tiedot_haettu_title" v-if="col.dayNo == 0" style="color: darkred; font-size: smaller;">Esteet päivitetty<br>{{eroTeksti}} sitten</span>
+                        <span v-else>{{col.dayName}}<br>{{col.dayNo}}</span>
                     </vue-col-header> 
                 </div>
             </div>
@@ -121,7 +122,6 @@
                     <hr v-if="referee.last_of_class" />
                 </div>
             </div>
-            <br><br>Päivitetty {{tiedot_haettu}}
         </div>
 
     </div>
