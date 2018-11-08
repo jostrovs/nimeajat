@@ -65,49 +65,64 @@
             margin-right: 35px;
         }
 
+        .fixed {
+            position: fixed;
+            z-index: 1;
+            background: white;
+        }
+
+        .siirtyy {
+            z-index: 0;
+            position: absolute;
+            top: 60px;
+        }
     </style>
 
+    <script src="js/jos-global.js"></script>
     <script src="js/lib/jquery-3.1.1.js"></script>
     <script src="js/lib/vue.js"></script>
     <script src="js/lib/moment.js"></script>
     <script src="js/vue-components-ehdokkaat.js"></script>
+    <script src="js/tuomarit_matriisi.js"></script>
     <script src="js/ehdokkaat.js"></script>
 </head>
 
 <body style="min-width: 1020px;">
     <div id="app">
-		<div class="tab-content"> 
-			<div id="etusivu" class="tab-pane fade in active">
-                Pvm: <input type="date" v-model="date" style="width: 120px">
-                <div class="nav-div" style="left: 150px;">
-                    <button @click="delta(-7)" title="viikko taaksepäin">&lt;&lt;&lt;</button>
-                </div>
-                <div class="nav-div">
-                    <button @click="delta(-1)" title="päivä taaksepäin">&lt;</button>
-                    &nbsp;&nbsp;
-                    <button @click="delta(1)" title="päivä eteenpäin">&gt;</button>
-                </div>
-                <div class="nav-div">
-                    <button @click="delta(7)" title="viikko eteenpäin">&gt;&gt;&gt;</button>
-                </div>
 
-                <div class="div-table">
-                    <div class="div-row">
-                        <vue-col-header v-for="col in columns" :column="col">
-                            {{col.dayName}}<br>{{col.dayNo}}
-                        </vue-col-header> 
-                    </div>
-                    <div class="div-row" v-for="referee in referees">
-                        <vue-cell v-for="cell in getCells(referee)" :cell="cell" :name="referee.name" :key="cell.key">
-                        </vue-cell> 
-                        <hr v-if="referee.last_of_class" />
-                    </div>
-                </div>
-           </div>
-			<div id="ehdokkaat" class="tab-pane fade">
+        <div class="fixed">
+            Pvm: <input type="date" v-model="date" style="width: 120px">
+            <div class="nav-div" style="left: 150px;">
+                <button @click="delta(-7)" title="viikko taaksepäin">&lt;&lt;&lt;</button>
+            </div>
+            <div class="nav-div">
+                <button @click="delta(-1)" title="päivä taaksepäin">&lt;</button>
+                &nbsp;&nbsp;
+                <button @click="delta(1)" title="päivä eteenpäin">&gt;</button>
+            </div>
+            <div class="nav-div">
+                <button @click="delta(7)" title="viikko eteenpäin">&gt;&gt;&gt;</button>
+            </div>
 
-			</div>
-        </div>        
+            <div class="div-table">
+                <div class="div-row">
+                    <vue-col-header v-for="col in columns" :column="col">
+                        {{col.dayName}}<br>{{col.dayNo}}
+                    </vue-col-header> 
+                </div>
+            </div>
+        </div>
+
+        <div class="siirtyy">
+            <div class="div-table">
+                <div class="div-row" v-for="referee in referees">
+                    <vue-cell v-for="cell in getCells(referee)" :cell="cell" :name="referee.name" :key="cell.key">
+                    </vue-cell> 
+                    <hr v-if="referee.last_of_class" />
+                </div>
+            </div>
+            <br><br>Päivitetty {{tiedot_haettu}}
+        </div>
 
     </div>
 </body>

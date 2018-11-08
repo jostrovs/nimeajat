@@ -1,0 +1,474 @@
+let paikka = "helsinki";
+
+var queryPaikka = getQueryString()['paikka'];
+if(queryPaikka) paikka = queryPaikka;
+
+let referees_helsinki = [
+    {
+        id: 1242,
+        name: "Häll Jukka",
+        luokka: "I",
+    },
+    {
+        id: 1985,
+        name: "Hätinen Juha",
+        luokka: "I",
+    },
+    {
+        id: 1270,
+        name: "Korpilahti Antti",
+        luokka: "I",
+    },
+    {
+        id: 1641,
+        name: "Näveri Martti",
+        luokka: "I",
+    },
+    {
+        id: 1579,
+        name: "Ostrovskij Jori",
+        luokka: "I",
+    },
+    // {
+    //     id: 1263,
+    //     name: "Rönnqvist Sini",
+    //     luokka: "I",
+    // },
+    {
+        id: 1321,
+        name: "Rönnqvist Suvi",
+        luokka: "I",
+    },
+    {
+        id: 1193,
+        name: "Tenhola Helena",
+        luokka: "I",
+    },
+    {
+        id: 1188,
+        name: "Tiitto Mika",
+        luokka: "I",
+        last_of_class: true,
+    },
+    {
+        id: 1171,
+        name: "Harju Kari",
+        luokka: "II",
+    },
+    {
+        id: 2080,
+        name: "Hassinen Jukka",
+        luokka: "II",
+    },
+    {
+        id: 1375,
+        name: "Hyttinen Pasi",
+        luokka: "II",
+    },
+    {
+    id: 2412,
+    name: "Isomaa Jarmo",
+    luokka: "II",
+    },                {
+        id: 1998,
+        name: "Jääskeläinen Kari",
+        luokka: "II",
+    },
+    {
+        id: 1331,
+        name: "Kantanen Mikko",
+        luokka: "II",
+    },
+    {
+        id: 1284,
+        name: "Kenttälä Kauko",
+        luokka: "II",
+    },
+    {
+        id: 1560,
+        name: "Keronen Pavel",
+        luokka: "II",
+    },
+    {
+        id: 1600,
+        name: "Lehtineva Antti",
+        luokka: "II",
+    },
+    {
+        id: 1649,
+        name: "Perkinen Elina",
+        luokka: "II",
+    },
+    {
+        id: 2143,
+        name: "Perkinen Teppo",
+        luokka: "II",
+    },
+    {
+        id: 1367,
+        name: "Rouhiainen Paavo",
+        luokka: "II",
+    },
+    {
+        id: 1771,
+        name: "Snellman Joni",
+        luokka: "III",
+        last_of_class: true,
+    },
+    // {
+    //     id: 1574,
+    //     name: "Sinerma Sakari",
+    //     luokka: "II",
+    // },
+    {
+        id: 2112,
+        name: "Andersson Erkki",
+        luokka: "III",
+    },
+    {
+        id: 1198,
+        name: "Honkanen Väinö",
+        luokka: "III",
+    },
+    {
+        id: 2192,
+        name: "Hyttinen Anna",
+        luokka: "III",
+    },
+    {
+        id: 1169,
+        name: "Kalliokunnas Kauko",
+        luokka: "III",
+    },
+    {
+        id: 2090,
+        name: "Keski-Nikkola Ilona",
+        luokka: "III",
+    },
+    {
+        id: 2202,
+        name: "Lind Elina",
+        luokka: "NT",
+    },
+    {
+        id: 1961,
+        name: "Lindberg Risto",
+        luokka: "III",
+    },
+    {
+        id: 1220,
+        name: "Mononen Timo",
+        luokka: "III",
+    },
+    {
+        id: 1360,
+        name: "Muje Tero",
+        luokka: "III",
+    },
+    {
+        id: 2300,
+        name: "Niemi Jarmo",
+        luokka: "III",
+    },
+    {
+        id: 1226,
+        name: "Ojala Teuvo",
+        luokka: "III",
+    },
+    {
+        id: 1257,
+        name: "Parjanen Olli",
+        luokka: "III",
+    },
+    // {
+    //     id: 1624,
+    //     name: "Pekkala Eero",
+    //     luokka: "III",
+    // },
+    // {
+    //     id: 1371,
+    //     name: "Rannikko Altti",
+    //     luokka: "III",
+    // },
+    {
+        id: 2434,
+        name: "Pussinen Susanna",
+        luokka: "III",
+    },
+    {
+        id: 1965,
+        name: "Ruuska Noora",
+        luokka: "III",
+    },
+    // {
+    //     id: 1584,
+    //     name: "Rönnqvist Timo",
+    //     luokka: "III",
+    // },
+    {
+        id: 1239,
+        name: "Torkkeli Heikki",
+        luokka: "III",
+    },
+];
+
+let referees_liiga = [
+    {
+        "id": "1202",
+        "name": "Aro Kenneth",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1218",
+        "name": "Caven Mira",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1617",
+        "name": "Försti Tuomo",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1554",
+        "name": "Hakala Raine",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1288",
+        "name": "Hakkarainen Pasi",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1567",
+        "name": "Hassinen Ville",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1207",
+        "name": "Hautala Ari",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1187",
+        "name": "Isotalo Tommi",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1243",
+        "name": "Jokelainen Ari",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1209",
+        "name": "Juotasniemi Tomi",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1383",
+        "name": "Kiimalainen Heikki",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1199",
+        "name": "Kolehmainen Sari",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1358",
+        "name": "Laiti Mihkal",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1208",
+        "name": "Muro Arto",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1295",
+        "name": "Mäkinen Timo",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1368",
+        "name": "Mäntylä Janne",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1324",
+        "name": "Natunen Ilmo",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1359",
+        "name": "Parkkinen Tommi",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1376",
+        "name": "Partiainen Kari",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1215",
+        "name": "Peteri Kaisa",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1352",
+        "name": "Puskala Juha",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1189",
+        "name": "Puskala Pauli",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1237",
+        "name": "Rinne Ari",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "2247",
+        "name": "Salmela Veli",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "2206",
+        "name": "Savinainen Juha",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1281",
+        "name": "Sipola Juha",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1178",
+        "name": "Suominen Kari",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1201",
+        "name": "Virta Esa",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1267",
+        "name": "Yli-kivistö Keijo",
+        "luokka": "Liiga",
+    },
+    {
+        "id": "1175",
+        "name": "Ylinen Arttu",
+        "luokka": "Liiga",
+        last_of_class: true,
+    },
+    {
+        "id": "1223",
+        "name": "Heikkinen Ari",
+        "luokka": "PS"
+    },
+    {
+        "id": "1337",
+        "name": "Heinonen Jukka",
+        "luokka": "PS"
+    },
+    {
+        "id": "1219",
+        "name": "Ikonen Pekka",
+        "luokka": "PS"
+    },
+    {
+        "id": "1987",
+        "name": "Järvinen Tomi",
+        "luokka": "PS"
+    },
+    {
+        "id": "1270",
+        "name": "Korpilahti Antti",
+        "luokka": "PS"
+    },
+    {
+        "id": "1251",
+        "name": "Kuusisto Jarmo",
+        "luokka": "PS"
+    },
+    {
+        "id": "1318",
+        "name": "Laukkanen Jouni",
+        "luokka": "PS"
+    },
+    {
+        "id": "1234",
+        "name": "Lehtonen Jouni",
+        "luokka": "PS"
+    },
+    {
+        "id": "1214",
+        "name": "Mannersuo Sari",
+        "luokka": "PS"
+    },
+    {
+        "id": "1274",
+        "name": "Mutkala Seppo",
+        "luokka": "PS"
+    },
+    {
+        "id": "1272",
+        "name": "Oravainen Marko",
+        "luokka": "PS"
+    },
+    {
+        "id": "1579",
+        "name": "Ostrovskij Jori",
+        "luokka": "PS"
+    },
+    {
+        "id": "1372",
+        "name": "Sairomaa Tomi",
+        "luokka": "PS"
+    },
+    {
+        "id": "2401",
+        "name": "Savolainen Viivi",
+        "luokka": "PS"
+    },
+    {
+        "id": "1630",
+        "name": "Uusi-pohjola Heikki",
+        "luokka": "PS"
+    },
+    {
+        "id": "1377",
+        "name": "Sundell Jori",
+        "luokka": "PS"
+    },
+    {
+        "id": "1310",
+        "name": "Suomi Harri",
+        "luokka": "PS"
+    },
+    {
+        "id": "1176",
+        "name": "Välimäki Pasi",
+        "luokka": "PS"
+    },
+    {
+        "id": "1556",
+        "name": "Ylisiurua Markku",
+        "luokka": "PS"
+    }
+];
+
+let myReferees = [];
+
+switch(paikka){
+    case 'liiga':
+        myReferees = referees_liiga;
+        break;
+    default:
+        myReferees = referees_helsinki;
+        break;
+}
+

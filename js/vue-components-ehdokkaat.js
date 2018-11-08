@@ -56,6 +56,7 @@ Vue.component('vue-cell', {
     template: `
         <div class="div-cell cell" :style="style">
             <span v-if="c.tuomari">{{name}}</span>
+            <span v-else-if="c.match && c.match.este"  :title="c.match.text"><img src="block.png" width="12"></span>
             <span v-else-if="c.match" :title="title">{{match_id}}</span>
             <span v-else>{{c.text}}</span>
         </div>
