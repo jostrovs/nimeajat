@@ -1,3 +1,25 @@
+var USE_CACHE = false;
+
+var cachedGet = function(url, callback){
+    let key = sha512(url);
+    let data = localStorage[key];
+    if(USE_CACHE && data){
+        console.log("Data haettu cachesta: " + key);
+        callback(JSON.parse(data));
+    } else {
+        $.get(url, function(d){
+            data = d;
+            if(USE_CACHE){
+                localStorage[key] = JSON.stringify(data);
+                console.log("Talletettu cacheen: " + key);
+            }
+            callback(data);
+        })
+    }
+};
+
+
+
 var bus = new Vue({
     methods: {
         on: function(event, callback){
@@ -34,7 +56,7 @@ function loadReferees(){
     var self = this;
 
     [start_date, end_date] = dateRange(moment());
-    let startDate = "2018-08-01";
+    let startDate = "2019-08-01";
 
     for(let referee of myReferees){
         var url = `https://lentopallo.torneopal.fi/taso/rest/getMatches?referee_id=${referee.id}&start_date=${startDate}&api_key=qfzy3wsw9cqu25kq5zre`; 
@@ -52,7 +74,7 @@ function loadReferees(){
         }
 
         load_count++;
-        $.get(url, function(data){
+        cachedGet(url, function(data){
             for(let match of data.matches){
                 referee.matches.push({
                     id: match.match_id,
@@ -77,7 +99,8 @@ function loadReferees(){
 let tiedot_haettu = "";
 
 function loadEsteet(){
-    $.get("./ajax/esteet.json", function(data){
+    cachedGet("./ajax/esteet.txt", function(data_txt){
+        let data = JSON.parse(data_txt);
         esteet = data.kaikki_esteet;
         
         tiedot_haettu = data.tiedot_haettu;
@@ -140,6 +163,10 @@ function initVue(){
             bus.on("SET_DATE", this.setDate);
 
             this.laskePaivitys();
+        },
+
+        mounted(){
+            if(USE_CACHE) $("#cache-in-use").css("display", "inline-block");
         },
 
         watch: {

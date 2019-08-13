@@ -13,6 +13,7 @@
 	<meta name="viewport" content="width=1050, initial-scale=0.6">
     
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="js/lib/js-sha512.js"></script>
 
     <style>
         body{
@@ -89,6 +90,7 @@
 
 <body style="min-width: 1020px;">
     <div id="app">
+        <div id="cache-in-use" style="display: none; font-weight: bold; color: white; background: red; padding: 5px; margin: 5px;">TIEDOT TULEVAT VÄLIMUISTISTA!</div>
 
         <div class="fixed">
             Pvm: <input type="date" v-model="date" style="width: 120px">

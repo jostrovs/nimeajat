@@ -51,6 +51,11 @@ let referees_helsinki = [
         last_of_class: true,
     },
     {
+        id: 2041,
+        name: "Haavisto Jami",
+        luokka: "II",
+    },
+    {
         id: 1171,
         name: "Harju Kari",
         luokka: "II",
@@ -112,7 +117,7 @@ let referees_helsinki = [
     {
         id: 1771,
         name: "Snellman Joni",
-        luokka: "III",
+        luokka: "II",
         last_of_class: true,
     },
     // {
@@ -123,6 +128,11 @@ let referees_helsinki = [
     {
         id: 2112,
         name: "Andersson Erkki",
+        luokka: "III",
+    },
+    {
+        id: 2562,
+        name: "Heikola Tiina",
         luokka: "III",
     },
     {
@@ -173,6 +183,11 @@ let referees_helsinki = [
     {
         id: 1226,
         name: "Ojala Teuvo",
+        luokka: "III",
+    },
+    {
+        id: 2575,
+        name: "Ostrovskij Aino",
         luokka: "III",
     },
     {
@@ -264,6 +279,11 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
+        "id": "1987",
+        "name": "Järvinen Tomi",
+        "luokka": "Liiga"
+    },
+    {
         "id": "1383",
         "name": "Kiimalainen Heikki",
         "luokka": "Liiga"
@@ -279,8 +299,8 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
-        "id": "1208",
-        "name": "Muro Arto",
+        "id": "1234",
+        "name": "Lehtonen Jouni",
         "luokka": "Liiga"
     },
     {
@@ -299,13 +319,13 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
-        "id": "1359",
-        "name": "Parkkinen Tommi",
+        "id": "1272",
+        "name": "Oravainen Marko",
         "luokka": "Liiga"
     },
     {
-        "id": "1376",
-        "name": "Partiainen Kari",
+        "id": "1359",
+        "name": "Parkkinen Tommi",
         "luokka": "Liiga"
     },
     {
@@ -333,19 +353,19 @@ let referees_liiga = [
         "name": "Salmela Veli",
         "luokka": "Liiga"
     },
-    {
+        {
         "id": "2206",
         "name": "Savinainen Juha",
         "luokka": "Liiga"
     },
     {
-        "id": "1281",
-        "name": "Sipola Juha",
+        "id": "2401",
+        "name": "Savolainen Viivi",
         "luokka": "Liiga"
     },
     {
-        "id": "1178",
-        "name": "Suominen Kari",
+        "id": "1281",
+        "name": "Sipola Juha",
         "luokka": "Liiga"
     },
     {
@@ -355,7 +375,7 @@ let referees_liiga = [
     },
     {
         "id": "1267",
-        "name": "Yli-kivistö Keijo",
+        "name": "Yli-Kivistö Keijo",
         "luokka": "Liiga",
     },
     {
@@ -380,11 +400,6 @@ let referees_liiga = [
         "luokka": "PS"
     },
     {
-        "id": "1987",
-        "name": "Järvinen Tomi",
-        "luokka": "PS"
-    },
-    {
         "id": "1270",
         "name": "Korpilahti Antti",
         "luokka": "PS"
@@ -400,23 +415,18 @@ let referees_liiga = [
         "luokka": "PS"
     },
     {
-        "id": "1234",
-        "name": "Lehtonen Jouni",
-        "luokka": "PS"
-    },
-    {
         "id": "1214",
         "name": "Mannersuo Sari",
         "luokka": "PS"
     },
     {
-        "id": "1274",
-        "name": "Mutkala Seppo",
+        "id": "1208",
+        "name": "Muro Arto",
         "luokka": "PS"
     },
     {
-        "id": "1272",
-        "name": "Oravainen Marko",
+        "id": "1274",
+        "name": "Mutkala Seppo",
         "luokka": "PS"
     },
     {
@@ -430,16 +440,6 @@ let referees_liiga = [
         "luokka": "PS"
     },
     {
-        "id": "2401",
-        "name": "Savolainen Viivi",
-        "luokka": "PS"
-    },
-    {
-        "id": "1630",
-        "name": "Uusi-pohjola Heikki",
-        "luokka": "PS"
-    },
-    {
         "id": "1377",
         "name": "Sundell Jori",
         "luokka": "PS"
@@ -450,6 +450,11 @@ let referees_liiga = [
         "luokka": "PS"
     },
     {
+        "id": "1630",
+        "name": "Uusi-Pohjola Heikki",
+        "luokka": "PS"
+    },
+    {
         "id": "1176",
         "name": "Välimäki Pasi",
         "luokka": "PS"
@@ -457,9 +462,20 @@ let referees_liiga = [
     {
         "id": "1556",
         "name": "Ylisiurua Markku",
-        "luokka": "PS"
-    }
+        "luokka": "PS",
+        last_of_class: true,
+    },
+    // {
+    //     "id": "1556",
+    //     "name": "Hassinen Jaakko",
+    //     "luokka": "I",
+    //     last_of_class: true,
+    // }
 ];
+
+
+
+
 
 let myReferees = [];
 
