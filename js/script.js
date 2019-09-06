@@ -1,3 +1,14 @@
+var bus = new Vue({
+    methods: {
+        on: function(event, callback){
+            this.$on(event, callback);
+        },
+        emit: function(event, payload){
+            this.$emit(event, payload);
+        }
+    }
+});
+
 Date.prototype.getWeek = function() {
     var onejan = new Date(this.getFullYear(), 0, 1);
     return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() -1) / 7);
@@ -469,6 +480,8 @@ $(document).ready(function () {
 
             showCSV: false,
             encuri: encodeURI("data:text/csv;charset=utf-8,asd,dfg,wer,sdfg\r\nsdf,dfg,xcv,wer\r\n"),
+
+            estematriisi_show: false,
         },
         
         created: function () {

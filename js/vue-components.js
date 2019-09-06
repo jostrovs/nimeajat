@@ -278,6 +278,50 @@ Vue.component('vue-competitions', {
                   }
               },
 });
+Vue.component('vue-estematriisi', {
+    template: `
+    <div v-if="show" style="background: #eee; max-width: 600px;">
+        <div class="panel-heading">
+        <a :href="getSrc()" target=_>Tuomareiden esteet päivälle {{pvm}}</a>
+        <button class="btn btn-default" style="padding: 2px 8px 2px 8px; color: red; float: right; margin-right: -5px;" @click="hidePopup()">X</button>
+        </div>
+        <div class="panel-body" style="width: 600px; ">    
+            <iframe id="estematriisiIframe" style="z-index: 300; width: 100%; height: 600px;" frameborder=0></iframe>
+        </div>
+    </div>
+    `,
+    data: function() {
+        return {
+            pvm: "PVM",
+            show: false,
+        }
+    },    
+    created: function(){
+        let self=this;
+
+        bus.on("ESTEMATRIISI_SHOW", function(pvm){
+            self.show_estematriisi(pvm);
+        })
+    },
+    methods: {
+        show_estematriisi: function(pvm){
+            this.pvm = pvm;
+            this.show = true;
+
+            let src = "http://www.lentopalloerotuomarit.fi/esteet/?pvm=" + pvm;
+            setTimeout(function(){
+                document.getElementById('estematriisiIframe').src = src;
+            }, 100);
+        },
+        hidePopup: function(){
+            this.show = false;
+        },
+        getSrc: function(){
+            let src = "http://www.lentopalloerotuomarit.fi/esteet/?pvm=" + this.pvm;
+            return src;
+        }
+    }
+});
 Vue.component('vue-matches', {
               props: ['initial_matches', 'show_days_ahead', 'nimeamattomat_lkm'],
               computed: {
@@ -298,6 +342,7 @@ Vue.component('vue-matches', {
               template: `
                     <div>
                         <h3>Nimeämättömiä otteluita yhteensä {{displayed_matches_count}}</h3>
+                        <vue-estematriisi></vue-estematriisi>
                         <vue-match v-for="match in matches_before" :match="match"></vue-match>
                     </div>
               `,
@@ -414,7 +459,9 @@ Vue.component('vue-match', {
                 </div>
                 <div class="box">
                 <span v-if="match.referee_status!==''">
-                    <a :href="torneoeditlink" target=_><img src="tp.png"></a>&nbsp;
+                    <a :href="torneoeditlink" target=_ title="Avaa ottelu torneopalissa (vaatii kirjautumisen!)"><img src="tp.png"></a>&nbsp;
+        
+                    <a @click="show_estematriisi()" :title="estematriisititle"><img src="block.png" height=16></a>&nbsp;
         
                     <span v-for="referee in match.referees" class='referee-list-label'>
                         {{referee}}
@@ -428,11 +475,20 @@ Vue.component('vue-match', {
             </div>
     `,
     data: function() {
+        var pvm = moment(this.match.datetime).format("YYYY-MM-DD");
         return {
+            pvm: pvm,
+            estematriisititle: "Avaa esteellisyyssivu päivälle " + pvm,
+            estematriisilink: "http://www.lentopalloerotuomarit.fi/esteet/?pvm=" + pvm,
             torneoeditlink: "https://lentopallo-extranet.torneopal.fi/taso/ottelu.php?otteluid=" + this.match.id,
             id: this._uid,
             collapseId: this._uid,
             collapseHref: "#" + this._uid.toString()
+        }
+    },
+    methods: {
+        show_estematriisi: function(){
+            bus.emit("ESTEMATRIISI_SHOW", this.pvm)
         }
     }
 });

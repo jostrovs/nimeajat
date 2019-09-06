@@ -5,6 +5,11 @@ if(queryPaikka) paikka = queryPaikka;
 
 let referees_helsinki = [
     {
+        id: 1764,
+        name: "Haavisto Jere",
+        luokka: "I",
+    },
+    {
         id: 1242,
         name: "Häll Jukka",
         luokka: "I",
@@ -105,6 +110,11 @@ let referees_helsinki = [
         luokka: "II",
     },
     {
+        id: 2680,
+        name: "Ovaska Kari",
+        luokka: "II",
+    },
+    {
         id: 2143,
         name: "Perkinen Teppo",
         luokka: "II",
@@ -138,6 +148,11 @@ let referees_helsinki = [
     {
         id: 1198,
         name: "Honkanen Väinö",
+        luokka: "III",
+    },
+    {
+        id: 2688,
+        name: "Hurttala Tiina",
         luokka: "III",
     },
     {
@@ -223,6 +238,16 @@ let referees_helsinki = [
     {
         id: 1239,
         name: "Torkkeli Heikki",
+        luokka: "III",
+    },
+    {
+        id: 2590,
+        name: "Vainio Samuel",
+        luokka: "III",
+    },
+    {
+        id: 2601,
+        name: "Vauhkonen Miro",
         luokka: "III",
     },
 ];
@@ -314,6 +339,11 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
+        "id": "2401",
+        "name": "Mönkkönen Viivi",
+        "luokka": "Liiga"
+    },
+    {
         "id": "1324",
         "name": "Natunen Ilmo",
         "luokka": "Liiga"
@@ -356,11 +386,6 @@ let referees_liiga = [
         {
         "id": "2206",
         "name": "Savinainen Juha",
-        "luokka": "Liiga"
-    },
-    {
-        "id": "2401",
-        "name": "Savolainen Viivi",
         "luokka": "Liiga"
     },
     {
