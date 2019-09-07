@@ -207,7 +207,7 @@ Vue.component('vue-referees', {
                       let ret = this.referees.filter((m)=>m.displayed);
                       return ret;
                   }
-              },                  
+              },  
 });
 Vue.component('vue-competitions', {
               props: ['competitions'],
@@ -308,8 +308,10 @@ Vue.component('vue-estematriisi', {
             this.pvm = pvm;
             this.show = true;
 
-            let src = "http://www.lentopalloerotuomarit.fi/esteet/?pvm=" + pvm;
+            let src = this.getSrc();
+
             setTimeout(function(){
+                console.log("Avataan, url: " + src);
                 document.getElementById('estematriisiIframe').src = src;
             }, 100);
         },
@@ -317,13 +319,14 @@ Vue.component('vue-estematriisi', {
             this.show = false;
         },
         getSrc: function(){
-            let src = "http://www.lentopalloerotuomarit.fi/esteet/?pvm=" + this.pvm;
+            let id_string = window.SELECTED_REFEREE_IDS.map(r=>r.toString()).join(","); 
+            let src = `http://www.lentopalloerotuomarit.fi/esteet/?pvm=${this.pvm}&ids=${id_string}`;
             return src;
         }
     }
 });
 Vue.component('vue-matches', {
-              props: ['initial_matches', 'show_days_ahead', 'nimeamattomat_lkm'],
+              props: ['initial_matches', 'show_days_ahead', 'nimeamattomat_lkm', 'referee_ids'],
               computed: {
                   matches_before: function(){
                       let dt = moment();
@@ -342,7 +345,7 @@ Vue.component('vue-matches', {
               template: `
                     <div>
                         <h3>Nimeämättömiä otteluita yhteensä {{displayed_matches_count}}</h3>
-                        <vue-estematriisi></vue-estematriisi>
+                        <vue-estematriisi :referee_ids="referee_ids"></vue-estematriisi>
                         <vue-match v-for="match in matches_before" :match="match"></vue-match>
                     </div>
               `,

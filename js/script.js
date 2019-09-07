@@ -1,3 +1,5 @@
+window.SELECTED_REFEREE_IDS = [];
+
 var bus = new Vue({
     methods: {
         on: function(event, callback){
@@ -494,6 +496,12 @@ $(document).ready(function () {
 
             this.loadCompetitions();
         },
+        watch: {
+            referees: function(val){
+                var ids = val.filter(r=>r.displayed).map(r=>r.id);
+                window.SELECTED_REFEREE_IDS = ids;
+            }
+        },
         computed: {
             last_shown_day: function(){
                 var now = moment();
@@ -585,7 +593,6 @@ $(document).ready(function () {
                                 
                 return ret;
             },
-
         },
         methods: {
             resize: resizeWindow,
@@ -596,7 +603,7 @@ $(document).ready(function () {
 
                 var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
                 //url = "/ajax/referees.json";
-                url = "./ajax/autoreferees.txt";
+                url = "http://www.lentopalloerotuomarit.fi/list/autoreferees.php";
 
                 $.get(url, function(data_){
                     let data = JSON.parse(data_);
@@ -884,6 +891,8 @@ $(document).ready(function () {
                 Lockr.set(PREFIX + "Referees", list);
                 Lockr.set(PREFIX + "RefereeDoubles", double);
                 Lockr.set(PREFIX + "RefereeWorkload", workload);
+
+                window.SELECTED_REFEREE_IDS = this.referees.filter(r=>r.displayed).map(r=>r.id);
             },
 
             retainCookies: function(comp, cat, gro, tea){
@@ -987,7 +996,9 @@ $(document).ready(function () {
                     if(doub.includes(referee.id)) referee.showDouble = false;
                     if(work.includes(referee.id)) referee.showWorkLoad = false;
                 }
-
+              
+                window.SELECTED_REFEREE_IDS = this.referees.filter(r=>r.displayed).map(r=>r.id);
+                 
                 this.cookies.vie = json;
             },
             getReferee: function(id){
