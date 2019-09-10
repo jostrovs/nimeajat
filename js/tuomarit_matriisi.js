@@ -56,11 +56,6 @@ let referees_helsinki = [
         last_of_class: true,
     },
     {
-        id: 2041,
-        name: "Haavisto Jami",
-        luokka: "II",
-    },
-    {
         id: 1171,
         name: "Harju Kari",
         luokka: "II",
@@ -105,13 +100,13 @@ let referees_helsinki = [
         luokka: "II",
     },
     {
-        id: 1649,
-        name: "Perkinen Elina",
+        id: 2680,
+        name: "Ovaska Kari",
         luokka: "II",
     },
     {
-        id: 2680,
-        name: "Ovaska Kari",
+        id: 1649,
+        name: "Perkinen Elina",
         luokka: "II",
     },
     {
@@ -130,16 +125,6 @@ let referees_helsinki = [
         luokka: "II",
         last_of_class: true,
     },
-    // {
-    //     id: 1574,
-    //     name: "Sinerma Sakari",
-    //     luokka: "II",
-    // },
-    {
-        id: 2112,
-        name: "Andersson Erkki",
-        luokka: "III",
-    },
     {
         id: 2562,
         name: "Heikola Tiina",
@@ -148,6 +133,11 @@ let referees_helsinki = [
     {
         id: 1198,
         name: "Honkanen Väinö",
+        luokka: "III",
+    },
+    {
+        id: 2694,
+        name: "Hurttala Alina",
         luokka: "III",
     },
     {
@@ -174,11 +164,6 @@ let referees_helsinki = [
         id: 2202,
         name: "Lind Elina",
         luokka: "NT",
-    },
-    {
-        id: 1961,
-        name: "Lindberg Risto",
-        luokka: "III",
     },
     {
         id: 1220,
@@ -215,19 +200,14 @@ let referees_helsinki = [
     //     name: "Pekkala Eero",
     //     luokka: "III",
     // },
-    // {
-    //     id: 1371,
-    //     name: "Rannikko Altti",
-    //     luokka: "III",
-    // },
     {
-        id: 2434,
-        name: "Pussinen Susanna",
+        id: 1371,
+        name: "Rannikko Altti",
         luokka: "III",
     },
     {
-        id: 1965,
-        name: "Ruuska Noora",
+        id: 2434,
+        name: "Pussinen Susanna",
         luokka: "III",
     },
     // {
@@ -248,6 +228,16 @@ let referees_helsinki = [
     {
         id: 2601,
         name: "Vauhkonen Miro",
+        luokka: "III",
+    },
+    {
+        id: 2691,
+        name: "Välimäki Ada",
+        luokka: "III",
+    },
+    {
+        id: 2692,
+        name: "Välimäki Pasi",
         luokka: "III",
     },
 ];
@@ -356,6 +346,11 @@ let referees_liiga = [
     {
         "id": "1359",
         "name": "Parkkinen Tommi",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1376",
+        "name": "Partiainen Kari",
         "luokka": "Liiga"
     },
     {
