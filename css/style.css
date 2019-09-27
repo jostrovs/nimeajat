@@ -108,6 +108,7 @@ th, td {
 
 .match {
     margin: 2px;
+    white-space: nowrap;
 }
 
 .double-booking {
@@ -210,8 +211,13 @@ th, td {
     background: blue;
     color: white;
 }
-.N2 {
-    background: #f99;
+.N2, .N2Y {
+    background: #f77;
+    color: white;
+}
+
+.N2A {
+    background: #fb7;
     color: white;
 }
 .M2 {

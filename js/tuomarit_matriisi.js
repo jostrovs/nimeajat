@@ -5,7 +5,7 @@ if(queryPaikka) paikka = queryPaikka;
 
 let referees_helsinki = [
     {
-        id: 1764,
+        id: 1674,
         name: "Haavisto Jere",
         luokka: "I",
     },
@@ -131,11 +131,6 @@ let referees_helsinki = [
         luokka: "III",
     },
     {
-        id: 1198,
-        name: "Honkanen Väinö",
-        luokka: "III",
-    },
-    {
         id: 2694,
         name: "Hurttala Alina",
         luokka: "III",
@@ -143,11 +138,6 @@ let referees_helsinki = [
     {
         id: 2688,
         name: "Hurttala Tiina",
-        luokka: "III",
-    },
-    {
-        id: 2192,
-        name: "Hyttinen Anna",
         luokka: "III",
     },
     {
@@ -160,11 +150,11 @@ let referees_helsinki = [
         name: "Keski-Nikkola Ilona",
         luokka: "III",
     },
-    {
-        id: 2202,
-        name: "Lind Elina",
-        luokka: "NT",
-    },
+    // {
+    //     id: 2202,
+    //     name: "Lind Elina",
+    //     luokka: "NT",
+    // },
     {
         id: 1220,
         name: "Mononen Timo",
@@ -210,11 +200,6 @@ let referees_helsinki = [
         name: "Pussinen Susanna",
         luokka: "III",
     },
-    // {
-    //     id: 1584,
-    //     name: "Rönnqvist Timo",
-    //     luokka: "III",
-    // },
     {
         id: 1239,
         name: "Torkkeli Heikki",
