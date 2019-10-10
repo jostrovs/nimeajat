@@ -109,11 +109,11 @@ let referees_helsinki = [
         name: "Perkinen Elina",
         luokka: "II",
     },
-    {
-        id: 2143,
-        name: "Perkinen Teppo",
-        luokka: "II",
-    },
+    // {
+    //     id: 2143,
+    //     name: "Perkinen Teppo",
+    //     luokka: "II",
+    // },
     {
         id: 1367,
         name: "Rouhiainen Paavo",
@@ -141,6 +141,11 @@ let referees_helsinki = [
         luokka: "III",
     },
     {
+        id: 2689,
+        name: "Jantunen Mika",
+        luokka: "III"
+      },
+    {
         id: 1169,
         name: "Kalliokunnas Kauko",
         luokka: "III",
@@ -148,6 +153,16 @@ let referees_helsinki = [
     {
         id: 2090,
         name: "Keski-Nikkola Ilona",
+        luokka: "III",
+    },
+    {
+        id: 2697,
+        name: "Kivioja Joona",
+        luokka: "III",
+    },
+    {
+        id: 2701,
+        name: "Kokkonen Sauli",
         luokka: "III",
     },
     // {
@@ -185,6 +200,11 @@ let referees_helsinki = [
         name: "Parjanen Olli",
         luokka: "III",
     },
+    {
+        id: 2434,
+        name: "Pussinen Susanna",
+        luokka: "III",
+    },
     // {
     //     id: 1624,
     //     name: "Pekkala Eero",
@@ -196,8 +216,8 @@ let referees_helsinki = [
         luokka: "III",
     },
     {
-        id: 2434,
-        name: "Pussinen Susanna",
+        id: 2564,
+        name: "Taajamo Jali",
         luokka: "III",
     },
     {
@@ -205,11 +225,11 @@ let referees_helsinki = [
         name: "Torkkeli Heikki",
         luokka: "III",
     },
-    {
-        id: 2590,
-        name: "Vainio Samuel",
-        luokka: "III",
-    },
+    // {
+    //     id: 2590,
+    //     name: "Vainio Samuel",
+    //     luokka: "III",
+    // },
     {
         id: 2601,
         name: "Vauhkonen Miro",
