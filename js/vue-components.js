@@ -237,7 +237,7 @@ Vue.component('vue-competitions', {
 
                                                 <span v-if="competition.development" style="background: #fcc;">   comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>
-                                                    <li v-for="group in category.groups" v-if="category.displayed">
+                                                    <li v-for="group in category.groups" v-if="category.displayed" :id="group_element_id(category.id, group.id)">
                                                         <input type="checkbox" v-model="group.displayed"> {{group.name}}
                                                         <span v-if="competition.development && group.isFinished()">LOPPU comp: {{competition.id}}  cat: {{category.id}}  gro: {{group.id}}</span>
                                                         <ul>
@@ -262,6 +262,18 @@ Vue.component('vue-competitions', {
                       collapseHref: "#" + this._uid.toString()
                   }
               },
+              mounted: function(){
+                  let self=this; 
+                  bus.on("ETSI_SARJALISTALTA_2", function(ids){
+                      let id = self.group_element_id(ids.category_id, ids.group_id);
+
+                      let dom_ele = document.getElementById(id);
+                      dom_ele.scrollIntoView();
+
+                      let element = $("#" + id);
+                      vilkuta_elementtia(element);
+                  });  
+              },
               methods: {
                   alert: function(mgg){
                       alert(mgg);
@@ -275,6 +287,10 @@ Vue.component('vue-competitions', {
                   loadGroupsOnParent: function(competition, category){
                       category.displayed = true;
                       this.$emit('load_groups_from_child', competition.id, category.id)
+                  },
+
+                  group_element_id: function(category_id, group_id){
+                      return "group_" + category_id + "_" + group_id;
                   }
               },
 });
@@ -466,6 +482,8 @@ Vue.component('vue-match', {
         
                     <a @click="show_estematriisi()" :title="estematriisititle"><img src="block.png" height=16></a>&nbsp;
         
+                    <a @click="etsi_sarjalistalta(match)" title="Etsi tämä lohko Sarjat-välilehdeltä"><img src="Look-icon.png" height=16></a>&nbsp;
+        
                     <span v-for="referee in match.referees" class='referee-list-label'>
                         {{referee}}
                     </span>
@@ -492,6 +510,10 @@ Vue.component('vue-match', {
     methods: {
         show_estematriisi: function(){
             bus.emit("ESTEMATRIISI_SHOW", this.pvm)
+        },
+
+        etsi_sarjalistalta: function(match){
+            bus.emit("ETSI_SARJALISTALTA_1", { category_id: match.category.id, group_id: match.group.id });
         }
     }
 });

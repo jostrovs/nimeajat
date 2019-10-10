@@ -438,6 +438,26 @@ class Team {
     }
 }
 
+var vilkuta_elementtia = function(jq_element){
+    jq_element.addClass("elementin_vilkutus");
+    jq_element.css("background-color", "red");
+
+    setTimeout(function(){
+        jq_element.css("background-color", "white");
+
+        setTimeout(function(){
+            jq_element.css("background-color", "red");
+
+            setTimeout(function(){
+                jq_element.css("background-color", "white");
+                setTimeout(function(){
+                    jq_element.removeClass("elementin_vilkutus");
+                }, 500);
+            }, 500);
+        }, 500);
+    }, 500);
+}
+
 const REF4 = ["M1", "ML", "NL", "MSC", "N1", "NSC"];
 const REF2 = ["M2", "M3"];
 
@@ -495,6 +515,8 @@ $(document).ready(function () {
             this.loadReferees();
 
             this.loadCompetitions();
+
+            bus.on("ETSI_SARJALISTALTA_1", this.etsi_sarjalistalta);
         },
         watch: {
             referees: function(val){
@@ -597,6 +619,13 @@ $(document).ready(function () {
         methods: {
             resize: resizeWindow,
             
+            etsi_sarjalistalta: function(ids){
+                $("#sarjat_tab").trigger('click');
+                setTimeout(function(){
+                    bus.emit("ETSI_SARJALISTALTA_2", ids)
+                }, 300);
+            },
+
             loadReferees: function(){
                 var self = this;
                 self.refereeMap = new Map();

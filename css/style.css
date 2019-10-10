@@ -277,6 +277,10 @@ th, td {
     font-size: 9pt;
 }
 
+.elementin_vilkutus {
+    transition: background-color 0.5s ease;
+}
+
 /* *************  Button  *************** */
 
 .myButton {
