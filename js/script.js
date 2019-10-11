@@ -632,7 +632,7 @@ $(document).ready(function () {
 
                 var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
                 //url = "/ajax/referees.json";
-                url = "http://www.lentopalloerotuomarit.fi/list/autoreferees.php";
+                url = "https://www.lentopalloerotuomarit.fi/list/autoreferees.php";
 
                 $.get(url, function(data_){
                     let data = JSON.parse(data_);

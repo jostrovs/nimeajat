@@ -336,7 +336,7 @@ Vue.component('vue-estematriisi', {
         },
         getSrc: function(){
             let id_string = window.SELECTED_REFEREE_IDS.map(r=>r.toString()).join(","); 
-            let src = `http://www.lentopalloerotuomarit.fi/esteet/?pvm=${this.pvm}&ids=${id_string}`;
+            let src = `https://www.lentopalloerotuomarit.fi/esteet/?pvm=${this.pvm}&ids=${id_string}`;
             return src;
         }
     }
@@ -500,7 +500,7 @@ Vue.component('vue-match', {
         return {
             pvm: pvm,
             estematriisititle: "Avaa esteellisyyssivu päivälle " + pvm,
-            estematriisilink: "http://www.lentopalloerotuomarit.fi/esteet/?pvm=" + pvm,
+            estematriisilink: "https://www.lentopalloerotuomarit.fi/esteet/?pvm=" + pvm,
             torneoeditlink: "https://lentopallo-extranet.torneopal.fi/taso/ottelu.php?otteluid=" + this.match.id,
             id: this._uid,
             collapseId: this._uid,
