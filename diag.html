@@ -1,0 +1,87 @@
+<!doctype html>
+
+<html lang="fi">
+
+<head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Diagnostiikkasivu</title>
+    <meta name="description" content="Lentopalloerotuomarinimeäjien sivu">
+    <meta name="author" content="Jori Ostrovskij">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <script src="js/lib/jquery-3.1.1.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="js/lib/lockr.js"></script>
+    <script src="js/tuomari-set.js"></script>
+</head>
+
+<style>
+    div {
+        display: none;
+        padding: 20px;
+        margin: 20px;
+        font-size: 16px;
+    }
+</style>
+
+<body>
+    <div class="try1" style="border: 3px solid green;">
+        localStorage talletus onnistui.
+    </div>
+
+    <div class="try2" style="border: 3px solid green;">
+        Sivu ladattu uudelleen onnistuneesti.
+    </div>
+
+    <div class="try3" style="border: 3px solid green;">
+        Kaikki näyttää toimivan odotetusti!
+    </div>
+
+    <div class="error" style="border: 3px solid red;">
+        
+    </div>
+    
+</body>
+
+<script>
+    try {
+        if(!navigator.cookieEnabled){
+            throw "Evästeet on kytketty pois.";           
+        }
+
+        if(location.href.indexOf("uudelleen") < 0){
+            localStorage.koe = "";
+            localStorage.koe = "testing";
+            $(".try1").show();
+
+            let loc = location.href;
+            loc += "?uudelleen=true";
+            location.assign(loc);
+        } else {
+            // Uudelleenhaun jälkeen
+            $(".try2").show();
+
+            if(localStorage.koe != "testing"){
+                throw "Talletetun tiedon haku ei toiminut";
+            }
+
+            $(".try2").hide();
+            $(".try3").show();
+        }
+
+    } catch(err) {
+        $("div").hide();        
+
+        $(".error").show();
+        let msg = err;
+        $(".error").text("Virhe: " + msg);
+    }
+
+</script>
+
+</html>
