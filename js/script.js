@@ -20,7 +20,7 @@ var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
     if(comp.length < 1){
-        comp = ["SARJAPOHJA", "vb2019epohj", "vb2019esavo", "vb2019esuomi", "vb2019isuomi", "vb2019ksuomi", "vb2019lappi", "vb2019lsuomi", "vb2019pkarjala", "vb2019ppohj", "vb2019psavo"];
+        comp = ["vb2017kpohj","vb2018kpohj","vb2019a","vb2019esuomi","vb2019isuomi","vb2019lasuomi","vb2019lsuomi","vb2019n","vb2019psuomi"];
         Lockr.set(PREFIX + "Competitions", comp);
     }
 
