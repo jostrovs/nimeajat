@@ -1027,8 +1027,8 @@ $(document).ready(function () {
                 }
               
                 window.SELECTED_REFEREE_IDS = this.referees.filter(r=>r.displayed).map(r=>r.id);
-                 
-                this.cookies.vie = json;
+                
+                this.cookies.vie = JSON.stringify(json);
             },
             getReferee: function(id){
                 for(let referee of this.referees){

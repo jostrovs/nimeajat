@@ -74,20 +74,6 @@
                 <h1><img src="balloon.png" style="padding-bottom: 15px; height: 60px; margin-right: 10px"> Nimeäjien työkalu</h1>
 
                 
-                <p><span class="referee-label">Uutta!</span> 11.10.2019: Sivut siirrettiin salatun protokollan (https) taakse, eli sivun osoite muuttui
-                    alun http -> https osalta. Valitettavasti tämän johdosta myös selaimeen talletetut asetukset ovat jääneet vanhalle osoitteelle,
-                    eli ne on vain naksuteltava käsin uudestaan.
-                </p>
-                <p><span class="referee-label">Uutta!</span> 10.10.2019: Tyhjät-välilehden otteluriville on lisätty suurennuslasi-ikoni <img src="Look-icon.png">. 
-                    Sitä klikkaamalla avataan Sarjat-välilehti ja näytetään se lohko, johon ko. ottelu kuuluu.
-                </p>
-                <p>Erityisesti junioreiden otteluita ja lohkoja tulee jatkuvasti paljon lisää, ja tällä tavalla päästään helposti piilottamaan
-                   lohkot, joihin ei itse tarvitse reagoida.
-                </p>
-                
-
-                <hr>
-
                 <!--<div style="background: red; padding: 12px;">
                 <h1 style="color: white;">HUOM!</h1>
                 <p style="font-size: 18px; color: white;">Tuomareiden tietojen haku Torneopalista ei tällä hetkellä toimi, ja sen vuoksi ei ole mahdollista saada tietoa tuplabuukkauksista tai tehtävämääristäkään. Poistan tämän ilmoituksen, kun sivut jälleen toimivat.</p>
@@ -169,6 +155,8 @@
                 <p>Huom! Kehitysvaiheessa sivu toimii Chromella ja Firefoxilla, joten jos sivu ei tunnu toimivan lainkaan, niin kokeile ensin ajantasaisella selaimella.</p>
 
                 <p>-Jori<br><img src="ema.png"></p> 
+                <hr>
+                <p><button class="myButton" onclick="location.reload(true)">Lataa sivu palvelimelta uudestaan</button></p>
 			</div>
 			<div id="tuplat" class="tab-pane fade">
                 <vue-tuplat v-model="tuplabuukkaukset_lkm" v-if="loader_count < 1" :duplicates="double_booking"></vue-tuplat>
