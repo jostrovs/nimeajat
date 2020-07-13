@@ -309,11 +309,6 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
-        "id": "1199",
-        "name": "Kolehmainen Sari",
-        "luokka": "Liiga"
-    },
-    {
         "id": "1358",
         "name": "Laiti Mihkal",
         "luokka": "Liiga"
@@ -349,13 +344,13 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
-        "id": "1359",
-        "name": "Parkkinen Tommi",
+        "id": "1579",
+        "name": "Ostrovskij Jori",
         "luokka": "Liiga"
     },
     {
-        "id": "1376",
-        "name": "Partiainen Kari",
+        "id": "1359",
+        "name": "Parkkinen Tommi",
         "luokka": "Liiga"
     },
     {
@@ -364,18 +359,8 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
-        "id": "1352",
-        "name": "Puskala Juha",
-        "luokka": "Liiga"
-    },
-    {
         "id": "1189",
         "name": "Puskala Pauli",
-        "luokka": "Liiga"
-    },
-    {
-        "id": "1237",
-        "name": "Rinne Ari",
         "luokka": "Liiga"
     },
     {
@@ -410,16 +395,6 @@ let referees_liiga = [
         last_of_class: true,
     },
     {
-        "id": "1223",
-        "name": "Heikkinen Ari",
-        "luokka": "PS"
-    },
-    {
-        "id": "1337",
-        "name": "Heinonen Jukka",
-        "luokka": "PS"
-    },
-    {
         "id": "1219",
         "name": "Ikonen Pekka",
         "luokka": "PS"
@@ -440,23 +415,28 @@ let referees_liiga = [
         "luokka": "PS"
     },
     {
+        "id": "2191",
+        "name": "Lumme Juhani",
+        "luokka": "PS"
+    },
+    {
         "id": "1214",
         "name": "Mannersuo Sari",
         "luokka": "PS"
     },
     {
-        "id": "1208",
-        "name": "Muro Arto",
+        "id": "2220",
+        "name": "Ojala Miikka",
         "luokka": "PS"
     },
     {
-        "id": "1274",
-        "name": "Mutkala Seppo",
+        "id": "1352",
+        "name": "Puskala Juha",
         "luokka": "PS"
     },
     {
-        "id": "1579",
-        "name": "Ostrovskij Jori",
+        "id": "1607",
+        "name": "Rantala Markku",
         "luokka": "PS"
     },
     {
