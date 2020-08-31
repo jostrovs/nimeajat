@@ -20,7 +20,7 @@ var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
     if(comp.length < 1){
-        comp = ["vb2017kpohj","vb2018kpohj","vb2019a","vb2019esuomi","vb2019isuomi","vb2019lasuomi","vb2019lsuomi","vb2019n","vb2019psuomi"];
+        comp = ["vb2020a","vb2020esuomi","vb2020isuomi","vb2020lasuomi","vb2020lsuomi","vb2020n","vb2020psuomi"];
         Lockr.set(PREFIX + "Competitions", comp);
     }
 
@@ -479,7 +479,7 @@ $(document).ready(function () {
             nimeamattomat_lkm: 0,
             tuplabuukkaukset_lkm: 0,
             alertShown: false,
-            datestring: "2019-12-31",
+            datestring: "2020-08-31",
             //date: new Date("2016-12-31"),
             matches: [],
             categories: [],
@@ -729,7 +729,7 @@ $(document).ready(function () {
                 //console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
-                        if(torneoCompetition.season_id != "2019-20") continue;
+                        if(torneoCompetition.season_id != "2020-21") continue;
                         let competition = new Competition(torneoCompetition);
                         competition.categories = [];
 
@@ -973,7 +973,7 @@ $(document).ready(function () {
                 let gro = this.groupSkip = json.Groups = Lockr.getArr(PREFIX + "Groups");
                 let tea = this.teamSkip = json.Teams = Lockr.getArr(PREFIX + "Teams");
 
-                if(comp.length < 1) comp = ["vb2019a"];
+                if(comp.length < 1) comp = ["vb2020a"];
 
                 for(let competition of this.competitions){
                     // Käsitellään kilpailujen ruksit

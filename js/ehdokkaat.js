@@ -56,7 +56,7 @@ function loadReferees(){
     var self = this;
 
     [start_date, end_date] = dateRange(moment());
-    let startDate = "2019-08-01";
+    let startDate = "2020-08-01";
 
     for(let referee of myReferees){
         var url = `https://lentopallo.torneopal.fi/taso/rest/getMatches?referee_id=${referee.id}&start_date=${startDate}&api_key=qfzy3wsw9cqu25kq5zre`; 
@@ -99,7 +99,8 @@ function loadReferees(){
 let tiedot_haettu = "";
 
 function loadEsteet(){
-    cachedGet("./ajax/esteet.txt", function(data_txt){
+    debugger;
+    cachedGet("https://www.lentopalloerotuomarit.fi/list/esteet.php", function(data_txt){
         let data = JSON.parse(data_txt);
         esteet = data.kaikki_esteet;
         
