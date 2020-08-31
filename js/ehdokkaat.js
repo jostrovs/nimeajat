@@ -99,7 +99,7 @@ function loadReferees(){
 let tiedot_haettu = "";
 
 function loadEsteet(){
-    cachedGet("https://www.lentopalloerotuomarit.fi/list/esteet.php", function(data_txt){
+    cachedGet("https://www.lentopalloerotuomarit.fi/list/esteet.txt", function(data_txt){
         let data = JSON.parse(data_txt);
         esteet = data.kaikki_esteet;
         
