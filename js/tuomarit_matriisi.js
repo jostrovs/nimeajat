@@ -25,11 +25,6 @@ let referees_helsinki = [
         luokka: "I",
     },
     {
-        id: 1641,
-        name: "Näveri Martti",
-        luokka: "I",
-    },
-    {
         id: 1579,
         name: "Ostrovskij Jori",
         luokka: "I",
@@ -183,6 +178,11 @@ let referees_helsinki = [
     {
         id: 2300,
         name: "Niemi Jarmo",
+        luokka: "III",
+    },
+    {
+        id: 1641,
+        name: "Näveri Martti",
         luokka: "III",
     },
     {

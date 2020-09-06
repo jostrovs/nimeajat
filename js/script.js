@@ -20,7 +20,7 @@ var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
     if(comp.length < 1){
-        comp = ["vb2020a","vb2020esuomi","vb2020isuomi","vb2020lasuomi","vb2020lsuomi","vb2020n","vb2020psuomi"];
+        comp = ["vb2020esuomi","vb2020isuomi","vb2020lasuomi","vb2020lsuomi","vb2020n","vb2020psuomi"];
         Lockr.set(PREFIX + "Competitions", comp);
     }
 
@@ -729,6 +729,7 @@ $(document).ready(function () {
                 //console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
+                        console.log(torneoCompetition.season_id);
                         if(torneoCompetition.season_id != "2020-21") continue;
                         let competition = new Competition(torneoCompetition);
                         competition.categories = [];
