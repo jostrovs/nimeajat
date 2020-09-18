@@ -201,6 +201,11 @@ let referees_helsinki = [
         luokka: "III",
     },
     {
+        id: 2816,
+        name: "Puhakka Pasi",
+        luokka: "III",
+    },
+    {
         id: 2434,
         name: "Pussinen Susanna",
         luokka: "III",
