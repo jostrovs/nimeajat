@@ -3,7 +3,7 @@ const SKIP_COMPETITION = ["SARJAPOHJA", "aluetesti", "beach2016", "masku2016", "
   // Junnuja:
  "vb2016n",
  "vb2016v",
-
+ 
 
  ];
 
@@ -16,4 +16,12 @@ const SKIP_CATEGORIES2 = [
      },
  ];
 
+const COMMON_SKIP = [
+    // Aikuisten kategorioita
+    
+    // A-pojat taso
+    "vb2020n.PA.1", "vb2020n.PA.2", "vb2020n.PA.3", "vb2020n.PA.4", "vb2020n.PA.6",  
 
+    // A-tytöt taso
+    "vb2020n.TA.1", "vb2020n.TA.2", "vb2020n.TA.3", "vb2020n.TA.4", "vb2020n.TA.5", "vb2020n.TA.6", "vb2020n.TA.7", "vb2020n.TA.8", "vb2020n.TA.9",  
+];

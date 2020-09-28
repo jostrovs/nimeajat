@@ -224,6 +224,8 @@ Vue.component('vue-competitions', {
                                         <input type="checkbox" v-model="competition.displayed">
                                         {{competition.name}}  {{(competition.id)}}
                                         <span v-if="competition.development && competition.isFinished()">LOPPU comp: {{competition.id}}</span>
+                                        <span class="id">({{competition.id}})</span>
+                                        <span class="info"> {{pelaamattaCompe(competition)}}</span>
 
                                         <button class="myButton" v-if="!competition.loaded && competition.displayed" @click="loadCategoriesOnParent(competition)">Lataa</button>
 
@@ -231,6 +233,9 @@ Vue.component('vue-competitions', {
 
                                             <li v-for="category in competition.categories" v-if="competition.displayed">
                                                 <input type="checkbox" v-model="category.displayed">
+                                                <span class="id">({{competition.id}}.{{category.id}})</span>
+                                                <span class="info"> {{pelaamattaCategory(category)}}</span>
+
                                                 {{category.name}}  {{(category.id)}}
 
                                                 <button class="myButton" v-if="!category.loaded && category.displayed" @click="loadGroupsOnParent(competition, category)">Lataa</button>
@@ -239,7 +244,8 @@ Vue.component('vue-competitions', {
                                                 <ul>
                                                     <li v-for="group in category.groups" v-if="category.displayed" :id="group_element_id(category.id, group.id)">
                                                         <input type="checkbox" v-model="group.displayed"> {{group.name}}
-                                                        <span v-if="competition.development && group.isFinished()">LOPPU comp: {{competition.id}}  cat: {{category.id}}  gro: {{group.id}}</span>
+                                                        <span class="id">({{competition.id}}.{{category.id}}.{{group.id}})</span>
+                                                        <span class="info"> {{pelaamattaLohko(group)}}</span>
                                                         <ul>
                                                             <li v-for="team in group.teams" v-if="group.displayed">
                                                                 <input type="checkbox" v-model="team.displayed"> {{team.name}}
@@ -251,7 +257,9 @@ Vue.component('vue-competitions', {
                                         </ul>
                                     </li>
                                 </ul>
-                            <!--div class="panel-footer">Panel Footer</div-->
+                                <!--div class="panel-footer">Panel Footer</div-->
+                                <div onclick="$('.id').css('display','inline-block')">id</div>
+                                <div onclick="$('.info').css('display','inline-block')">pelaamatta</div>
                           </div>
               
               `,
@@ -275,6 +283,27 @@ Vue.component('vue-competitions', {
                   });  
               },
               methods: {
+                  pelaamattaLohko(lohko){
+                      let p = lohko.pelaamatta();
+                      let t = lohko.total();
+                      if(t == 0 && p == 0) return "";
+                      return p.toString() + "/" + t;
+                  },
+                
+                  pelaamattaCategory(kate){
+                      let p = kate.pelaamatta();
+                      let t = kate.total();
+                      if(t == 0 && p == 0) return "";
+                      return p.toString() + "/" + t;
+                  },
+                
+                  pelaamattaCompe(kompe){
+                      let p = kompe.pelaamatta();
+                      let t = kompe.total();
+                      if(t == 0 && p == 0) return "";
+                      return p.toString() + "/" + t;
+                  },
+                
                   alert: function(mgg){
                       alert(mgg);
                   },

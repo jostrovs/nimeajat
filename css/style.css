@@ -1,3 +1,4 @@
+
 #app {
     margin-left: 12%;
     margin-right: 12%;
@@ -329,3 +330,16 @@ th, td {
     width: 60px;
     padding: 4px 8px;
 }
+
+
+span.id { 
+    display: none;
+    background-color: yellow;
+}
+
+span.info { 
+    display: none;
+    background-color: #fdb;
+}
+
+

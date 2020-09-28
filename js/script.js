@@ -327,6 +327,21 @@ class Category {
         if(DEVELOPMENT) this.development=true;
     }
 
+    pelaamatta(){
+        let ret = 0;
+        this.groups.map(g=>{
+            ret += g.pelaamatta();
+        });
+        return ret;
+    }
+    total(){
+        let ret = 0;
+        this.groups.map(g=>{
+            ret += g.total();
+        });
+        return ret;
+    }
+
     isFinished(){
         for(let group of this.groups){
             if(!group.isFinished()) return false;
@@ -352,6 +367,21 @@ class Competition {
         if(DEVELOPMENT) this.development=true;
     }
 
+    pelaamatta(){
+        let ret = 0;
+        this.categories.map(c=>{
+            ret += c.pelaamatta();
+        });
+        return ret;
+    }
+    total(){
+        let ret = 0;
+        this.categories.map(c=>{
+            ret += c.total();
+        });
+        return ret;
+    }
+
     isFinished(){
         for(let category of this.categories){
             if(!category.isFinished()) return false;
@@ -374,7 +404,24 @@ class Group {
         this.teams = [];
         this.development=false;
         this.isNew=true;
+
         if(DEVELOPMENT) this.development=true;
+    }
+
+    pelaamatta(){
+        let ret = 0;
+        this.matches.map(m=>{
+            if(!m.played) ret++;
+        });
+        return ret;
+    }
+
+    total(){
+        let ret = 0;
+        this.matches.map(m=>{
+            ret++;
+        });
+        return ret;
     }
 
     isFinished(){
@@ -731,6 +778,9 @@ $(document).ready(function () {
                     for(let torneoCompetition of data.competitions){
                         console.log(torneoCompetition.season_id);
                         if(torneoCompetition.season_id != "2020-21") continue;
+
+       
+
                         let competition = new Competition(torneoCompetition);
                         competition.categories = [];
 
@@ -778,6 +828,15 @@ $(document).ready(function () {
             loadGroups: function(competition, category, pushPosition=-1){
                 // Tämä pois??
                 // Lohkot & ottelut
+             
+                let categoryn_tunniste = competition.id + "." + category.id;
+                if(COMMON_SKIP.indexOf(categoryn_tunniste) >= 0){
+                    // Skipataan yhteisistä, esim. menneet junnutasot.
+                    console.log("COMMON_SKIP: " + categoryn_tunniste);
+                    return;
+                }
+
+             
                 let self = this;
                 if(!category || !category.torneoCategory || !category.torneoCategory.category_id){
                     console.log("Tyhjä category");
@@ -789,14 +848,12 @@ $(document).ready(function () {
 
 
                 $.get(url2, function(data){
-                    if(category.id == "N1"){
-                        var breaker=1;
-                    }
-
                     if(data.call.status === "error"){
                         self.loader(-1);
                         return;
                     }
+
+
 
                     let detailedTorneoCategory = data.category;
                     
@@ -807,7 +864,14 @@ $(document).ready(function () {
                     for(let torneoGroup of detailedTorneoCategory.groups){
                         let group = new Group(torneoGroup);
                         //console.log("L              " + competition.id + ": " + detailedTorneoCategory.category_id + " - " + group.id);
-                        
+
+                        let lohkon_tunniste = competition.id + "." + category.id + "." + group.id;
+                        if(COMMON_SKIP.indexOf(lohkon_tunniste) >= 0){
+                            console.log("COMMON_SKIP: " + lohkon_tunniste);
+                            // Skipataan yhteisistä, esim. menneet junnutasot.
+                            continue;
+                        }
+
                         if(!detailedTorneoCategory.matches){
                             //debugger;
                             console.log("    Ei otteluita: " + competition.id + ": " + detailedTorneoCategory.category_id);
@@ -1005,6 +1069,7 @@ $(document).ready(function () {
                                 if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2]) group.displayed = false;
                             }
                             
+
                             for(let team of group.teams){
                                 // Käsitellään joukkueiden ruksit
                                 //console.log("C            " + team.id + " - " + team.name);
