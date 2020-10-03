@@ -614,9 +614,9 @@ $(document).ready(function () {
                         var allSettings = JSON.parse(json);
 
                         var key = "P" + PREFIX;
-                        var settingsObject = allSettings[key];
+                        var settingsObj = allSettings[key];
 
-                        if(!settingsObject){
+                        if(!settingsObj){
                             // Tämän prefixin asetuksia ei ole tiedostossa.
                             self.loadSettingsFromLocal();
                             return;

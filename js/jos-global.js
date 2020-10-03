@@ -28,4 +28,3 @@ if(token != undefined){
     console.log("Talletus TOKEN: " + TOKEN);
 }
 
-TOKEN = "JORI";
