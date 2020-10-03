@@ -34,6 +34,9 @@
     <script src="js/tuomari-set.js"></script>
     <script src="js/vue-components.js"></script>
     <script src="js/skip.js"></script>
+    
+    <script src="js/util.js"></script>
+    <script src="js/classes.js"></script>
     <script src="js/script.js"></script>
 </head>
 
@@ -65,7 +68,6 @@
 			<li><a data-toggle="tab" href="#lähipelit" @click="resize()">Lähipelit</a></li>
 			<li><a data-toggle="tab" href="#tuomarit" @click="resize()">Tuomarit</a></li>
 			<li><a data-toggle="tab" href="#sarjat" @click="resize()" id="sarjat_tab">Sarjat</a></li>
-			<li><a data-toggle="tab" href="#tuovie" @click="resize()">Tuo/vie</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -195,36 +197,6 @@
                 <vue-competitions @load_categories_from_child="loadCategoriesFromChild" 
                                   @load_groups_from_child="loadGroupsFromChild"
                                    v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
-			</div>
-			<div id="tuovie" class="tab-pane fade">
-                
-                <h2>Tuo/vie</h2>
-
-                <p>Kun asetukset on saatu kuntoon yhdellä selaimella esim. PC:llä, olisi mukavaa saada samat asetukset siirrettyä muille laitteille ilman työlästä uudelleennaksuttelua. 
-                Se onnistuu täällä.</p>
-                <p><b>HUOM!</b> Käytä vie-toimintoa vain heti sen jälkeen, kun olet tallettanut ja ladannut asetukset "Asetukset"-välilehdellä! Näin varmistetaan se, että siirrettäviin asetuksiin ole tullut muutoksia.</p>
-
-                <hr>
-
-                <h4>Esimerkki: Asetusten vienti PC:ltä kännykkään</h4>
-                <p>1. Lataa sivu uudestaan.<br>
-                   2. Tule selaimella tälle sivulle ja kopioi <b>KAIKKI</b> teksti ylemmästä alla olevasta laatikosta. <br>
-                   3. Siirrä jollain konstilla teksti PC:ltä puhelimeen.<br>
-                   4. Liitä puhelimessa teksti alempaan allaolevista laatikoista ja paina "Tallenna asetukset"-painiketta.<br>
-                   5. Lataa sivu uudestaan, jotta varmistat uusien asetusten olevan käytössä.</p>
-
-                <button class="myButton" @click="importCookies">Tallenna asetukset</button>
-                
-                <button class="myButton" @click="clearCookies">Tyhjennä asetukset</button>
-                
-                <hr>
-                
-                <label>Kopioi tästä laatikosta viedäksesi asetukset toiseen selaimeen:</label><br>
-                <textarea style="width: 100%" rows="5" cols="40" readonly v-model="cookies.vie"></textarea>
-                
-                <hr>
-
-                <vue-input-area label="Liitä tähän laatikkoon tuodaksesi asetukset toisesta selaimesta" v-model="cookies.tuo"></vue-input-area>
 			</div>
     		<div id="lähipelit" class="tab-pane fade">
                 

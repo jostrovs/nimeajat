@@ -1,517 +1,3 @@
-window.SELECTED_REFEREE_IDS = [];
-
-var bus = new Vue({
-    methods: {
-        on: function(event, callback){
-            this.$on(event, callback);
-        },
-        emit: function(event, payload){
-            this.$emit(event, payload);
-        }
-    }
-});
-
-Date.prototype.getWeek = function() {
-    var onejan = new Date(this.getFullYear(), 0, 1);
-    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() -1) / 7);
-}
-
-var initialSettings = function(){
-    // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
-    let comp = Lockr.getArr(PREFIX + "Competitions");
-    if(comp.length < 1){
-        comp = ["vb2020esuomi","vb2020isuomi","vb2020lasuomi","vb2020lsuomi","vb2020n","vb2020psuomi"];
-        Lockr.set(PREFIX + "Competitions", comp);
-    }
-
-    let refe = Lockr.getArr(PREFIX + "Referees");
-    if(refe.length < 1){
-        refe = [];
-        for(let i=1164;i<2800;++i){
-            if(i != 1202 && i != 1288 && i!= 1225 && i != 1201){
-                refe.push(i.toString());                
-            }
-        }
-        Lockr.set(PREFIX + "Referees", refe);
-    }
-};
-
-let resizeTimeout = 0;
-var resizeWindow = function(){
-    if(resizeTimeout != 0) clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(function(){
-        let width = window.innerWidth;
-        let height = window.innerHeight;
-
-        // Navbar placeholder
-        let navbar = parseInt($("#navbar").css("height"),10);
-        $(".navbar-placeholder").height(navbar + "px");
-
-        // Tuomarilista
-        let tuomaritButtonit = parseInt($("#tuomaritButtonit").css("height"),10);
-        let tuomaritPanelHeading = parseInt($("#tuomarit-panel-heading").css("height"),10);
-        let tuomaritPanelButtons = parseInt($("#tuomarit-panel-buttons").css("height"),10);
-        let tuomaritVainValitut = parseInt($("#tuomarit-vain-valitut").css("height"),10);
-        let tuomaritLuokat = parseInt($("#tuomarit-luokat").css("height"),10);
-
-        let tuomaritMinus = navbar + tuomaritButtonit + tuomaritPanelHeading + tuomaritPanelButtons + tuomaritVainValitut + tuomaritLuokat;
-        if(tuomaritMinus < navbar+1) tuomaritMinus = 217;
-        let tuomaritLista = height - tuomaritMinus - 60;
-        if(tuomaritLista < 200) tuomaritLista = 200;
-        $("#tuomarit-lista").css("max-height", tuomaritLista.toString() + "px");
-
-        // Sarjat
-        let sarjatButtonit = parseInt($("#sarjat-buttonit").css("height"),10);
-        let sarjatPanelHeading = parseInt($("#sarjat-panel-heading").css("height"),10);
-
-        let sarjatMinus = navbar + sarjatButtonit + sarjatPanelHeading;
-        if(sarjatMinus < navbar+1) sarjatMinus = 137;
-        let sarjat = height - sarjatMinus - 40;
-        if(sarjat < 200) sarjat = 200;
-        $("#sarjatCollapse").css("max-height", sarjat.toString() + "px");
-
-
-        ////
-        console.log(`(${width},${height})`);
-        console.log(`sarjat: ${sarjat}`);
-        resizeTimeout = 0;
-    },100);
-};
-
-var pois_umlaut = function(s){
-    s = repl(s,"&Auml;", "Ä");
-    s = repl(s,"&Ouml;", "Ö");
-    s = repl(s,"&Aring;", "Å");
-    s = repl(s,"&auml;", "ä");
-    s = repl(s,"&ouml;", "ö");
-    s = repl(s,"&aring;", "å");
-    return s;
-};
-
-var repl = function(s, search, replace){
-    return s.split(search).join(replace);
-}
-
-var cookieMatch = function(needle, haystack){
-    for(let hay of haystack){
-        if(hay===needle) return true;
-        if(hay.startsWith(needle+".")) return true;
-    }
-    return false;
-};
-
-function setWeekSeparators(matches){
-    let prev = -1;
-    for(let i=0;i<matches.length;++i){
-        let m = matches[i];
-        if(!m.displayed) continue;
-        if(prev != m.week && prev > -1){
-            m.weekSeparator = true;
-        } 
-        prev = m.week;
-    }
-}
-
-class Match{
-    constructor(torneoMatch, competition, category, group){
-        this.number = torneoMatch.match_number;
-        this.id = torneoMatch.match_id;
-        this.torneoMatch = torneoMatch;
-        this.displayed = true;
-        this.hasTime = true;
-        this.played = torneoMatch.status == 'Played';
-
-        this.referees = [];
-        this.href="https://lentopallo.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
-
-        this.fill_date();
-        this.fill_referees();
-
-        this.competition = competition;
-        
-        this.category = category;
-        this.category_href="https://lentopallo.torneopal.fi/taso/sarja.php?turnaus=" + competition.id + "&sarja=" + category.id;
-        
-        this.group = group;
-        this.group_href = this.category_href + "&lohko=" + this.group.id;
-
-        this.special = 0;
-
-        this.isDisplayed = function(){
-            return this.displayed && this.competition.displayed && this.group.displayed && this.category.displayed &&
-                   this.isTeamDisplayed() && this.hasTime;
-        }
-
-        this.isTeamDisplayed = function(){
-            let team = this.group.getTeam(this.torneoMatch.team_A_id);
-            if(!team) return false;
-            return team.displayed;
-        }
-
-        this.toCSV = function(){
-            let refe = "";
-            for(let r of this.referees){
-                if(refe.length > 0) refe += "; ";
-                refe += r;
-            }
-
-            let puuttuu = "";
-            if(this.referee_status != '') puuttuu = "Puuttuu: " + this.referee_status;
-
-            return this.weekday + "," + 
-                   this.datetime.toLocaleDateString() + ",klo," +
-                   this.toTimeString() + "," + 
-                   this.torneoMatch.category_id + "," + 
-                   this.group.id + "," + 
-                   this.torneoMatch.match_number + "," + 
-                   this.getVenue() + "," + 
-                   this.torneoMatch.team_A_name + "-" + this.torneoMatch.team_B_name + "," + 
-                   refe + "," + 
-                   puuttuu;
-
-        }
-    }
-
-    toTimeString(){
-        if(this.hasTime === false) return "--:--";
-        let h = this.datetime.getHours().toString();
-        if(h.length < 2) h = "0" + h;
-        let m = this.datetime.getMinutes().toString();
-        if(m.length < 2) m = "0" + m;
-        return h + ":" + m;
-    }
-
-    toLogString(){
-        return this.id + "   " + 
-               this.category.name + "   " + 
-               this.datetime.toLocaleDateString() + "   " + 
-               this.datetime.toLocaleTimeString() + "   " + 
-               this.torneoMatch.venue_name + "   " + 
-               this.torneoMatch.team_A_name + " - " +
-               this.torneoMatch.team_B_name + "   ";
-    }
-
-    isDisplayed(map){
-        for(let id of this.referee_ids){
-            let refe = map.get(id);
-
-            if(refe == undefined){
-                this.special = 1;
-                return true;
-            }
-            if(refe.displayed) return true;
-        }
-        return false;
-    }
-
-    isWorkloadDisplayed(map){
-        for(let id of this.referee_ids){
-            let refe = map.get(id);
-
-            if(refe == undefined){
-                this.special = 1;
-                return true;
-            }
-            if(refe.displayed && refe.showWorkLoad) return true;
-        }
-        return false;
-    }
-
-    fill_date(){
-        let a = this.torneoMatch;
-        let da = a.date.split("-");
-        if(da.length < 3){
-            da = ["2030", "1", "1"];
-             this.displayed = false;
-        }
-        
-        let ta = a.time.split(":");
-        if(ta.length < 3){
-             ta = ["23", "59", "59"];
-             this.hasTime = false;
-        }
-        
-        let date_a = new Date(da[0], da[1]-1, da[2], ta[0], ta[1], ta[2], 0);
-        this.datetime = date_a;
-
-        this.datelocal = date_a.toLocaleDateString();
-        let hours = date_a.getHours().toString();
-        if(hours.length < 2) hours = "0" + hours;
-        let mins = date_a.getMinutes().toString();
-        if(mins.length < 2) mins = "0" + mins;
-        this.timelocal = hours + ":" + mins;
-
-        switch(this.datetime.getDay()){
-            case 0: this.weekday = "Su"; break;
-            case 1: this.weekday = "Ma"; break;
-            case 2: this.weekday = "Ti"; break;
-            case 3: this.weekday = "Ke"; break;
-            case 4: this.weekday = "To"; break;
-            case 5: this.weekday = "Pe"; break;
-            case 6: this.weekday = "La"; break;
-        }   
-
-        this.week = this.datetime.getWeek();
-    }
-
-    hasReferees(){
-        return this.referees.length > 0;
-    }
-
-    fill_referees(){
-        // Asetetaan ottelulle tieto tuomarien statuksesta
-        let m = this.torneoMatch;
-        this.referee_status="";
-        this.referees = [];
-        this.referee_ids = [];
-
-        let puuttuu = [];
-
-        if(REF4.includes(m.category_id)){
-            // Kaikki neljä täytyy löytyä
-            if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
-            else { this.referees.push(m.referee_1_name); this.referee_ids.push(m.referee_1_id); }
-
-            if(!(m.referee_2_name !== null && m.referee_2_name.length > 0 &&  m.referee_2_name !== "??")) puuttuu.push("VT"); 
-            else { this.referees.push(m.referee_2_name); this.referee_ids.push(m.referee_2_id); }
-
-            if(!(m.assistant_referee_1_name !== null && m.assistant_referee_1_name.length > 0 &&  m.assistant_referee_1_name !== "??")) puuttuu.push("RT1"); 
-            else { this.referees.push(m.assistant_referee_1_name); this.referee_ids.push(m.assistant_referee_1_id); }
-
-            if(!(m.assistant_referee_2_name !== null && m.assistant_referee_2_name.length > 0 &&  m.assistant_referee_2_name !== "??")) puuttuu.push("RT2"); 
-            else { this.referees.push(m.assistant_referee_2_name); this.referee_ids.push(m.assistant_referee_2_id); }
-
-        }
-        else if(REF2.includes(m.category_id)){
-            // Kaksi täytyy löytyä
-            if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
-            else { this.referees.push(m.referee_1_name); this.referee_ids.push(m.referee_1_id); }
-
-            if(!(m.referee_2_name !== null && m.referee_2_name.length > 0 &&  m.referee_2_name !== "??")) puuttuu.push("VT"); 
-            else { this.referees.push(m.referee_2_name); this.referee_ids.push(m.referee_2_id); }
-        }
-        else {    
-            // Yksi sentään 
-            if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
-            else { this.referees.push(m.referee_1_name); this.referee_ids.push(m.referee_1_id); }
-        }
-
-        this.referee_status = puuttuu.join(" ");
-
-        if(this.referee_status !== ''){
-            var breaker=0;
-        }
-    }  
-
-    isValidDate(){
-        return this.datetime > new Date() && this.datetime.getFullYear()<2030;
-    }
-
-    getVenue(){
-        let ret = this.torneoMatch.venue_name;
-        if(!ret) return "----";
-        return ret;
-    }
-}
-
-class Category {
-    constructor(torneoCategory){
-        this.torneoCategory = torneoCategory;
-        this.displayed = true;
-        this.id = torneoCategory.category_id;
-        this.name = torneoCategory.category_name;
-        this.groups=[];
-        this.development=false;
-        this.isNew=true;
-        this.loaded = false;
-        if(DEVELOPMENT) this.development=true;
-    }
-
-    pelaamatta(){
-        let ret = 0;
-        this.groups.map(g=>{
-            ret += g.pelaamatta();
-        });
-        return ret;
-    }
-    total(){
-        let ret = 0;
-        this.groups.map(g=>{
-            ret += g.total();
-        });
-        return ret;
-    }
-
-    isFinished(){
-        for(let group of this.groups){
-            if(!group.isFinished()) return false;
-        }
-        return true;
-    }
-
-    getJson(){
-        return new Category(this.torneoCategory);
-    }
-}
-
-class Competition {
-    constructor(torneoCompetition){
-        this.torneoCompetition = torneoCompetition;
-        this.displayed = true;
-        this.name = torneoCompetition.competition_name;
-        this.id = torneoCompetition.competition_id;
-        this.categories = [];
-        this.development=false;
-        this.isNew=true;
-        this.loaded=false;
-        if(DEVELOPMENT) this.development=true;
-    }
-
-    pelaamatta(){
-        let ret = 0;
-        this.categories.map(c=>{
-            ret += c.pelaamatta();
-        });
-        return ret;
-    }
-    total(){
-        let ret = 0;
-        this.categories.map(c=>{
-            ret += c.total();
-        });
-        return ret;
-    }
-
-    isFinished(){
-        for(let category of this.categories){
-            if(!category.isFinished()) return false;
-        }
-        return true;
-    }
-
-    getJson(){
-        return new Competition(this.torneoCompetition);
-    }
-}
-
-class Group {
-    constructor(torneoGroup){
-        this.id = torneoGroup.group_id;
-        this.name = torneoGroup.group_name;
-        this.torneoGroup = torneoGroup;
-        this.displayed = true;
-        this.matches = [];
-        this.teams = [];
-        this.development=false;
-        this.isNew=true;
-
-        if(DEVELOPMENT) this.development=true;
-    }
-
-    pelaamatta(){
-        let ret = 0;
-        this.matches.map(m=>{
-            if(!m.played) ret++;
-        });
-        return ret;
-    }
-
-    total(){
-        let ret = 0;
-        this.matches.map(m=>{
-            ret++;
-        });
-        return ret;
-    }
-
-    isFinished(){
-        for(let match of this.matches){
-            if(!match.played) return false;
-        }
-        return true;
-    }
-
-    fillTeams(){
-        // Haetaan lohkon otteluista joukkueet
-        for(let match of this.matches){
-            if(null === this.getTeam(match.torneoMatch.team_A_id)){
-                this.teams.push(new Team(match.torneoMatch.team_A_id, match.torneoMatch.team_A_name));
-            }
-            if(null === this.getTeam(match.torneoMatch.team_B_id)){
-                this.teams.push(new Team(match.torneoMatch.team_B_id, match.torneoMatch.team_B_name));
-            }
-        }
-    }
-
-    getTeam(id){
-        for(let team of this.teams){
-            if(team.id === id) return team;
-        }        
-        return null;
-    }
-
-    getJson(){
-        return new Group(this.torneoGroup);
-    }
-}
-
-class Referee {
-      constructor(torneoReferee){
-          this.id = torneoReferee.referee_id;
-          this.name = pois_umlaut(torneoReferee.last_name + " " + torneoReferee.first_name);
-          this.gsm = torneoReferee.gsm;
-          this.PostiNo = torneoReferee.posti;
-          this.Kunta = pois_umlaut(torneoReferee.kunta);
-          this.Email = torneoReferee.email;
-          this.Luokka = torneoReferee.lk;
-          this.torneoReferee = torneoReferee;
-          this.displayed = true;
-          this.showWorkLoad = true;
-          this.showDouble = true;
-          this.href="https://lentopallo.torneopal.fi/taso/ottelulista.php?tuomari=" + torneoReferee.referee_id; 
-
-          if(this.Luokka == "I-luokka") this.Luokka = "I";
-          if(this.Luokka == "II-luokka") this.Luokka = "II";
-          if(this.Luokka == "III-luokka") this.Luokka = "III";
-    }  
-}
-
-class Team {
-    constructor(id, name){
-        this.id = id;
-        this.name = name;
-        this.displayed = true;
-        this.matches = [];
-    }
-}
-
-var vilkuta_elementtia = function(jq_element){
-    jq_element.addClass("elementin_vilkutus");
-    jq_element.css("background-color", "red");
-
-    setTimeout(function(){
-        jq_element.css("background-color", "white");
-
-        setTimeout(function(){
-            jq_element.css("background-color", "red");
-
-            setTimeout(function(){
-                jq_element.css("background-color", "white");
-                setTimeout(function(){
-                    jq_element.removeClass("elementin_vilkutus");
-                }, 500);
-            }, 500);
-        }, 500);
-    }, 500);
-}
-
-const REF4 = ["M1", "ML", "NL", "MSC", "N1", "NSC"];
-const REF2 = ["M2", "M3"];
-
-var match_without_date = function(m){
-    // Pois ottelut, joilla ei ole päivämäärää
-    return m.datetime < new Date(2029, 1, 1, 1, 1, 1, 1);
-};
 
 $(document).ready(function () {
     initialSettings();
@@ -539,7 +25,7 @@ $(document).ready(function () {
             refereeMap: null,
             double_booking: [],
             loader_count: 0,
-            cookies: { vie: {}, tuo: ""},
+
             dontLoadCookies: false,
 
             competitionSkip: [],
@@ -776,7 +262,6 @@ $(document).ready(function () {
                 //console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
                 $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
                     for(let torneoCompetition of data.competitions){
-                        console.log(torneoCompetition.season_id);
                         if(torneoCompetition.season_id != "2020-21") continue;
 
        
@@ -986,6 +471,32 @@ $(document).ready(function () {
                 Lockr.set(PREFIX + "RefereeDoubles", double);
                 Lockr.set(PREFIX + "RefereeWorkload", workload);
 
+                if(TOKEN){
+                    // Jos talletustoken on annettu, niin talletetaan asetukset myös palvelimelle
+
+                    var settingsObject = {
+                        showdaysahead: this.show_days_ahead,
+                        competitions: comp,
+                        categories: cat,
+                        groups: gro,
+                        teams: tea,
+                        referees: list,
+                        doubles: double,
+                        workload: workload,
+                    };
+
+                    saveSettingsObject(settingsObject,
+                        function(){
+                            // Success!
+                            //alert("Asetukset talletettu.");
+                        },
+                        function(status){
+                            // Failure
+                            alert("Asetusten talletus ei onnistunut, status: " + status);
+                        });
+
+                }
+
                 window.SELECTED_REFEREE_IDS = this.referees.filter(r=>r.displayed).map(r=>r.id);
             },
 
@@ -1027,22 +538,16 @@ $(document).ready(function () {
                 this.teamSkip = Lockr.getArr(PREFIX + "Teams");
             },
 
-            loadCookies: function(){
-                console.log("Load cookies");
-                let json = {};
+            applySettingsObject: function(settingsObject){
+                let self=this;
 
-                this.show_days_ahead = json.ShowDaysAhead = Lockr.get(PREFIX + "ShowDaysAhead", "60");
+                if(settingsObject.competitions.length < 1) competitions = ["vb2020a"];
 
-                let comp = this.competitionSkip = json.Competitions = Lockr.getArr(PREFIX + "Competitions");
-                let cat = this.categorySkip = json.Categories = Lockr.getArr(PREFIX + "Categories");
-                let gro = this.groupSkip = json.Groups = Lockr.getArr(PREFIX + "Groups");
-                let tea = this.teamSkip = json.Teams = Lockr.getArr(PREFIX + "Teams");
-
-                if(comp.length < 1) comp = ["vb2020a"];
+                this.show_days_ahead = settingsObject.showdaysahead;
 
                 for(let competition of this.competitions){
                     // Käsitellään kilpailujen ruksit
-                    for(let compItem of comp){
+                    for(let compItem of settingsObject.competitions){
                         if(competition.id === compItem) competition.displayed = false;
                     }
 
@@ -1052,19 +557,15 @@ $(document).ready(function () {
                         // Käsitellään sarjojen ruksit
                         //console.log("C    " + category.id);
                         
-                        for(let catItem of cat){
+                        for(let catItem of settingsObject.categories){
                             let arr = catItem.split(".");
                             if(competition.id === arr[0] && category.id === arr[1]) category.displayed = false;
                         }
                         
-                        if(category.id == "N1"){
-                            var breaker=1;
-                        }
-
                         for(let group of category.groups){
                             // Käsitellään lohkojen ruksit
                             //console.log("C        " + group.id);
-                            for(let groItem of gro){
+                            for(let groItem of settingsObject.groups){
                                 let arr = groItem.split(".");
                                 if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2]) group.displayed = false;
                             }
@@ -1073,7 +574,7 @@ $(document).ready(function () {
                             for(let team of group.teams){
                                 // Käsitellään joukkueiden ruksit
                                 //console.log("C            " + team.id + " - " + team.name);
-                                for(let teaItem of tea){
+                                for(let teaItem of settingsObject.teams){
                                 let arr = teaItem.split(".");
                                     if(competition.id === arr[0] && category.id === arr[1] && group.id === arr[2] && team.id === arr[3]) team.displayed = false;
                                 }
@@ -1082,20 +583,83 @@ $(document).ready(function () {
                     }
                 }
 
-                let disp = json.Referees = Lockr.getArr(PREFIX + "Referees");
-                let doub = json.RefereeDoubles = Lockr.getArr(PREFIX + "RefereeDoubles");
-                let work = json.RefereeWorkload = Lockr.getArr(PREFIX + "RefereeWorkload");
     
                 for(let referee of this.referees){
-                    if(disp.includes(referee.id)) referee.displayed = false;
-                    if(doub.includes(referee.id)) referee.showDouble = false;
-                    if(work.includes(referee.id)) referee.showWorkLoad = false;
+                    if(settingsObject.referees.includes(referee.id)) referee.displayed = false;
+                    if(settingsObject.doubles.includes(referee.id)) referee.showDouble = false;
+                    if(settingsObject.workload.includes(referee.id)) referee.showWorkLoad = false;
                 }
               
                 window.SELECTED_REFEREE_IDS = this.referees.filter(r=>r.displayed).map(r=>r.id);
                 
-                this.cookies.vie = JSON.stringify(json);
             },
+
+            loadCookies: function(){
+                let self=this;
+
+                console.log("Load cookies");
+
+                if(TOKEN){
+                    // Talletustoken on annettu; ladataan asetukset palvelimelta
+
+                    loadSettingsObject(function(json){
+                        if(!json){
+                            alert("Palvelimelle talletettuja tietoja ei löytynyt; käytetään selaimen asetuksia ja talletetaan ne palvelimelle.");
+                            var settings =  self.loadSettingsFromLocal();
+
+                            saveSettingsObject(settings);
+                            return;
+                        }
+                        
+                        var allSettings = JSON.parse(json);
+
+                        var key = "P" + PREFIX;
+                        var settingsObject = allSettings[key];
+
+                        if(!settingsObject){
+                            // Tämän prefixin asetuksia ei ole tiedostossa.
+                            self.loadSettingsFromLocal();
+                            return;
+                        }
+
+                        self.competitionSkip = settingsObj.competitions;
+                        self.categorySkip = settingsObj.categories;
+                        self.groupSkip = settingsObj.groups;
+                        self.teamSkip = settingsObj.teams;
+    
+                        self.applySettingsObject(settingsObj);
+                    })
+                } else {
+                    // Talletustokenia ei ole; käytetään local storagen asetuksia
+                    self.loadSettingsFromLocal();
+                }
+
+            },
+
+            loadSettingsFromLocal: function(){
+                let self=this;
+                self.competitionSkip = Lockr.getArr(PREFIX + "Competitions");
+                self.categorySkip = Lockr.getArr(PREFIX + "Categories");
+                self.groupSkip = Lockr.getArr(PREFIX + "Groups");
+                self.teamSkip = Lockr.getArr(PREFIX + "Teams");
+
+                var settingsObj = {
+                    showdaysahead: Lockr.get(PREFIX + "ShowDaysAhead", "60"),
+                    
+                    competitions: Lockr.getArr(PREFIX + "Competitions"),
+                    categories: Lockr.getArr(PREFIX + "Categories"),
+                    groups: Lockr.getArr(PREFIX + "Groups"),
+                    teams: Lockr.getArr(PREFIX + "Teams"),
+
+                    referees: Lockr.getArr(PREFIX + "Referees"),
+                    doubles: Lockr.getArr(PREFIX + "RefereeDoubles"),
+                    workload: Lockr.getArr(PREFIX + "RefereeWorkload"),
+                }
+
+                self.applySettingsObject(settingsObj);
+                return settingsObj;
+        },
+
             getReferee: function(id){
                 for(let referee of this.referees){
                     if(referee.id === id) return referee;
@@ -1122,7 +686,7 @@ $(document).ready(function () {
                     for(let id of match.referee_ids){
                         if(referee_ids.indexOf(id)<0){
                             // Otteluun on valittu vieras tuomari
-                            console.log("VIERAS TUOMARI:" + match.referees.join(", ") + "    " + match.torneoMatch.team_A_name + "-" + match.torneoMatch.team_B_name);
+                            //console.log("VIERAS TUOMARI:" + match.referees.join(", ") + "    " + match.torneoMatch.team_A_name + "-" + match.torneoMatch.team_B_name);
                         }
                     }
                 }
