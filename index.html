@@ -68,6 +68,7 @@
 			<li><a data-toggle="tab" href="#lähipelit" @click="resize()">Lähipelit</a></li>
 			<li><a data-toggle="tab" href="#tuomarit" @click="resize()">Tuomarit</a></li>
 			<li><a data-toggle="tab" href="#sarjat" @click="resize()" id="sarjat_tab">Sarjat</a></li>
+			<li><a data-toggle="tab" href="#kirjautuminen" @click="resize()">Kirjautuminen</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -207,6 +208,32 @@
 
                 <vue-all-matches :initial_matches="all_matches" :show_days_ahead="show_days_ahead"></vue-all-matches>
             </div>
+			<div id="kirjautuminen" class="tab-pane fade">
+                <div id="kirjautuminen-buttonit">
+                    <button class="myButton" @click="saveCookies">Tallenna asetukset</button>
+                    <button class="myButton" @click="loadCookies">Lataa asetukset</button>
+                    
+                    <hr>
+
+                    <h2>Asetusten talletus palvelimelle</h2>
+                    <p>Mikäli sait herjan <span class="herja">Palvelimelle talletettuja tietoja ei löytynyt</span>, niin 
+                       kyse on siitä, että et ole vielä tallettanut palvelimelle mitään.</p>
+
+                    <p>Tietojen talletus on käytettävissä ainoastaan silloin, kun sivun osoitteessa
+                       on mukana kohta <span class="code">token=<i><&lt;oma-tunnisteesi&gt</i>;</span>.
+                    </p>
+
+                    <p><b>Ennen kuin talletat palvelimelle ensimmäisen kerran, niin varmista, että sinulla 
+                        on valittuna oikeat sarjat ja tuomarit!</b> Sen jälkeen kun tiedot on talletettu,
+                        niin ne ovat käytössä <b>kaikkialla</b>, siis kaikilla tietokoneilla, puhelimilla, 
+                        selaimilla jne., jos osoitteessa on mukana yllä mainittu tunniste. 
+                    </p>
+
+                    <p>Asetuksia voi toki edelleen muuttaa ja tallettaa uudestaan.</p>
+
+                    </p>
+                </div>
+			</div>
         </div>        
 
     </div>

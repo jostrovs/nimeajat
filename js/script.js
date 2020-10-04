@@ -33,6 +33,8 @@ $(document).ready(function () {
             groupSkip: [],
             teamSkip: [],
 
+            kirjautuminen: {},
+
             showCSV: false,
             encuri: encodeURI("data:text/csv;charset=utf-8,asd,dfg,wer,sdfg\r\nsdf,dfg,xcv,wer\r\n"),
 
@@ -431,7 +433,7 @@ $(document).ready(function () {
                 this.loadCookies();
             },
 
-            saveCookies: function(){
+            saveCookies: function(noserver){
                 // Show days ahead
                 Lockr.set(PREFIX + "ShowDaysAhead", this.show_days_ahead);
 
@@ -473,6 +475,8 @@ $(document).ready(function () {
 
                 if(TOKEN){
                     // Jos talletustoken on annettu, niin talletetaan asetukset myös palvelimelle
+                    if(noserver == "NO SERVER") return; // Jos latauksen jälkeen on pyydetty
+                                                        // cookieSavea, niin ei talleteta silloin enää palvelimelle asti
 
                     var settingsObject = {
                         showdaysahead: this.show_days_ahead,
@@ -488,11 +492,12 @@ $(document).ready(function () {
                     saveSettingsObject(settingsObject,
                         function(){
                             // Success!
+                            toastr.info("Asetukset talletettu onnistuneesti palvelimelle.")
                             //alert("Asetukset talletettu.");
                         },
                         function(status){
                             // Failure
-                            alert("Asetusten talletus ei onnistunut, status: " + status);
+                            toastr.error("Asetusten talletus ei onnistunut. Status: " + status);
                         });
 
                 }
@@ -545,11 +550,15 @@ $(document).ready(function () {
 
                 this.show_days_ahead = settingsObject.showdaysahead;
 
+                let tarvitaan_uudelleenlatausta = false;
+
                 for(let competition of this.competitions){
                     // Käsitellään kilpailujen ruksit
                     for(let compItem of settingsObject.competitions){
                         if(competition.id === compItem) competition.displayed = false;
                     }
+
+                    if(competition.displayed && !competition.loaded) tarvitaan_uudelleenlatausta = true;
 
                     //console.log(competition.id);
 
@@ -580,6 +589,9 @@ $(document).ready(function () {
                                 }
                             }
                         }
+
+                        if(category.displayed && !category.loaded) tarvitaan_uudelleenlatausta = true;
+
                     }
                 }
 
@@ -592,6 +604,14 @@ $(document).ready(function () {
               
                 window.SELECTED_REFEREE_IDS = this.referees.filter(r=>r.displayed).map(r=>r.id);
                 
+                if(tarvitaan_uudelleenlatausta){
+                    toastr.info("Sarja-asetukset ovat muuttuneet. Sivu täytyy ladata uudestaan.");
+                    setTimeout(function(){
+                        location.reload();
+                    }, 2000);
+
+                }
+
             },
 
             loadCookies: function(){
@@ -604,10 +624,10 @@ $(document).ready(function () {
 
                     loadSettingsObject(function(json){
                         if(!json){
-                            alert("Palvelimelle talletettuja tietoja ei löytynyt; käytetään selaimen asetuksia ja talletetaan ne palvelimelle.");
-                            var settings =  self.loadSettingsFromLocal();
+                            toastr.error("Palvelimelle talletettuja tietoja ei löytynyt.\r\nKatso lisää tietoja 'Kirjautuminen'-välilehdeltä");
 
-                            saveSettingsObject(settings);
+                            //alert("Palvelimelle talletettuja tietoja ei löytynyt.");
+                            var settings =  self.loadSettingsFromLocal();
                             return;
                         }
                         
@@ -628,6 +648,9 @@ $(document).ready(function () {
                         self.teamSkip = settingsObj.teams;
     
                         self.applySettingsObject(settingsObj);
+                        toastr.info("Asetukset ladattu palvelimelta.");
+
+                        self.saveCookies("NO SERVER");
                     })
                 } else {
                     // Talletustokenia ei ole; käytetään local storagen asetuksia
