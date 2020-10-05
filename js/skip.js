@@ -20,8 +20,16 @@ const COMMON_SKIP = [
     // Aikuisten kategorioita
     
     // A-pojat taso
-    "vb2020n.PA.1", "vb2020n.PA.2", "vb2020n.PA.3", "vb2020n.PA.4", "vb2020n.PA.6",  
+    "vb2020n.PA.1", "vb2020n.PA.2", "vb2020n.PA.3", "vb2020n.PA.4", "vb2020n.PA.5",  
 
     // A-tytöt taso
     "vb2020n.TA.1", "vb2020n.TA.2", "vb2020n.TA.3", "vb2020n.TA.4", "vb2020n.TA.5", "vb2020n.TA.6", "vb2020n.TA.7", "vb2020n.TA.8", "vb2020n.TA.9",  
+
+    // C-pojat taso
+    "vb2020n.PC.1", "vb2020n.PC.2", "vb2020n.PC.3", "vb2020n.PC.4", "vb2020n.PC.5", "vb2020n.PC.6", "vb2020n.PC.7", "vb2020n.PC.8", "vb2020n.PC.9", 
+
+    // C-tytöt taso
+    "vb2020n.TC.1", "vb2020n.TC.2", "vb2020n.TC.3", "vb2020n.TC.4", "vb2020n.TC.5", "vb2020n.TC.6", "vb2020n.TC.7", "vb2020n.TC.8", "vb2020n.TC.9", "vb2020n.TC.10", 
+    "vb2020n.TC.11", "vb2020n.TC.12", "vb2020n.TC.13", "vb2020n.TC.14", "vb2020n.TC.15", "vb2020n.TC.16", "vb2020n.TC.17", "vb2020n.TC.18", "vb2020n.TC.19", "vb2020n.TC.20", 
+    "vb2020n.TC.21", "vb2020n.TC.22", "vb2020n.TC.23", "vb2020n.TC.24", "vb2020n.TC.25", "vb2020n.TC.26", "vb2020n.TC.27", "vb2020n.TC.28", "vb2020n.TC.29", "vb2020n.TC.30", 
 ];
