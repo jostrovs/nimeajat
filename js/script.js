@@ -626,11 +626,18 @@ $(document).ready(function () {
                         if(!json){
                             toastr.error("Palvelimelle talletettuja tietoja ei löytynyt.\r\nKatso lisää tietoja 'Kirjautuminen'-välilehdeltä");
 
+                            self.kirjautuminen.message = "Tunniste OK, mutta palvelimelle talletettuja tietoja ei löytynyt";
+
                             //alert("Palvelimelle talletettuja tietoja ei löytynyt.");
                             var settings =  self.loadSettingsFromLocal();
                             return;
                         }
                         
+                        if(GLOBAL_SETTINGS_OBJECT != undefined && GLOBAL_SETTINGS_OBJECT.status){
+                            toastr.error("Tuntematon tunniste: " + TOKEN);
+                            self.kirjautuminen.message = GLOBAL_SETTINGS_OBJECT.status;
+                        }
+
                         var allSettings = JSON.parse(json);
 
                         var key = "P" + PREFIX;

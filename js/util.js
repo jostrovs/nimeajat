@@ -185,6 +185,7 @@ var loadSettingsObject = function(callback){
         function(json){
             if(json){
                 GLOBAL_SETTINGS_OBJECT = JSON.parse(json);
+
             }
             if(callback){
                 callback(json);
