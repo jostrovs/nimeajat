@@ -9,7 +9,7 @@
 
     // $token täytyy olla asetettu!
     require_once('./findToken.php');
-    // Nyt on asetettu muuttujat $found, $filename_body ja $filename
+    // Nyt on asetettu muuttujat $found, $filename_body, $filename ja $user_email
 
     if($found){
         if(file_exists($filename)){

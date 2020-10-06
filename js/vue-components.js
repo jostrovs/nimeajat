@@ -941,3 +941,30 @@ Vue.component('vue-referee-window', {
     }
 });
 
+Vue.component('vue-linkin-tilaus', {
+    template: `
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" v-model="to_email" placeholder="Sähköposti" id="email">
+            <button class="btn" @click="laheta()">Lähetä</button>
+        </div>
+    `,
+    data: function() {
+        return {
+            to_email: ''            
+        }
+    },
+    methods: {
+        laheta(){
+            let self=this;
+            requestLink(this.to_email, function(result){
+                if(result.status == "OK"){
+                    toastr.info("Linkki on lähetetty osoitteeseen " + self.to_email);
+                } else {
+                    toastr.error("Linkin lähetys epäonnistui. Syy: " + result.status);
+                }
+            })
+        }
+    }
+});
+

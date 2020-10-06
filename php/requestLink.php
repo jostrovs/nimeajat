@@ -1,12 +1,39 @@
 <?php
 
+$email = "";
+$token = "";
+if(isset($_GET['email'])){
+    $email = $_GET['email'];
+} else {
+    exit("{\"status\": \"Sähköposti puuttuu\"}");
+}
+
 require_once('credentials.php');
 require_once('./PHPMailer/PHPMailerAutoload.php');
+require_once('./tokenit.php');
+$found = false;
 
-function sendEmail($to, $token, $name){
+$token_keys = array_keys($tokenit);
+foreach($token_keys as $key) {
+    $value = $tokenit[$key];
+    if($key === $email){
+        $found = true;
+        $token = $value;
+    }
+}
+
+if(!$found){
+    exit("{\"status\": \"Tuntematon sähköpostiosoite\"}");
+}
+
+function sendEmail($to, $token){
     global $mailUsername, $mailPassword; // Nämä on pakko olla
-    $subject = "Kirjautumislinkki tarkkailuraporttisivulle";
-    $body = "Hei!\r\nTässä on kirjautumislinkkisi tarkkailuraporttisivulle:\r\nhttps://www.lentopalloerotuomarit.fi/tuomaritarkkailu/?token=" . $token . "\r\n\r\nÄlä vastaa tähän viestiin, vaan ongelmatapauksissa ota yhteyttä jostrovs@gmail.com.\r\n-Jori\r\n";
+    $subject = "Linkki nimeäjien työkaluun";
+    $body = "Hei!\r\nTässä on linkki, jolla saat käyttöön asetusten talletuksen palvelimelle nimeäjien työkalusivulla:\r\n"
+          . "https://www.lentopalloerotuomarit.fi/nimeajat/?token=" . $token . "\r\n"
+          . "Linkissä oleva 'token' on tunniste, jonka perusteella tiedetään, mihin tiedostoon juuri sinun asetuksesi "
+          . "kuuluu tallettaa.\r\n\r\n"
+          . "Älä vastaa tähän viestiin, vaan ongelmatapauksissa ota yhteyttä jostrovs@gmail.com.\r\n-Jori\r\n";
      
     $mail = new PHPMailer();
     
@@ -33,7 +60,7 @@ function sendEmail($to, $token, $name){
     $mail->Body = $body; 
     // you may also use $mail->Body = file_get_contents('your_mail_template.html');
      
-    $mail->AddAddress ($to, $name);     
+    $mail->AddAddress ($to, $to);     
     // you may also use this format $mail->AddAddress ($recipient);
      
     if(!$mail->Send()) 
@@ -47,7 +74,6 @@ function sendEmail($to, $token, $name){
     return $error_message;
 }
 
-$email  = $_GET["email"];
-$email = strtolower($email);
-
+sendEmail($email, $token);
+exit("{\"status\": \"OK\"}");
 ?>

@@ -193,3 +193,21 @@ var loadSettingsObject = function(callback){
         });
 }
 
+var requestLink = function(email, callback){
+    var url = "https://www.lentopalloerotuomarit.fi/nimeajat/php/requestLink.php";
+    if(LOCALHOST) url = "http://localhost:3333/php/requestLink.php";
+
+    url = url + "?timestamp=" + (new Date()).getMilliseconds().toString() + "&email=" + email;
+
+    $.get(url,
+        function(json){
+            let response = {};
+            if(json){
+                response = JSON.parse(json);
+            }
+            if(callback){
+                callback(response);
+            }
+        });
+}
+

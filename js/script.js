@@ -33,7 +33,9 @@ $(document).ready(function () {
             groupSkip: [],
             teamSkip: [],
 
-            kirjautuminen: {},
+            kirjautuminen: {
+                message: TOKEN ? 'Ladataan tietoja...' : 'Ei tunnistetta',
+            },
 
             showCSV: false,
             encuri: encodeURI("data:text/csv;charset=utf-8,asd,dfg,wer,sdfg\r\nsdf,dfg,xcv,wer\r\n"),
