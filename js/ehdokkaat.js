@@ -101,6 +101,18 @@ let tiedot_haettu = "";
 function loadEsteet(){
     cachedGet("https://www.lentopalloerotuomarit.fi/list/esteet.txt", function(data_txt){
         let data = JSON.parse(data_txt);
+        
+        // // 2021-esteet on siirrettävä yhdellä päivällä eteenpäin.
+        // for(let i=0;i< data.kaikki_esteet.length;++i){
+        //     let deb = data.kaikki_esteet[i];
+        //     let pvm = moment(data.kaikki_esteet[i].Pvm);
+        //     if(pvm.year() == 2021){
+        //         pvm.add(24, 'hours');
+        //     }
+        //     let newPvm = pvm.format('YYYY-MM-DD');
+        //     data.kaikki_esteet[i].Pvm = newPvm;
+        // }        
+        
         esteet = data.kaikki_esteet;
         
         tiedot_haettu = data.tiedot_haettu;
