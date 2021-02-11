@@ -404,6 +404,7 @@ $(document).ready(function () {
                     this.checkDoubleBooking();
                     this.checkForeignReferees();
                     $("#loader").hide();
+                    toastr.info("Kaikki tiedot ladattu.")
                 }
             },
 
