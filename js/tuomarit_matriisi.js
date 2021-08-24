@@ -324,6 +324,11 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
+        "id": "1208",
+        "name": "Muro Arto",
+        "luokka": "Liiga"
+    },
+    {
         "id": "1295",
         "name": "Mäkinen Timo",
         "luokka": "Liiga"
@@ -334,13 +339,13 @@ let referees_liiga = [
         "luokka": "Liiga"
     },
     {
-        "id": "2401",
-        "name": "Mönkkönen Viivi",
+        "id": "1324",
+        "name": "Natunen Ilmo",
         "luokka": "Liiga"
     },
     {
-        "id": "1324",
-        "name": "Natunen Ilmo",
+        "id": "2220",
+        "name": "Ojala Miikka",
         "luokka": "Liiga"
     },
     {
@@ -366,6 +371,11 @@ let referees_liiga = [
     {
         "id": "1189",
         "name": "Puskala Pauli",
+        "luokka": "Liiga"
+    },
+    {
+        "id": "1321",
+        "name": "Rönnqvist Suvi",
         "luokka": "Liiga"
     },
     {
@@ -430,16 +440,6 @@ let referees_liiga = [
         "luokka": "PS"
     },
     {
-        "id": "2220",
-        "name": "Ojala Miikka",
-        "luokka": "PS"
-    },
-    {
-        "id": "1352",
-        "name": "Puskala Juha",
-        "luokka": "PS"
-    },
-    {
         "id": "1607",
         "name": "Rantala Markku",
         "luokka": "PS"
@@ -455,8 +455,8 @@ let referees_liiga = [
         "luokka": "PS"
     },
     {
-        "id": "1310",
-        "name": "Suomi Harri",
+        "id": "1188",
+        "name": "Tiitto Mika",
         "luokka": "PS"
     },
     {
@@ -467,13 +467,8 @@ let referees_liiga = [
     {
         "id": "1176",
         "name": "Välimäki Pasi",
-        "luokka": "PS"
-    },
-    {
-        "id": "1556",
-        "name": "Ylisiurua Markku",
         "luokka": "PS",
-        last_of_class: true,
+        last_of_class: true
     },
     // {
     //     "id": "1556",
