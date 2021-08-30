@@ -12,7 +12,7 @@ $(document).ready(function () {
             nimeamattomat_lkm: 0,
             tuplabuukkaukset_lkm: 0,
             alertShown: false,
-            datestring: "2020-08-31",
+            datestring: "2021-08-31",
             //date: new Date("2016-12-31"),
             matches: [],
             categories: [],
@@ -549,7 +549,7 @@ $(document).ready(function () {
             applySettingsObject: function(settingsObject){
                 let self=this;
 
-                if(settingsObject.competitions.length < 1) competitions = ["vb2020a"];
+                if(settingsObject.competitions.length < 1) competitions = ["vb2021a"];
 
                 this.show_days_ahead = settingsObject.showdaysahead;
 
