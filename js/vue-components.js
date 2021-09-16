@@ -507,7 +507,6 @@ Vue.component('vue-match', {
                 </div>
                 <div class="box">
                 <span v-if="match.referee_status!==''">
-                    TORNEO: {{match.torneo_edit_href}}
                     <a :href="match.torneo_edit_href" target=_ title="Avaa ottelu torneopalissa (vaatii kirjautumisen!)"><img src="tp.png"></a>&nbsp;
         
                     <a @click="show_estematriisi()" :title="estematriisititle"><img src="block.png" height=16></a>&nbsp;
