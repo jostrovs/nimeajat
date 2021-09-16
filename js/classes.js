@@ -9,6 +9,7 @@ class Match{
 
         this.referees = [];
         this.href="https://lentopallo.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
+        this.torneo_edit_href="https://lentopallo-extranet.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
 
         this.fill_date();
         this.fill_referees();
