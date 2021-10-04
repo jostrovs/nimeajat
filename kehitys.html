@@ -176,9 +176,7 @@
                 
                 <hr>
                 
-                <vue-competitions @load_categories_from_child="loadCategoriesFromChild" 
-                                  @load_groups_from_child="loadGroupsFromChild"
-                                   v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+                <vue-competitions v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
 			</div>
 			<div id="tuovie" class="tab-pane fade">
                 

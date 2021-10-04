@@ -1,3 +1,5 @@
+let JOS_LOCAL_DATA = true;
+
 
 $(document).ready(function () {
     initialSettings();
@@ -15,6 +17,10 @@ $(document).ready(function () {
             datestring: "2021-08-31",
             //date: new Date("2016-12-31"),
             matches: [],
+
+            torneomatches: [],
+            seriesData: {},
+
             categories: [],
             competitions: [],
             message: 'Hello Vue!',
@@ -43,16 +49,22 @@ $(document).ready(function () {
             estematriisi_show: false,
         },
         
-        created: function () {
+        created: async function () {
             var self = this;
             $("#loader").show();
 
             this.loadSkips();
 
-            this.loadReferees();
+            this.loadReferees(function(){
+                self.loadMatches(function(){
+                    self.loadSeries(function(){
+                        self.loader_count=0;
+                        self.loader(-1);
+                    });
+                });
 
-            this.loadCompetitions();
-
+            });
+            
             bus.on("ETSI_SARJALISTALTA_1", this.etsi_sarjalistalta);
         },
         watch: {
@@ -163,16 +175,18 @@ $(document).ready(function () {
                 }, 300);
             },
 
-            loadReferees: function(){
+            loadReferees: function(callback){
                 var self = this;
                 self.refereeMap = new Map();
 
                 var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
                 //url = "/ajax/referees.json";
                 url = "https://www.lentopalloerotuomarit.fi/list/autoreferees.php";
+                url = "/data/autoreferees.json"; // JOS_LOCAL_DATA
 
                 $.get(url, function(data_){
-                    let data = JSON.parse(data_);
+                    let data = data_;
+                    if(!JOS_LOCAL_DATA) data = JSON.parse(data_);
                     self.referees = [];
                     if(data.call != undefined && data.call.status == "error"){
                         alert("Tuomarien tietojen haku epäonnistui.");
@@ -201,6 +215,8 @@ $(document).ready(function () {
                         self.refereeMap.set(referee.referee_id, newReferee);
                         self.referees.push(newReferee);    
                     }
+
+                    callback();
                 });
             },
 
@@ -238,86 +254,76 @@ $(document).ready(function () {
                 return false;
             },
 
-            loadCategoriesFromChild: function(competition_id){
-                // Sarjanäkymästä tuli käsky ladata sarjat annetulle kilpailulle
-                this.dontLoadCookies = true;
-                $("#loader").show();
-                let competition = this.getCompetition(competition_id);
-                this.loadCategories(competition);
+            loadMatches: function(callback){
+                var self = this;
+
+                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/ottelut.json"; 
+                url = "/data/ottelut.json"; // JOS_LOCAL_DATA 
+                $.get(url, function(data){
+                    if(!JOS_LOCAL_DATA) data = JSON.parse(data);
+                    self.torneomatches = data.matches;
+                    callback();
+                });
             },
 
-            loadGroupsFromChild: function(competition_id, category_id){
-                // Sarjanäkymästä tuli käsky ladata lohkot annetulle sarjalle
-                this.dontLoadCookies = true;
-                $("#loader").show();
-                let competition = this.getCompetition(competition_id);
-                let pos=0;
-                for(let category of competition.categories){
-                    if(category.id === category_id){
-                        this.loadGroups(competition, category, pos);
-                    }
-                    pos++;
-                }
+            loadSeries: function(callback){
+                var self = this;
+
+                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/series.json"; 
+                url = "/data/series.json"; // JOS_LOCAL_DATA 
+                $.get(url, function(data){
+                    if(!JOS_LOCAL_DATA) data = JSON.parse(data);
+                    self.seriesData = data;
+                    self.loadCompetitions();
+                    callback();
+                });
             },
 
             loadCompetitions: function(){
                 var self = this;
 
-                //console.log("getCompetitions: https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre");
-                $.get("https://lentopallo.torneopal.fi/taso/rest/getCompetitions?api_key=qfzy3wsw9cqu25kq5zre", function(data){
-                    for(let torneoCompetition of data.competitions){
-                        if(torneoCompetition.season_id != "2021-22") continue;
+                for(let torneoCompetition of self.seriesData.competitions){
+                    if(torneoCompetition.season_id != "2021-22") continue;
 
-       
+                    let competition = new Competition(torneoCompetition);
+                    competition.categories = [];
 
-                        let competition = new Competition(torneoCompetition);
-                        competition.categories = [];
-
-                        if(self.isSkipCompetition(torneoCompetition.competition_id)){
-                            self.competitions.push(competition);
-                            continue;
-                        } else {
-                            self.loadCategories(competition);
-                            self.competitions.push(competition);
-                        } 
-                    }
-                });
+                    if(self.isSkipCompetition(torneoCompetition.competition_id)){
+                        self.competitions.push(competition);
+                        continue;
+                    } else {
+                        self.loadCategories(competition);
+                        self.competitions.push(competition);
+                    } 
+                }
             },
 
             loadCategories: function(competition){
                 var self = this;
-                let url = "https://lentopallo.torneopal.fi/taso/rest/getCategories?api_key=qfzy3wsw9cqu25kq5zre&competition_id=" + competition.torneoCompetition.competition_id;
                 
-                let torneoCompetition = competition.torneoCompetition;
-
                 competition.loaded = true;
-                console.log("loadCategories url: " + url);
-                $.get(url, function(data){
-                    if(data.call.status === "error") return;
-                    //console.log(data);
-                    for(let torneoCategory of data.categories){
-                        //console.log("Ladataan: " + competition.id + ": " + torneoCategory.category_id);
 
-                        let category = new Category(torneoCategory);
+                let categories = self.seriesData.categories.filter(c => c.competition_id == competition.id);
 
-                        if(torneoCategory.category_id == 'TESTI') continue;
+                for(let torneoCategory of categories){
+                    let category = new Category(torneoCategory);
 
-                        if(self.isSkipCategory(torneoCompetition.competition_id, torneoCategory.category_id)){
-                            category.displayed = false;
-                            competition.categories.push(category);
-                            continue;
-                        } else {
-                            self.loadGroups(competition, category);
-                        }
+                    if(torneoCategory.category_id == 'TESTI') continue;
 
+                    if(self.isSkipCategory(competition.id, category.id)){
+                        category.displayed = false;
+                        competition.categories.push(category);
+                        continue;
+                    } else {
+                        self.loadGroups(competition, category);
+                        competition.categories.push(category);
                     }
-                });
+                }
             },
 
             loadGroups: function(competition, category, pushPosition=-1){
-                // Tämä pois??
-                // Lohkot & ottelut
-             
+                var self = this;
+
                 let categoryn_tunniste = competition.id + "." + category.id;
                 if(COMMON_SKIP.indexOf(categoryn_tunniste) >= 0){
                     // Skipataan yhteisistä, esim. menneet junnutasot.
@@ -325,73 +331,43 @@ $(document).ready(function () {
                     return;
                 }
 
-             
-                let self = this;
                 if(!category || !category.torneoCategory || !category.torneoCategory.category_id){
                     console.log("Tyhjä category");
                     return;
                 }
-                let url2 = "https://lentopallo.torneopal.fi/taso/rest/getCategory?api_key=qfzy3wsw9cqu25kq5zre&category_id=" + category.torneoCategory.category_id + "&competition_id=" + category.torneoCategory.competition_id + "&matches=1";
-                self.loader(1);
-                let retCategory;
 
+                category.groups = [];
 
-                $.get(url2, function(data){
-                    if(data.call.status === "error"){
-                        self.loader(-1);
-                        return;
+                let groups = self.seriesData.groups.filter(g => g.competition_id == competition.id && g.category_id == category.id);
+
+                for(let torneoGroup of groups){
+                    let group = new Group(torneoGroup);
+
+                    let lohkon_tunniste = competition.id + "." + category.id + "." + group.id;
+
+                    if(COMMON_SKIP.indexOf(lohkon_tunniste) >= 0){
+                        console.log("COMMON_SKIP: " + lohkon_tunniste);
+                        // Skipataan yhteisistä, esim. menneet junnutasot.
+                        continue;
                     }
 
+                    let matches = self.torneomatches.filter(m => m.competition_id == competition.id && 
+                                                             m.category_id == category.id &&
+                                                             m.group_id == group.id);
 
-
-                    let detailedTorneoCategory = data.category;
-                    
-                    retCategory = new Category(data.category);
-
-                    let my_groups = [];
-
-                    for(let torneoGroup of detailedTorneoCategory.groups){
-                        let group = new Group(torneoGroup);
-                        //console.log("L              " + competition.id + ": " + detailedTorneoCategory.category_id + " - " + group.id);
-
-                        let lohkon_tunniste = competition.id + "." + category.id + "." + group.id;
-                        if(COMMON_SKIP.indexOf(lohkon_tunniste) >= 0){
-                            console.log("COMMON_SKIP: " + lohkon_tunniste);
-                            // Skipataan yhteisistä, esim. menneet junnutasot.
-                            continue;
+                    group.matches = [];
+                    for(let torneoMatch of matches){
+                        let match = new Match(torneoMatch, competition, category, group);
+                        if(match.datetime < new Date(2030,1,1,0,0,0,0)){
+                            self.matches.push(match);
+                            group.matches.push(match);
                         }
-
-                        if(!detailedTorneoCategory.matches){
-                            //debugger;
-                            console.log("    Ei otteluita: " + competition.id + ": " + detailedTorneoCategory.category_id);
-                            continue;
-                        }
-
-                        for(let torneoMatch of detailedTorneoCategory.matches){
-                            if(torneoMatch.group_id !== group.id) continue;
-                            //console.log(self.matches.length);
-                            let match = new Match(torneoMatch, competition, retCategory, group);
-                            if(match.datetime < new Date(2030,1,1,0,0,0,0)){
-                                self.matches.push(match);
-                                group.matches.push(match);
-                            }
-                        }
-                        group.fillTeams();
-                        my_groups.push(group);
                     }
-                    retCategory.groups = my_groups;
-                    retCategory.loaded = true;
-                    category.groups = my_groups;
-                    category.loaded = true;
+                    group.fillTeams();
+                    category.groups.push(group);
+                }
 
-                    if(pushPosition < 0) competition.categories.push(retCategory);
-                    else {
-                        competition.categories.splice(pushPosition, 1, retCategory);
-                    }
-
-                    self.loader(-1);
-                    
-                });
+                category.loaded = true;
             },
 
             loader: function(delta){
