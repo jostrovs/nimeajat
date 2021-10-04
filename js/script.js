@@ -10,6 +10,8 @@ $(document).ready(function () {
     var app = new Vue({
         el: '#app',
         data: {
+            refresher: false,
+
             show_days_ahead: 60,
             nimeamattomat_lkm: 0,
             tuplabuukkaukset_lkm: 0,
@@ -185,7 +187,7 @@ $(document).ready(function () {
                 var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
                 //url = "/ajax/referees.json";
                 url = "https://www.lentopalloerotuomarit.fi/list/autoreferees.php";
-                url = "/data/autoreferees.json"; // JOS_LOCAL_DATA
+                if(JOS_LOCAL_DATA) url = "/data/autoreferees.json"; // JOS_LOCAL_DATA
 
                 $.get(url, function(data_){
                     let data = data_;
@@ -272,9 +274,9 @@ $(document).ready(function () {
                 var self = this;
 
                 let url = "https://www.lentopalloerotuomarit.fi/ottelulista/ottelut.json"; 
-                url = "/data/ottelut.json"; // JOS_LOCAL_DATA 
+                if(JOS_LOCAL_DATA) url = "/data/ottelut.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
-                    if(!JOS_LOCAL_DATA) data = JSON.parse(data);
+                    //if(!JOS_LOCAL_DATA) data = JSON.parse(data);
                     self.torneomatches = data.matches;
                     callback();
                 });
@@ -284,9 +286,9 @@ $(document).ready(function () {
                 var self = this;
 
                 let url = "https://www.lentopalloerotuomarit.fi/ottelulista/series.json"; 
-                url = "/data/series.json"; // JOS_LOCAL_DATA 
+                if(JOS_LOCAL_DATA) url = "/data/series.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
-                    if(!JOS_LOCAL_DATA) data = JSON.parse(data);
+                    //if(!JOS_LOCAL_DATA) data = JSON.parse(data);
                     self.seriesData = data;
                     self.loadCompetitions();
                     callback();
@@ -760,6 +762,16 @@ $(document).ready(function () {
                 return encodeURI(text);
             },
 
+            refresh_all: function(){
+                if(!confirm("Ladataanko kaikki tiedot uudestaan palvelimelta?\r\nHuom! älä tee tätä turhaan, sillä kysely on raskas.")){
+                    return;
+                }
+    
+                this.refresher = true;
+                $.get("https://www.lentopalloerotuomarit.fi/ottelulista/refresh.php", function(data_){
+                    location.reload();
+                });
+            }            
         }
     });
 });

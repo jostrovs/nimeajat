@@ -14,7 +14,7 @@
     <!-- Apple/Safari icon -->
     <link rel="apple-touch-icon" sizes="180x180" href="https://www.lentopalloerotuomarit.fi/nimeajat/icon180.png">
     
-    <title>Tuomarinimeäjien sivu</title>
+    <title>[KOE] Tuomarinimeäjien sivu</title>
     <meta name="description" content="Lentopalloerotuomarinimeäjien sivu">
     <meta name="author" content="Jori Ostrovskij">
 
@@ -44,13 +44,20 @@
     <div id="overlay" class="overlay" style="display: none"></div>
     <div id="popup" style="display: none"></div>
     <div onclick="$('#loader').hide();" style="display: none; padding: 40px; font-size: 20px; height:80%; position: fixed; top: 10%; left: 10%; width: 80%; 
-                                               background: linear-gradient(to top, #fefcea 0%,#efdd69 100%); 
+                                               background: linear-gradient(to top, #fceafc 0%,#dd3f69 100%); 
                                                border: 3px solid #a00;" id="loader">
         Ladataan tietoja...
     </div>
-    
     <div id="app">
-        <ul id="navbar" class="nav nav-tabs">
+        <div v-if="refresher" style="display: inline-block; padding: 40px; font-size: 20px; height:96%; position: fixed; top: 2%; left: 2%; width: 96%; 
+            background: rgb(36,0,0);
+            background: linear-gradient(180deg, rgba(36,0,0,1) 0%, rgba(121,9,9,1) 56%); 
+            border: 3px solid #a00; color: white;  z-index: 2000000;" id="refresher">
+        Päivitetään tietoja torneopalin palvelimelta...            
+
+    </div>
+
+    <ul id="navbar" class="nav nav-tabs">
 			<li class="active"><a data-toggle="tab" href="#etusivu" @click="resize()">Etusivu</a>  </li>
 			<li>
                 <a data-toggle="tab" href="#tuplat" @click="resize()">
@@ -69,12 +76,14 @@
 			<li><a data-toggle="tab" href="#tuomarit" @click="resize()">Tuomarit</a></li>
 			<li><a data-toggle="tab" href="#sarjat" @click="resize()" id="sarjat_tab">Sarjat</a></li>
 			<li><a data-toggle="tab" href="#kirjautuminen" @click="resize()">Kirjautuminen</a></li>
+			<li> <img @click="refresh_all()" src="refresh-icon.png" style="pointer: cursor; margin-top: 8px;" height=24 title="Tietojen päivitys">
+            </li>
 		</ul>
 
 		<div class="tab-content">
      		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
 			<div id="etusivu" class="tab-pane fade in active">
-                <h1><img src="balloon.png" style="padding-bottom: 15px; height: 60px; margin-right: 10px"> Nimeäjien työkalu</h1>
+                <h1><img src="balloon.png" style="padding-bottom: 15px; height: 60px; margin-right: 10px"> Nimeäjien työkalu [KOEKÄYTTÖ]</h1>
 
                 
                 <!--<div style="background: red; padding: 12px;">
