@@ -1,4 +1,4 @@
-let JOS_LOCAL_DATA = true;
+let JOS_LOCAL_DATA = false;
 
 
 $(document).ready(function () {
@@ -55,8 +55,11 @@ $(document).ready(function () {
 
             this.loadSkips();
 
+            $("#loader").text("Ladataan tuomareita...");
             this.loadReferees(function(){
+                $("#loader").text("Ladataan otteluita...");
                 self.loadMatches(function(){
+                    $("#loader").text("Ladataan sarjoja...");
                     self.loadSeries(function(){
                         self.loader_count=0;
                         self.loader(-1);
@@ -254,6 +257,17 @@ $(document).ready(function () {
                 return false;
             },
 
+            isSkipGroup: function(competition_id, category_id, group_id){
+                for(let skipLine of this.groupSkip){
+                    let arr = skipLine.split(".");
+                    if(arr[0] === competition_id && arr[1] === category_id && arr[2] == group_id){
+                        return true;
+                    } 
+                }
+
+                return false;
+            },
+
             loadMatches: function(callback){
                 var self = this;
 
@@ -289,12 +303,10 @@ $(document).ready(function () {
                     competition.categories = [];
 
                     if(self.isSkipCompetition(torneoCompetition.competition_id)){
-                        self.competitions.push(competition);
-                        continue;
-                    } else {
-                        self.loadCategories(competition);
-                        self.competitions.push(competition);
+                        competition.displayed = false;
                     } 
+                    self.loadCategories(competition);
+                    self.competitions.push(competition);
                 }
             },
 
@@ -312,12 +324,9 @@ $(document).ready(function () {
 
                     if(self.isSkipCategory(competition.id, category.id)){
                         category.displayed = false;
-                        competition.categories.push(category);
-                        continue;
-                    } else {
-                        self.loadGroups(competition, category);
-                        competition.categories.push(category);
-                    }
+                    } 
+                    self.loadGroups(competition, category);
+                    competition.categories.push(category);
                 }
             },
 
@@ -345,12 +354,6 @@ $(document).ready(function () {
 
                     let lohkon_tunniste = competition.id + "." + category.id + "." + group.id;
 
-                    if(COMMON_SKIP.indexOf(lohkon_tunniste) >= 0){
-                        console.log("COMMON_SKIP: " + lohkon_tunniste);
-                        // Skipataan yhteisistä, esim. menneet junnutasot.
-                        continue;
-                    }
-
                     let matches = self.torneomatches.filter(m => m.competition_id == competition.id && 
                                                              m.category_id == category.id &&
                                                              m.group_id == group.id);
@@ -364,6 +367,10 @@ $(document).ready(function () {
                         }
                     }
                     group.fillTeams();
+
+                    if(self.isSkipGroup(competition.id, category.id, group.id)){
+                        group.displayed = false;
+                    } 
                     category.groups.push(group);
                 }
 
