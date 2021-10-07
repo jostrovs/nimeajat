@@ -221,7 +221,10 @@
                     <hr>
                 </div>
 
-                <vue-competitions v-if="loader_count < 1" :competitions="competitions"></vue-competitions>
+                <input type="checkbox" v-model="show_all_series"> Näytä kaikki sarjat 
+                <span v-if="show_all_series">(Nyt: kaikki näytetään)</span>
+                <span v-if="!show_all_series">(Nyt: piilotetaan sarjat, joissa ei ole pelattavia pelejä)</span>
+                <vue-competitions v-if="loader_count < 1" :competitions="competitions" :show_all="show_all_series"></vue-competitions>
 			</div>
     		<div id="lähipelit" class="tab-pane fade">
                 

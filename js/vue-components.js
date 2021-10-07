@@ -210,7 +210,7 @@ Vue.component('vue-referees', {
               },  
 });
 Vue.component('vue-competitions', {
-              props: ['competitions'],
+              props: ['competitions', 'show_all'],
               template: `
                       <div class="panel panel-default sarjalista">
                           <div id="sarjat-panel-heading" class="panel-heading">
@@ -220,21 +220,23 @@ Vue.component('vue-competitions', {
                           </div>
                           <div id="sarjatCollapse" class="panel-collapse collapse in" style="overflow-y: scroll;">
                               <ul>
-                                    <li v-for="competition in competitions">
+                                    <li v-for="competition in showed_competitions(competitions)">
                                         <input type="checkbox" v-model="competition.displayed">
                                         {{competition.name}}  {{(competition.id)}}
                                         <span v-if="competition.development && competition.isFinished()">LOPPU comp: {{competition.id}}</span>
                                         <span class="id">({{competition.id}})</span>
                                         <span class="info"> {{pelaamattaCompe(competition)}}</span>
+                                        <span class="nimettavia"> {{nimettaviaCompe(competition)}}</span>
 
                                         <button class="myButton" v-if="!competition.loaded && competition.displayed" @click="loadCategoriesOnParent(competition)">Lataa</button>
 
                                         <ul>
 
-                                            <li v-for="category in competition.categories" v-if="competition.displayed">
+                                            <li v-for="category in showed_categories(competition.categories)" v-if="competition.displayed">
                                                 <input type="checkbox" v-model="category.displayed">
                                                 <span class="id">({{competition.id}}.{{category.id}})</span>
                                                 <span class="info"> {{pelaamattaCategory(category)}}</span>
+                                                <span class="nimettavia"> {{nimettaviaCategory(category)}}</span>
 
                                                 {{category.name}}  {{(category.id)}}
 
@@ -242,10 +244,11 @@ Vue.component('vue-competitions', {
 
                                                 <span v-if="competition.development" style="background: #fcc;">   comp: {{competition.id}}  cat: {{category.id}}</span>
                                                 <ul>
-                                                    <li v-for="group in category.groups" v-if="category.displayed" :id="group_element_id(category.id, group.id)">
+                                                    <li v-for="group in showed_groups(category.groups)" v-if="category.displayed" :id="group_element_id(category.id, group.id)">
                                                         <input type="checkbox" v-model="group.displayed"> {{group.name}}
                                                         <span class="id">({{competition.id}}.{{category.id}}.{{group.id}})</span>
                                                         <span class="info"> {{pelaamattaLohko(group)}}</span>
+                                                        <span class="nimettavia"> {{nimettaviaLohko(group)}}</span>
                                                         <ul>
                                                             <li v-for="team in group.teams" v-if="group.displayed">
                                                                 <input type="checkbox" v-model="team.displayed"> {{team.name}}
@@ -260,6 +263,7 @@ Vue.component('vue-competitions', {
                                 <!--div class="panel-footer">Panel Footer</div-->
                                 <div onclick="$('.id').css('display','inline-block')">id</div>
                                 <div onclick="$('.info').css('display','inline-block')">pelaamatta</div>
+                                <div onclick="$('.nimettavia').css('display','inline-block')">nimettavia</div>
                           </div>
               
               `,
@@ -283,8 +287,41 @@ Vue.component('vue-competitions', {
                   });  
               },
               methods: {
+                  showed_competitions(competitions){
+                      if(this.show_all) return competitions;
+                      let ret = [];
+                      competitions.map(c => {
+                          if(c.pelaamatta() > 0 || c.nimettavia() > 0) ret.push(c);
+                      });  
+                      return ret;
+                  },
+
+                  showed_categories(categories){
+                      if(this.show_all) return categories;
+                      let ret = [];
+                      categories.map(c => {
+                          if(c.pelaamatta() > 0 || c.nimettavia() > 0) ret.push(c);
+                      });  
+                      return ret;
+                  },
+
+                  showed_groups(groups){
+                      if(this.show_all) return groups;
+                      let ret = [];
+                      groups.map(c => {
+                        if(c.pelaamatta() > 0 || c.nimettavia() > 0) ret.push(c);
+                      });  
+                      return ret;
+                  },
+                
                   pelaamattaLohko(lohko){
                       let p = lohko.pelaamatta();
+                      let t = lohko.total();
+                      if(t == 0 && p == 0) return "";
+                      return p.toString() + "/" + t;
+                  },
+                  nimettaviaLohko(lohko){
+                      let p = lohko.nimettavia();
                       let t = lohko.total();
                       if(t == 0 && p == 0) return "";
                       return p.toString() + "/" + t;
@@ -296,9 +333,21 @@ Vue.component('vue-competitions', {
                       if(t == 0 && p == 0) return "";
                       return p.toString() + "/" + t;
                   },
+                  nimettaviaCategory(kate){
+                      let p = kate.nimettavia();
+                      let t = kate.total();
+                      if(t == 0 && p == 0) return "";
+                      return p.toString() + "/" + t;
+                  },
                 
                   pelaamattaCompe(kompe){
                       let p = kompe.pelaamatta();
+                      let t = kompe.total();
+                      if(t == 0 && p == 0) return "";
+                      return p.toString() + "/" + t;
+                  },
+                  nimettaviaCompe(kompe){
+                      let p = kompe.nimettavia();
                       let t = kompe.total();
                       if(t == 0 && p == 0) return "";
                       return p.toString() + "/" + t;
@@ -380,6 +429,7 @@ Vue.component('vue-matches', {
                       yesterday.add(-1, 'days');
                       let ret = this.initial_matches.filter((m)=>moment(m.datetime) <= dt);
                       ret = ret.filter((m)=>moment(m.datetime) >= yesterday);
+                      ret = ret.filter((m)=>m.status != 'Played');
                       
                       this.displayed_matches_count = ret.filter((m)=> m.isDisplayed()).length;
                       this.$emit('input', this.displayed_matches_count);

@@ -342,6 +342,11 @@ span.info {
     background-color: #fdb;
 }
 
+span.nimettavia { 
+    display: none;
+    background-color: #adf;
+}
+
 span.code {
     font-family: Courier, monospace;
     font-size: 12px;

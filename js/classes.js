@@ -6,6 +6,7 @@ class Match{
         this.displayed = true;
         this.hasTime = true;
         this.played = torneoMatch.status == 'Played';
+        this.status = torneoMatch.status;
 
         this.referees = [];
         this.href="https://lentopallo.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
@@ -199,6 +200,14 @@ class Match{
         if(!ret) return "----";
         return ret;
     }
+
+    nimettava(){
+        return this.status != "Played" && this.status != "Planned";
+    }
+
+    pelaamatta(){
+        return this.status != "Played" && this.status != "Planned";
+    }
 }
 
 class Category {
@@ -218,6 +227,13 @@ class Category {
         let ret = 0;
         this.groups.map(g=>{
             ret += g.pelaamatta();
+        });
+        return ret;
+    }
+    nimettavia(){
+        let ret = 0;
+        this.groups.map(g=>{
+            ret += g.nimettavia();
         });
         return ret;
     }
@@ -261,6 +277,13 @@ class Competition {
         });
         return ret;
     }
+    nimettavia(){
+        let ret = 0;
+        this.categories.map(c=>{
+            ret += c.nimettavia();
+        });
+        return ret;
+    }
     total(){
         let ret = 0;
         this.categories.map(c=>{
@@ -298,7 +321,15 @@ class Group {
     pelaamatta(){
         let ret = 0;
         this.matches.map(m=>{
-            if(!m.played) ret++;
+            if(m.pelaamatta()) ret++;
+        });
+        return ret;
+    }
+
+    nimettavia(){
+        let ret = 0;
+        this.matches.map(m=>{
+            if(m.nimettava()) ret++;
         });
         return ret;
     }

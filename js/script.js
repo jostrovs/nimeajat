@@ -23,6 +23,7 @@ $(document).ready(function () {
             torneomatches: [],
             seriesData: {},
 
+            show_all_series: true,
             categories: [],
             competitions: [],
             message: 'Hello Vue!',
@@ -395,6 +396,7 @@ $(document).ready(function () {
 
             clearCookies: function(){
                 Lockr.set(PREFIX + "ShowDaysAhead", 60);
+                Lockr.set(PREFIX + "ShowAllSeries", true);
                 Lockr.set(PREFIX + "Competitions", []);
                 Lockr.set(PREFIX + "Categories", []);
                 Lockr.set(PREFIX + "Groups", []);
@@ -410,6 +412,7 @@ $(document).ready(function () {
                 let json = JSON.parse(this.cookies.tuo);
 
                 Lockr.set(PREFIX + "ShowDaysAhead", json.ShowDaysAhead);
+                Lockr.set(PREFIX + "ShowAllSeries", json.ShowAllSeries);
                 Lockr.set(PREFIX + "Competitions", json.Competitions);
                 Lockr.set(PREFIX + "Categories", json.Categories);
                 Lockr.set(PREFIX + "Groups", json.Groups);
@@ -424,6 +427,7 @@ $(document).ready(function () {
             saveCookies: function(noserver){
                 // Show days ahead
                 Lockr.set(PREFIX + "ShowDaysAhead", this.show_days_ahead);
+                Lockr.set(PREFIX + "ShowAllSeries", this.show_all_series);
 
                 // competitions, categories & groups
                 var comp=[], cat=[], gro = [], tea=[];
@@ -637,6 +641,7 @@ $(document).ready(function () {
                             return;
                         }
 
+                        self.show_all_series = settingsObj.show_all_series;
                         self.competitionSkip = settingsObj.competitions;
                         self.categorySkip = settingsObj.categories;
                         self.groupSkip = settingsObj.groups;
