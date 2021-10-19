@@ -1017,3 +1017,85 @@ Vue.component('vue-linkin-tilaus', {
     }
 });
 
+Vue.component('vue-timestamp', {
+    template: `
+        <div :style="styl" class="age" :title="title()" @click="aleTitle()">
+            {{textIka()}} 
+        </div>
+    `,
+    data: function() {
+        let initial_mome = moment("2000-01-01");
+        return {
+            stamp: initial_mome,
+            text: initial_mome.format("YYYY-MM-DD hh:mm:ss"),
+            ika: '0',
+            styl: {
+                color: 'red',
+            }
+        }
+    },
+    created: function(){
+        let self=this;
+        this.age();
+        bus.on("PAIVITA_TIMESTAMP", function(incoming_stamp){
+            self.stamp = moment(incoming_stamp);
+            self.setAge();
+        })
+    },
+    methods: {
+        aleTitle: function(){
+            alert(this.title());
+        },
+        textIka: function(){
+            if(this.ika > 60 * 24 * 1000) return "<ei haettu>";
+            if(this.ika < 1) return `Nyt`;
+            if(this.ika < 2) return `${this.ika} minuutti`;
+            if(this.ika < 60) return `${this.ika} minuuttia`;
+            let m = this.ika % 60;
+            let h = Math.floor(this.ika / 60);
+            if(h < 2) return `${h} tunti`;
+            if(h < 24) return `${h} tuntia`;
+            let d=Math.floor(h/24);
+            return `${d} päivää`
+        },
+        title: function(){
+            let paiva = viikonpaiva(this.stamp);
+            let dat = this.stamp.format("DD.MM.YYYY");
+            let klo = this.stamp.format("HH:mm:ss");
+            let text_ika = this.textIka();
+            if(text_ika == '<ei haettu>') return "Tietoja ei ole vielä haettu palvelimelta.";
+            if(text_ika == 'Nyt') return "Tiedot haettu torneopalista juuri äsken.";
+            return `Tiedot haettu torneopalista ${text_ika} sitten, ${paiva} ${dat} klo ${klo}`;
+        },
+        setAge: function(){
+            let self=this;
+            self.age();
+            
+            setTimeout(function(){
+                self.setAge();
+            }, 30*1000);
+        },
+        age: function(){
+            let self=this;
+            var sec = moment().diff(this.stamp, 'seconds') // 1
+            this.ika = Math.floor(sec/60);
+ 
+            if(this.ika < 20) this.styl = {
+                "background-color": "#9f9",
+                "border": "2px solid #7c7",
+                "color": "#383",
+            }
+            else if(this.ika < 60) this.styl = {
+                "background-color": "yellow",
+                "border": "2px solid #fda",
+                "color": "#b84",
+            }
+            else this.styl = {
+                "background-color": "#f42",
+                "border": "2px solid #f75",
+                "color": "white",
+            }
+        }
+    }
+});
+

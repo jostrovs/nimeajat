@@ -132,6 +132,12 @@ var vilkuta_elementtia = function(jq_element){
     }, 500);
 }
 
+var timestamp = function(){
+    var d = new Date();
+    var n = d.getTime();
+    return n.toString();
+};
+
 const REF4 = ["M1", "ML", "NL", "MSC", "N1", "NSC"];
 const REF2 = ["M2", "M3"];
 
@@ -209,5 +215,17 @@ var requestLink = function(email, callback){
                 callback(response);
             }
         });
+}
+
+var viikonpaiva = function(mome){
+    switch(mome.day()){
+        case 0: return "Su"; break;
+        case 1: return "Ma"; break;
+        case 2: return "Ti"; break;
+        case 3: return "Ke"; break;
+        case 4: return "To"; break;
+        case 5: return "Pe"; break;
+        case 6: return "La"; break;
+    } 
 }
 

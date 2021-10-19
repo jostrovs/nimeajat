@@ -76,10 +76,10 @@
 			<li><a data-toggle="tab" href="#tuomarit" @click="resize()">Tuomarit</a></li>
 			<li><a data-toggle="tab" href="#sarjat" @click="resize()" id="sarjat_tab">Sarjat</a></li>
 			<li><a data-toggle="tab" href="#kirjautuminen" @click="resize()">Kirjautuminen</a></li>
-			<li> <img @click="refresh_all()" src="refresh-icon.png" style="pointer: cursor; margin-top: 8px;" height=24 title="Tietojen päivitys">
+			<li> <img @click="refresh_all()" src="refresh-icon.png" style="cursor: pointer; margin-top: 8px;" height=24 title="Tietojen päivitys">
+			<li> <vue-timestamp /></li>
             </li>
 		</ul>
-
 		<div class="tab-content">
      		<div v-if="alertShown" class="alert alert-success alert-dismissible" role="alert" style="position: fixed">{{alertText}}</div>
 			<div id="etusivu" class="tab-pane fade in active">

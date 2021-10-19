@@ -57,6 +57,8 @@ $(document).ready(function () {
             $("#loader").show();
 
             this.loadSkips();
+   
+            this.loadTimestamp();
 
             $("#loader").text("Ladataan tuomareita...");
             this.loadReferees(function(){
@@ -181,13 +183,22 @@ $(document).ready(function () {
                 }, 300);
             },
 
+            loadTimestamp: function(){
+                var self = this;
+                var url = "https://www.lentopalloerotuomarit.fi/ottelulista/timestamp.txt?timestamp=" + timestamp(); 
+                $.get(url, function(data_){
+                    let data = data_;
+                    bus.emit("PAIVITA_TIMESTAMP", data_);
+                });
+            },
+
             loadReferees: function(callback){
                 var self = this;
                 self.refereeMap = new Map();
 
-                var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre"; 
+                var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre&timestamp=" + timestamp(); 
                 //url = "/ajax/referees.json";
-                url = "https://www.lentopalloerotuomarit.fi/list/autoreferees.php";
+                url = "https://www.lentopalloerotuomarit.fi/list/autoreferees.php?timestamp=" + timestamp();
                 if(JOS_LOCAL_DATA) url = "/data/autoreferees.json"; // JOS_LOCAL_DATA
 
                 $.get(url, function(data_){
@@ -274,7 +285,7 @@ $(document).ready(function () {
             loadMatches: function(callback){
                 var self = this;
 
-                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/ottelut.json"; 
+                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/ottelut.json?t=" + timestamp(); 
                 if(JOS_LOCAL_DATA) url = "/data/ottelut.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
                     //if(!JOS_LOCAL_DATA) data = JSON.parse(data);
@@ -286,7 +297,7 @@ $(document).ready(function () {
             loadSeries: function(callback){
                 var self = this;
 
-                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/series.json"; 
+                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/series.json?t=" + timestamp(); 
                 if(JOS_LOCAL_DATA) url = "/data/series.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
                     //if(!JOS_LOCAL_DATA) data = JSON.parse(data);
@@ -773,7 +784,7 @@ $(document).ready(function () {
                 }
     
                 this.refresher = true;
-                $.get("https://www.lentopalloerotuomarit.fi/ottelulista/refresh.php", function(data_){
+                $.get("https://www.lentopalloerotuomarit.fi/ottelulista/refresh.php?t=" + timestamp(), function(data_){
                     location.reload();
                 });
             }            

@@ -363,5 +363,12 @@ span.herja {
     border-radius: 3px;
 }
 
-
+div.age {
+    padding: 1px 3px 0px 3px;
+    border-radius: 4px;
+    margin-top: 9px;
+    margin-left: 9px;
+    font-size: 10px; 
+    cursor: pointer;  
+}
 
