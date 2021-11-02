@@ -347,6 +347,11 @@ span.nimettavia {
     background-color: #adf;
 }
 
+span.match_status { 
+    display: none;
+    background-color: #adf;
+}
+
 span.code {
     font-family: Courier, monospace;
     font-size: 12px;

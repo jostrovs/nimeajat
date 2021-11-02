@@ -540,8 +540,8 @@ Vue.component('vue-match', {
     template: `
             <div class='match' v-if="forceDisplay || match.isDisplayed()">
                 <vue-week-separator v-if="match.weekSeparator" :week="match.week"></vue-week-separator>
-                <div class="box" style="min-width:30px;"><a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> </div>
-                <div class="box" style="min-width:70px;"><a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> </div>
+                <div class="box" style="min-width:50px;"><a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> </div>
+                <div class="box" style="min-width:70px;"><a :href="match.group_href" target="_blank" class="lohko-label">{{match.group.name}}</a> </div>
                 <div class="box" style="min-width:60px;"><a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a></div>
                 <div class="box" style="width:170px;"> 
                     <span class="ajankohta-label">
@@ -556,23 +556,24 @@ Vue.component('vue-match', {
                 {{match.torneoMatch.team_B_name}}
                 </div>
                 <div class="box">
-                <span v-if="match.referee_status!==''">
-                    <a :href="match.torneo_edit_href" target=_ title="Avaa ottelu torneopalissa (vaatii kirjautumisen!)"><img src="tp.png"></a>&nbsp;
-        
-                    <a @click="show_estematriisi()" :title="estematriisititle"><img src="block.png" height=16></a>&nbsp;
-        
-                    <a @click="etsi_sarjalistalta(match)" title="Etsi tämä lohko Sarjat-välilehdeltä"><img src="Look-icon.png" height=16></a>&nbsp;
-        
-                    <span v-for="referee in match.referees" class='referee-list-label'>
-                        {{referee}}
-                    </span>
+                    <span v-if="match.referee_status!==''">
+                        <a :href="match.torneo_edit_href" target=_ title="Avaa ottelu torneopalissa (vaatii kirjautumisen!)"><img src="tp.png"></a>&nbsp;
+            
+                        <a @click="show_estematriisi()" :title="estematriisititle"><img src="block.png" height=16></a>&nbsp;
+            
+                        <a @click="etsi_sarjalistalta(match)" title="Etsi tämä lohko Sarjat-välilehdeltä"><img src="Look-icon.png" height=16></a>&nbsp;
+            
+                        <span v-for="referee in match.referees" class='referee-list-label'>
+                            {{referee}}
+                        </span>
 
-                    <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
-                        {{referee}}
+                        <span v-for="referee in match.referee_status.split(' ')" class='referee-label'>
+                            {{referee}}
+                        </span>
                     </span>
-                </span>
-                </span>
-            </div>
+                </div>
+                <span class="match_status">{{match.status}}</span>
+             </div>
     `,
     data: function() {
         var pvm = moment(this.match.datetime).format("YYYY-MM-DD");

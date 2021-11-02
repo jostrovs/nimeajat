@@ -202,6 +202,17 @@
                 <hr>
 
                 <vue-matches  v-model="nimeamattomat_lkm" v-if="loader_count < 1" :initial_matches="matches_with_incomplete_referees" :show_days_ahead="show_days_ahead"></vue-matches>
+
+                <hr>
+
+                <input type="checkbox" v-model="fixture_only"> Näytä vain pelit, joiden status on 'Fixture' 
+                <br>
+                <div onclick="$('.match_status').css('display','inline-block')" 
+                     style="display: inline-block; border: 1px solid #aaf; background-color: #def; padding: 3px; border-radius: 3px; cursor: pointer;">
+                     
+                     Näytä status
+                </div>
+                
 			</div>
 			<div id="tuomarit" class="tab-pane fade">
                 <div id="tuomaritButtonit">

@@ -12,6 +12,8 @@ $(document).ready(function () {
         data: {
             refresher: false,
 
+            fixture_only: false,
+            
             show_days_ahead: 60,
             nimeamattomat_lkm: 0,
             tuplabuukkaukset_lkm: 0,
@@ -150,10 +152,15 @@ $(document).ready(function () {
             matches_with_incomplete_referees: function(){
                 if(this.loader_count > 0) return [];
 
-                let matches_without_referee =this.matches_of_displayed_categories
-                                             .filter((m)=>m.isDisplayed())
-                                             .filter((m)=>m.referee_status.length > 0)
-                                             .sort((m1, m2)=> m1.datetime-m2.datetime);
+                let matches_without_referee =this.matches_of_displayed_categories;
+
+                if(this.fixture_only){
+                    matches_without_referee = matches_without_referee.filter((m) => m.status == 'Fixture');
+                }
+
+                matches_without_referee = matches_without_referee.filter((m)=>m.isDisplayed())
+                                                                 .filter((m)=>m.referee_status.length > 0)
+                                                                 .sort((m1, m2)=> m1.datetime-m2.datetime);
                 
 
 
