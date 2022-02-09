@@ -229,3 +229,7 @@ var viikonpaiva = function(mome){
     } 
 }
 
+var omadate = function(datetime){
+    let m = moment(datetime);
+    return m.format("D.M.YYYY");
+}

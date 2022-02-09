@@ -482,7 +482,7 @@ Vue.component('vue-all-matches', {
                 <div class="box" style="width:170px;"> 
                     <span class="ajankohta-label">
                         <div class="ib" style="width: 20px;">{{match.weekday}}</div>
-                        <div class="ib" style="width: 70px; text-align: right;">{{match.datetime.toLocaleDateString()}}</div>
+                        <div class="ib" style="width: 70px; text-align: right;">{{omadate(match.datetime)}}</div>
                         klo {{match.toTimeString()}}
                     </span>
                 </div>
@@ -546,7 +546,7 @@ Vue.component('vue-match', {
                 <div class="box" style="width:170px;"> 
                     <span class="ajankohta-label">
                         <div class="ib" style="width: 20px;">{{match.weekday}}</div>
-                        <div class="ib" style="width: 70px; text-align: right;">{{match.datetime.toLocaleDateString()}}</div>
+                        <div class="ib" style="width: 70px; text-align: right;">{{omadate(match.datetime)}}</div>
                         klo {{match.toTimeString()}}
                     </span>
                 </div>
@@ -905,7 +905,7 @@ Vue.component('vue-workload-match', {
                     <a :href="match.category_href" target="_blank"><span class="sarja-label" :class="match.torneoMatch.category_id">{{match.torneoMatch.category_id}}</span></a> 
                     <a :href="match.group_href" target="_blank" class="lohko-label">Lohko {{match.group.id}}</a> 
                     <a :href="match.href" target="_blank">{{match.torneoMatch.match_number}}</a> 
-                    {{match.datetime.toLocaleDateString()}} 
+                    {{omadate(match.datetime)}} 
                     klo {{match.toTimeString()}}
                     {{match.getVenue()}}
                     {{match.torneoMatch.team_A_name}} -

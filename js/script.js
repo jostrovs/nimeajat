@@ -192,7 +192,7 @@ $(document).ready(function () {
 
             loadTimestamp: function(){
                 var self = this;
-                var url = "https://www.lentopalloerotuomarit.fi/ottelulista/timestamp.txt?timestamp=" + timestamp(); 
+                var url = "https://www.lentopalloerotuomarit.fi/ottelulista/MIRROR.php?filename=timestamp.txt&timestamp=" + timestamp(); 
                 $.get(url, function(data_){
                     let data = data_;
                     bus.emit("PAIVITA_TIMESTAMP", data_);
@@ -292,10 +292,10 @@ $(document).ready(function () {
             loadMatches: function(callback){
                 var self = this;
 
-                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/ottelut.json?t=" + timestamp(); 
+                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/MIRROR.php?filename=ottelut.json&t=" + timestamp(); 
                 if(JOS_LOCAL_DATA) url = "/data/ottelut.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
-                    //if(!JOS_LOCAL_DATA) data = JSON.parse(data);
+                    if(!JOS_LOCAL_DATA) data = JSON.parse(data);
                     self.torneomatches = data.matches;
                     callback();
                 });
@@ -304,10 +304,10 @@ $(document).ready(function () {
             loadSeries: function(callback){
                 var self = this;
 
-                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/series.json?t=" + timestamp(); 
+                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/MIRROR.php?filename=series.json&t=" + timestamp(); 
                 if(JOS_LOCAL_DATA) url = "/data/series.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
-                    //if(!JOS_LOCAL_DATA) data = JSON.parse(data);
+                    if(!JOS_LOCAL_DATA) data = JSON.parse(data);
                     self.seriesData = data;
                     self.loadCompetitions();
                     callback();
@@ -316,7 +316,7 @@ $(document).ready(function () {
 
             loadCompetitions: function(){
                 var self = this;
-
+                
                 for(let torneoCompetition of self.seriesData.competitions){
                     if(torneoCompetition.season_id != "2021-22") continue;
 

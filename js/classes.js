@@ -47,7 +47,7 @@ class Match{
             if(this.referee_status != '') puuttuu = "Puuttuu: " + this.referee_status;
 
             return this.weekday + "," + 
-                   this.datetime.toLocaleDateString() + ",klo," +
+                   omadate(this.datetime) + ",klo," +
                    this.toTimeString() + "," + 
                    this.torneoMatch.category_id + "," + 
                    this.group.id + "," + 
@@ -72,7 +72,7 @@ class Match{
     toLogString(){
         return this.id + "   " + 
                this.category.name + "   " + 
-               this.datetime.toLocaleDateString() + "   " + 
+               omadate(this.datetime) + "   " + 
                this.datetime.toLocaleTimeString() + "   " + 
                this.torneoMatch.venue_name + "   " + 
                this.torneoMatch.team_A_name + " - " +
@@ -122,7 +122,7 @@ class Match{
         let date_a = new Date(da[0], da[1]-1, da[2], ta[0], ta[1], ta[2], 0);
         this.datetime = date_a;
 
-        this.datelocal = date_a.toLocaleDateString();
+        this.datelocal = omadate(date_a);
         let hours = date_a.getHours().toString();
         if(hours.length < 2) hours = "0" + hours;
         let mins = date_a.getMinutes().toString();
