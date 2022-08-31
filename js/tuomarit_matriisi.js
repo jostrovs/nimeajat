@@ -420,13 +420,8 @@ let referees_liiga = [
         "luokka": "PS"
     },
     {
-        "id": "1251",
-        "name": "Kuusisto Jarmo",
-        "luokka": "PS"
-    },
-    {
-        "id": "1318",
-        "name": "Laukkanen Jouni",
+        "id": "1692",
+        "name": "Kuukasjärvi Jani",
         "luokka": "PS"
     },
     {
@@ -437,6 +432,11 @@ let referees_liiga = [
     {
         "id": "1214",
         "name": "Mannersuo Sari",
+        "luokka": "PS"
+    },
+    {
+        "id": "2816",
+        "name": "Puhakka Pasi",
         "luokka": "PS"
     },
     {
