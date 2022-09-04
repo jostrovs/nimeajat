@@ -95,7 +95,7 @@ Vue.component('vue-referees', {
                                   <tr v-for="referee in sorted_referees" v-if="isDisplayed(referee)">
                                       <td><input type="checkbox" v-model="referee.displayed"></td>
                                       <td>{{referee.id}}</td>
-                                      <td><a :href="referee.href + '&alkupvm=2021-09-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
+                                      <td><a :href="referee.href + '&alkupvm=2022-09-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo'" target="blank">{{referee.name}}</a></td>
                                       <td>{{referee.Luokka}}</td>
                                       <td>{{referee.PostiNo}}</td>
                                       <td>{{referee.Kunta}}</td>
@@ -757,7 +757,7 @@ Vue.component('vue-tehtavat', {
             $("#referee-window").show();
             this.referee_name = referee.name;
             
-            let src= referee.href + "&alkupvm=2021-09-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo";
+            let src= referee.href + "&alkupvm=2022-09-01&print=1&piilota=tarkkailija&jarjestys=pvm,klo";
             this.src=src;
 
             document.getElementById('refereeIframe').src = src;
@@ -767,7 +767,7 @@ Vue.component('vue-tehtavat', {
             $("#esteet").show();
             this.referee_name = referee.name;
             
-            let src= "https://lentopallo-extranet.torneopal.fi/taso/tuomari.php?tuomari=" + referee.id + "&turnaus=vb2021a&sivu=esteet";
+            let src= "https://lentopallo-extranet.torneopal.fi/taso/tuomari.php?tuomari=" + referee.id + "&turnaus=vb2022a&sivu=esteet";
             this.src=src;
 
             document.getElementById('esteIframe').src = src;
@@ -841,21 +841,21 @@ Vue.component('vue-tehtavat', {
 
             switch(month.toLowerCase()){
                 case 'syyskuu':
-                    ret = ret.filter((m)=> m.datetime.getMonth() == 8 && m.datetime.getFullYear() == 2021); break;
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 8 && m.datetime.getFullYear() == 2022); break;
                 case 'lokakuu':
-                    ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2021); break;
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 9 && m.datetime.getFullYear() == 2022); break;
                 case 'marraskuu':
-                    ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2021); break;
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 10 && m.datetime.getFullYear() == 2022); break;
                 case 'joulukuu':
-                    ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2021); break;
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 11 && m.datetime.getFullYear() == 2022); break;
                 case 'tammikuu':
-                    ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2022); break;
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 0 && m.datetime.getFullYear() == 2023); break;
                 case 'helmikuu':
-                    ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2022); break;
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 1 && m.datetime.getFullYear() == 2023); break;
                 case 'maaliskuu':
-                    ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2022); break;
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 2 && m.datetime.getFullYear() == 2023); break;
                 case 'huhtikuu':
-                    ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2022); break;
+                    ret = ret.filter((m)=> m.datetime.getMonth() == 3 && m.datetime.getFullYear() == 2023); break;
             }
             return ret;
         },

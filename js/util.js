@@ -20,7 +20,7 @@ var initialSettings = function(){
     // Jos ei mitään suodatuksia ole asetettu, näytetään oletuksena vain liiton sarjat ja pari liigatuomaria
     let comp = Lockr.getArr(PREFIX + "Competitions");
     if(comp.length < 1){
-        comp = ["vb2021esuomi","vb2021isuomi","vb2021lasuomi","vb2021lsuomi","vb2021n","vb2021psuomi"];
+        comp = ["vb2022esuomi","vb2022isuomi","vb2022lasuomi","vb2022suomi","vb2022n","vb2022psuomi"];
         Lockr.set(PREFIX + "Competitions", comp);
     }
 
