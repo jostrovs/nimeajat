@@ -1,3 +1,5 @@
+moment.locale('fi');
+
 Vue.component('vue-input', {
                 template: `
                     <div class="form-group">

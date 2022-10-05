@@ -1,3 +1,5 @@
+moment.locale('fi');
+
 class Match{
     constructor(torneoMatch, competition, category, group){
         this.number = torneoMatch.match_number;
@@ -139,7 +141,13 @@ class Match{
             case 6: this.weekday = "La"; break;
         }   
 
-        this.week = this.datetime.getWeek();
+        //debugger;
+        if(this.torneoMatch.date == '2022-12-26'){
+            //debugger;
+        }
+        let mo = moment(this.torneoMatch.date);
+        let we = mo.week();
+        this.week = we;
     }
 
     hasReferees(){

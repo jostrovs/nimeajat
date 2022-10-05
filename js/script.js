@@ -1,5 +1,6 @@
 let JOS_LOCAL_DATA = false;
 
+moment.locale('fi');
 
 $(document).ready(function () {
     initialSettings();
