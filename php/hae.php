@@ -13,8 +13,8 @@
 
     if($found){
         if(file_exists($filename)){
-            $content = readfile($filename);
-            echo $content[0];
+            $content = file_get_contents($filename);
+            echo $content;
         }
     } else {
         echo "{\"status\": \"file not found\"}";
