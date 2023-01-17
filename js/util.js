@@ -158,7 +158,7 @@ var saveSettingsObject = function(obj, success_callback, fail_callback){
     var key = "P" + PREFIX;
     GLOBAL_SETTINGS_OBJECT[key] = obj;
 
-    var url = "https://www.lentopalloerotuomarit.fi/nimeajat/php/talleta.php";
+    var url = "https://www.lentopallotuomarit.fi/nimeajat/php/talleta.php";
     if(LOCALHOST) url = "http://localhost:3333/php/talleta.php";
 
     $.post(url,
@@ -182,7 +182,7 @@ var saveSettingsObject = function(obj, success_callback, fail_callback){
 };
 
 var loadSettingsObject = function(callback){
-    var url = "https://www.lentopalloerotuomarit.fi/nimeajat/php/hae.php";
+    var url = "https://www.lentopallotuomarit.fi/nimeajat/php/hae.php";
     if(LOCALHOST) url = "http://localhost:3333/php/hae.php";
 
     url = url + "?timestamp=" + (new Date()).getMilliseconds().toString() + "&token=" + TOKEN;
@@ -200,7 +200,7 @@ var loadSettingsObject = function(callback){
 }
 
 var requestLink = function(email, callback){
-    var url = "https://www.lentopalloerotuomarit.fi/nimeajat/php/requestLink.php";
+    var url = "https://www.lentopallotuomarit.fi/nimeajat/php/requestLink.php";
     if(LOCALHOST) url = "http://localhost:3333/php/requestLink.php";
 
     url = url + "?timestamp=" + (new Date()).getMilliseconds().toString() + "&email=" + email;

@@ -193,7 +193,7 @@ $(document).ready(function () {
 
             loadTimestamp: function(){
                 var self = this;
-                var url = "https://www.lentopalloerotuomarit.fi/ottelulista/MIRROR.php?filename=timestamp.txt&timestamp=" + timestamp(); 
+                var url = "https://www.lentopallotuomarit.fi/ottelulista/MIRROR.php?filename=timestamp.txt&timestamp=" + timestamp(); 
                 $.get(url, function(data_){
                     let data = data_;
                     bus.emit("PAIVITA_TIMESTAMP", data_);
@@ -206,7 +206,7 @@ $(document).ready(function () {
 
                 var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre&timestamp=" + timestamp(); 
                 //url = "/ajax/referees.json";
-                url = "https://www.lentopalloerotuomarit.fi/list/autoreferees.php?timestamp=" + timestamp();
+                url = "https://www.lentopallotuomarit.fi/list/autoreferees.php?timestamp=" + timestamp();
                 if(JOS_LOCAL_DATA) url = "/data/autoreferees.json"; // JOS_LOCAL_DATA
 
                 $.get(url, function(data_){
@@ -293,7 +293,7 @@ $(document).ready(function () {
             loadMatches: function(callback){
                 var self = this;
 
-                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/MIRROR.php?filename=ottelut.json&t=" + timestamp(); 
+                let url = "https://www.lentopallotuomarit.fi/ottelulista/MIRROR.php?filename=ottelut.json&t=" + timestamp(); 
                 if(JOS_LOCAL_DATA) url = "/data/ottelut.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
                     if(!JOS_LOCAL_DATA) data = JSON.parse(data);
@@ -305,7 +305,7 @@ $(document).ready(function () {
             loadSeries: function(callback){
                 var self = this;
 
-                let url = "https://www.lentopalloerotuomarit.fi/ottelulista/MIRROR.php?filename=series.json&t=" + timestamp(); 
+                let url = "https://www.lentopallotuomarit.fi/ottelulista/MIRROR.php?filename=series.json&t=" + timestamp(); 
                 if(JOS_LOCAL_DATA) url = "/data/series.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
                     if(!JOS_LOCAL_DATA) data = JSON.parse(data);
@@ -792,7 +792,7 @@ $(document).ready(function () {
                 }
     
                 this.refresher = true;
-                $.get("https://www.lentopalloerotuomarit.fi/ottelulista/refresh.php?t=" + timestamp(), function(data_){
+                $.get("https://www.lentopallotuomarit.fi/ottelulista/refresh.php?t=" + timestamp(), function(data_){
                     location.reload();
                 });
             }            

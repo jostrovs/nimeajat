@@ -30,7 +30,7 @@ function sendEmail($to, $token){
     global $mailUsername, $mailPassword; // Nämä on pakko olla
     $subject = "Linkki nimeäjien työkaluun";
     $body = "Hei!\r\nTässä on linkki, jolla saat käyttöön asetusten talletuksen palvelimelle nimeäjien työkalusivulla:\r\n"
-          . "https://www.lentopalloerotuomarit.fi/nimeajat/?token=" . $token . "\r\n"
+          . "https://www.lentopallotuomarit.fi/nimeajat/?token=" . $token . "\r\n"
           . "Linkissä oleva 'token' on tunniste, jonka perusteella tiedetään, mihin tiedostoon juuri sinun asetuksesi "
           . "kuuluu tallettaa.\r\n\r\n"
           . "Älä vastaa tähän viestiin, vaan ongelmatapauksissa ota yhteyttä jostrovs@gmail.com.\r\n-Jori\r\n";
@@ -51,7 +51,7 @@ function sendEmail($to, $token){
     $mail->Password = $mailPassword;
  
     $mail->CharSet = 'utf-8';
-    $mail->SetFrom ('tarkkailu@lentopalloerotuomarit.fi', 'Jori');
+    $mail->SetFrom ('tarkkailu@lentopallotuomarit.fi', 'Jori');
     $mail->AddBCC ( 'jostrovs@gmail.com', 'Jori'); 
     $mail->Subject = $subject;
     $mail->ContentType = 'text/plain'; 

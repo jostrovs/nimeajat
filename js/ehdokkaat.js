@@ -99,7 +99,7 @@ function loadReferees(){
 let tiedot_haettu = "";
 
 function loadEsteet(){
-    cachedGet("https://www.lentopalloerotuomarit.fi/list/esteet.txt", function(data_txt){
+    cachedGet("https://www.lentopallotuomarit.fi/list/esteet.txt", function(data_txt){
         let data = JSON.parse(data_txt);
         
         // // 2021-esteet on siirrettävä yhdellä päivällä eteenpäin.
