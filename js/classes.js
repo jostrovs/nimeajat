@@ -154,6 +154,15 @@ class Match{
         return this.referees.length > 0;
     }
 
+    n2_vt(match){
+        if(match.competition_id != 'vb2022a') return false;
+        if(match.category_id != 'N2') return false;
+        if(match.group_name.length < 10) return false;
+        var prefix1 = match.group_name.substring(0, 7);
+        var prefix2 = "Pudotuspelit".substring(0,7);
+        return prefix1 == prefix2;
+    }
+
     fill_referees(){
         // Asetetaan ottelulle tieto tuomarien statuksesta
         let m = this.torneoMatch;
@@ -179,6 +188,14 @@ class Match{
 
         }
         else if(REF2.includes(m.category_id)){
+            // Kaksi täytyy löytyä
+            if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
+            else { this.referees.push(m.referee_1_name); this.referee_ids.push(m.referee_1_id); }
+
+            if(!(m.referee_2_name !== null && m.referee_2_name.length > 0 &&  m.referee_2_name !== "??")) puuttuu.push("VT"); 
+            else { this.referees.push(m.referee_2_name); this.referee_ids.push(m.referee_2_id); }
+        }
+        else if(this.n2_vt(m)){ // Naisten 2-sarjan 2-tuomarin pelit
             // Kaksi täytyy löytyä
             if(!(m.referee_1_name !== null && m.referee_1_name.length > 0 &&  m.referee_1_name !== "??")) puuttuu.push("PT"); 
             else { this.referees.push(m.referee_1_name); this.referee_ids.push(m.referee_1_id); }
