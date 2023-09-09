@@ -19,7 +19,7 @@ $(document).ready(function () {
             nimeamattomat_lkm: 0,
             tuplabuukkaukset_lkm: 0,
             alertShown: false,
-            datestring: "2022-08-31",
+            datestring: "2023-08-31",
             //date: new Date("2016-12-31"),
             matches: [],
 
@@ -319,7 +319,7 @@ $(document).ready(function () {
                 var self = this;
                 
                 for(let torneoCompetition of self.seriesData.competitions){
-                    if(torneoCompetition.season_id != "2022-23") continue;
+                    if(torneoCompetition.season_id != "2023-24") continue;
 
                     let competition = new Competition(torneoCompetition);
                     competition.categories = [];
@@ -557,7 +557,7 @@ $(document).ready(function () {
             applySettingsObject: function(settingsObject){
                 let self=this;
 
-                if(settingsObject.competitions.length < 1) competitions = ["vb2022a"];
+                if(settingsObject.competitions.length < 1) competitions = ["vb2023a"];
 
                 this.show_days_ahead = settingsObject.showdaysahead;
 

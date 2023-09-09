@@ -142,9 +142,7 @@ class Match{
         }   
 
         //debugger;
-        if(this.torneoMatch.date == '2022-12-26'){
-            //debugger;
-        }
+
         let mo = moment(this.torneoMatch.date);
         let we = mo.week();
         this.week = we;
@@ -155,7 +153,7 @@ class Match{
     }
 
     n2_vt(match){
-        if(match.competition_id != 'vb2022a') return false;
+        if(match.competition_id != 'vb2023a') return false;
         if(match.category_id != 'N2') return false;
         if(match.group_name.length < 10) return false;
         var prefix1 = match.group_name.substring(0, 7);
