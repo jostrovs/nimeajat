@@ -217,6 +217,8 @@ $(document).ready(function () {
                         alert("Tuomarien tietojen haku epäonnistui.");
                         return;
                     }
+
+                    debugger;
                     for(let referee of data.referees){
                         
                         let newReferee = new Referee(referee);
@@ -231,21 +233,22 @@ $(document).ready(function () {
                             newReferee.Luokka = luokka;
                         }
                         switch(luokka){
-                            case "Liiga": newReferee.LuokkaNo = 0; break;
-                            case "PS": newReferee.LuokkaNo = 1; break;
-                            case "I": newReferee.LuokkaNo = 2; break;
-                            case "I-luokka": newReferee.LuokkaNo = 2; break;
-                            case "II": newReferee.LuokkaNo = 3; break;
-                            case "II-luokka": newReferee.LuokkaNo = 3; break;
-                            case "III": newReferee.LuokkaNo = 4; break;
-                            case "O": newReferee.LuokkaNo = 4; newReferee.Luokka = "III"; break;
-                            case "III-luokka": newReferee.LuokkaNo = 4; break;
-                            case "NT": newReferee.LuokkaNo = 5; break;
-                            case "-": newReferee.LuokkaNo = 6; newReferee.Luokka = "Ei"; break;
+                            case "Liiga":      newReferee.LuokkaNo = 0; break;
+                            case "PS":         newReferee.LuokkaNo = 1; break;
+                            case "I":          newReferee.LuokkaNo = 2; break;
+                            case "I-luokka":   newReferee.LuokkaNo = 2; newReferee.Luokka = "I"; break;
+                            case "II":         newReferee.LuokkaNo = 3; break;
+                            case "II-luokka":  newReferee.LuokkaNo = 3; newReferee.Luokka = "II"; break;
+                            case "III":        newReferee.LuokkaNo = 4; break;
+                            case "O":          newReferee.LuokkaNo = 4; newReferee.Luokka = "III"; break;
+                            case "III-luokka": newReferee.LuokkaNo = 4; newReferee.Luokka = "III"; break;
+                            case "NT":         newReferee.LuokkaNo = 5; break;
+                            case "-":          newReferee.LuokkaNo = 6; newReferee.Luokka = "Ei"; break;
                             default: 
-                            debugger;
-                            newReferee.LuokkaNo = 4;
+                            newReferee.LuokkaNo = 4; newReferee.Luokka = "III"; 
                         }
+
+                        console.log(newReferee.Luokka);
 
                         self.refereeMap.set(referee.referee_id, newReferee);
                         self.referees.push(newReferee);    
