@@ -218,7 +218,6 @@ $(document).ready(function () {
                         return;
                     }
 
-                    debugger;
                     for(let referee of data.referees){
                         
                         let newReferee = new Referee(referee);
