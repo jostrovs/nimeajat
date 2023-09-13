@@ -247,8 +247,6 @@ $(document).ready(function () {
                             newReferee.LuokkaNo = 4; newReferee.Luokka = "III"; 
                         }
 
-                        console.log(newReferee.Luokka);
-
                         self.refereeMap.set(referee.referee_id, newReferee);
                         self.referees.push(newReferee);    
                     }
