@@ -698,7 +698,7 @@ Vue.component('vue-tehtavat', {
                     </tr>
                     <tr v-for="referee in referees">
                         <td>
-                            <img @click="showEste(referee)" src="block.png" height=16 title="Näytä tuomarin esteet" style="cursor: pointer">
+                            <!--img @click="showEste(referee)" src="block.png" height=16 title="Näytä tuomarin esteet" style="cursor: pointer"-->
                             <a @click="showRefereeWindow(referee)" title="Näytä tuomarin ottelulista" style="cursor: pointer">{{referee.name}}</a>
                         </td>
                         <td>{{referee.Luokka}}</td>

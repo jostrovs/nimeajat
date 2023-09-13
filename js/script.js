@@ -224,7 +224,13 @@ $(document).ready(function () {
                         // newReferee.PostiNo = tuomariDetails.PostiNo;
                         // newReferee.Kunta = tuomariDetails.Kunta;
                         // newReferee.Luokka = tuomariDetails.Luokka;
-                        switch(newReferee.Luokka){
+                        let luokka = newReferee.Luokka;
+                        let pos = luokka.indexOf("/");
+                        if (pos > 0){
+                            luokka = luokka.substring(0, pos);
+                            newReferee.Luokka = luokka;
+                        }
+                        switch(luokka){
                             case "Liiga": newReferee.LuokkaNo = 0; break;
                             case "PS": newReferee.LuokkaNo = 1; break;
                             case "I": newReferee.LuokkaNo = 2; break;
@@ -232,9 +238,13 @@ $(document).ready(function () {
                             case "II": newReferee.LuokkaNo = 3; break;
                             case "II-luokka": newReferee.LuokkaNo = 3; break;
                             case "III": newReferee.LuokkaNo = 4; break;
+                            case "O": newReferee.LuokkaNo = 4; newReferee.Luokka = "III"; break;
                             case "III-luokka": newReferee.LuokkaNo = 4; break;
                             case "NT": newReferee.LuokkaNo = 5; break;
-                            default: newReferee.LuokkaNo = 4;
+                            case "-": newReferee.LuokkaNo = 6; newReferee.Luokka = "Ei"; break;
+                            default: 
+                            debugger;
+                            newReferee.LuokkaNo = 4;
                         }
 
                         self.refereeMap.set(referee.referee_id, newReferee);
