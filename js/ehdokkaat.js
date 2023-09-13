@@ -59,7 +59,7 @@ function loadReferees(){
     let startDate = "2023-09-01";
 
     for(let referee of myReferees){
-        var url = `https://lentopallo.torneopal.fi/taso/rest/getMatches?referee_id=${referee.id}&start_date=${startDate}&api_key=qfzy3wsw9cqu25kq5zre`; 
+        var url = `https://lentopallo.api.torneopal.com/taso/rest/getMatches?referee_id=${referee.id}&start_date=${startDate}&api_key=qfzy3wsw9cqu25kq5zre`; 
         referee.matches = [];
         referee.href=url;
 

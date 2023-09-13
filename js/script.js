@@ -204,7 +204,7 @@ $(document).ready(function () {
                 var self = this;
                 self.refereeMap = new Map();
 
-                var url = "https://lentopallo.torneopal.fi/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre&timestamp=" + timestamp(); 
+                var url = "https://lentopallo.api.torneopal.com/taso/rest/getReferees?api_key=qfzy3wsw9cqu25kq5zre&timestamp=" + timestamp(); 
                 //url = "/ajax/referees.json";
                 url = "https://www.lentopallotuomarit.fi/list/autoreferees.php?timestamp=" + timestamp();
                 if(JOS_LOCAL_DATA) url = "/data/autoreferees.json"; // JOS_LOCAL_DATA

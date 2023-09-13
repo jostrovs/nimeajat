@@ -11,7 +11,7 @@ class Match{
         this.status = torneoMatch.status;
 
         this.referees = [];
-        this.href="https://lentopallo.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
+        this.href="https://lentopallo.api.torneopal.com/taso/ottelu.php?otteluid=" + this.id;
         this.torneo_edit_href="https://lentopallo-extranet.torneopal.fi/taso/ottelu.php?otteluid=" + this.id;
 
         this.fill_date();
@@ -20,7 +20,7 @@ class Match{
         this.competition = competition;
         
         this.category = category;
-        this.category_href="https://lentopallo.torneopal.fi/taso/sarja.php?turnaus=" + competition.id + "&sarja=" + category.id;
+        this.category_href="https://lentopallo.api.torneopal.com/taso/sarja.php?turnaus=" + competition.id + "&sarja=" + category.id;
         
         this.group = group;
         this.group_href = this.category_href + "&lohko=" + this.group.id;
@@ -409,7 +409,7 @@ class Referee {
           this.displayed = true;
           this.showWorkLoad = true;
           this.showDouble = true;
-          this.href="https://lentopallo.torneopal.fi/taso/ottelulista.php?tuomari=" + torneoReferee.referee_id; 
+          this.href="https://lentopallo.api.torneopal.com/taso/ottelulista.php?tuomari=" + torneoReferee.referee_id; 
 
           if(this.Luokka == "I-luokka") this.Luokka = "I";
           if(this.Luokka == "II-luokka") this.Luokka = "II";
