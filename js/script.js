@@ -307,7 +307,7 @@ $(document).ready(function () {
                 if(JOS_LOCAL_DATA) url = "/data/ottelut.json"; // JOS_LOCAL_DATA 
                 $.get(url, function(data){
                     if(!JOS_LOCAL_DATA) data = JSON.parse(data);
-                    self.torneomatches = data.matches;
+                    self.torneomatches = data;//.matches;
                     callback();
                 });
             },
